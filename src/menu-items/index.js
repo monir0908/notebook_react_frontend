@@ -7,7 +7,7 @@ import collection from './collection';
 // ==============================|| MENU ITEMS ||============================== //
 
 const menuItems = {
-    items: [top, collection, dashboard, pages, utilities]
+    items: [top, dashboard, pages, utilities]
 };
 
 export default menuItems;

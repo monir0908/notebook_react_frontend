@@ -37,98 +37,44 @@ const Font = Quill.import('formats/font');
 Font.whitelist = ['arial', 'comic-sans', 'courier-new', 'georgia', 'helvetica', 'Inter', 'lucida'];
 Quill.register(Font, true);
 
-// Quill.register('modules/linkTooltip', (quill) => {
-//     console.log(quill);
-//     quill.container.addEventListener('click', (evt) => {
-//         console.log(evt);
-//         if (evt.target.tagName === 'A' && (quill.options.readOnly || evt.offsetY < -5)) {
-//             window.open(evt.target.href)?.focus();
-//         }
-//     });
-// });
-
-// const Link = Quill.import('formats/link');
-
-// class ClickableLink extends Link {
-//     create(value) {
-//         const node = super.create(value);
-//         node.setAttribute('href', Link.sanitize(value));
-//         node.setAttribute('target', '_blank');
-//         node.setAttribute('contenteditable', 'false');
-
-//         return node;
-//     }
-// }
-
-// Quill.register('formats/link', ClickableLink, true);
-
-// var Link = Quill.import('formats/link');
-
-// class MyLink extends Link {
-//     static create(value) {
-//         let node = super.create(value);
-//         value = this.sanitize(value);
-//         if (!value.startsWith('http')) {
-//             value = 'http://' + value;
-//         }
-//         node.setAttribute('href', value);
-//         return node;
-//     }
-// }
-
-// Quill.register(MyLink);
-
-// // Define the custom module
-// class LinkClickModule {
+// class AnchorPromptModule {
 //     constructor(quill, options) {
 //         this.quill = quill;
 //         this.options = options;
-//         this.quill.on('click', 'a', this.handleClick.bind(this));
+//         this.quill.root.addEventListener('click', this.handleClick.bind(this));
 //     }
 
-//     handleClick(link) {
-//         window.open(link.href, '_blank');
+//     handleClick(event) {
+//         const anchor = event.target.closest('a');
+//         if (anchor && anchor.rel === 'noopener noreferrer') {
+
+//             //     const newHref = window.prompt('Enter a new URL:', anchor.href);
+//             //     if (newHref) {
+//             //         anchor.href = newHref;
+//             //     }
+//         }
 //     }
 // }
 
-// // Register the custom module
-// Quill.register('modules/link_click', LinkClickModule);
+// Quill.register('modules/linkTooltip', AnchorPromptModule);
 
-// new Quill('#editor-container', {
-//     modules: {
-//         link_click: true
-//     }
-// });
-
-// Quill.register('modules/linkTooltip', (quill) => {
-//     quill.container.addEventListener('click', (evt) => {
-//         if (evt.target.tagName === 'A' && (quill.options.readOnly || evt.offsetY < -5)) {
-//             window.open(evt.target.href)?.focus();
-//         }
-//     });
-// });
-
-class LinkClickModule {
+class LinkTooltip {
     constructor(quill, options) {
         this.quill = quill;
         this.options = options;
-        this.quill.on('click', 'a', this.handleClick.bind(this));
+        this.quill.root.addEventListener('click', this.handleClick.bind(this));
     }
-
-    handleClick() {
-        quill.container.addEventListener('click', (evt) => {
-            if (evt.target.tagName === 'A' && (quill.options.readOnly || evt.offsetY < -5)) {
-                window.open(evt.target.href)?.focus();
-            }
-        });
+    handleClick(evt) {
+        if (evt.target.tagName === 'A' && (this.quill.options.readOnly || evt.offsetY < 100)) {
+            window.open(evt.target.href)?.focus();
+        }
     }
 }
+Quill.register('modules/linkTooltip', LinkTooltip);
 
-Quill.register('modules/linkTooltip', LinkClickModule);
 // Modules object for setting up the Quill editor
 export const modules = (props) => ({
-    linkTooltip: true,
-    cursors: true,
+    // cursors: true,
     // cursors: {
     //   id: 1,
     //   name: "User 1",
@@ -136,17 +82,18 @@ export const modules = (props) => ({
     //   range: { index:0, length:5 }
     // },
     toolbar: {
-        container: '#' + props,
-        handlers: {
-            undo: undoChange,
-            redo: redoChange
-        }
+        container: '#' + props
+        // handlers: {
+        //     undo: undoChange,
+        //     redo: redoChange
+        // }
     },
     history: {
         delay: 500,
         maxStack: 100,
         userOnly: true
-    }
+    },
+    linkTooltip: true
 });
 
 // Formats objects for setting up the Quill editor

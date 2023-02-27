@@ -18,7 +18,7 @@ const collectionSlice = createSlice({
         }),
             builder.addCase(collectionList.fulfilled, (state, { payload }) => {
                 state.loading = false;
-                state.data = payload;
+                state.data = payload.data;
                 state.error = null;
             }),
             builder.addCase(collectionList.rejected, (state, { payload }) => {

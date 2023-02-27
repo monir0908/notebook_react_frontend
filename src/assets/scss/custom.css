@@ -1,1 +1,13 @@
+.ql-container.ql-bubble:not(.ql-disabled) a:hover::before{
+    cursor: pointer;
+}
 
+/* .ql-container.ql-bubble:not(.ql-disabled) a {
+    position: fixed !important;
+} */
+
+.ql-container.ql-bubble:not(.ql-disabled) a::before {
+    background-color: #121926 !important;
+    border-radius: 5px !important;
+    transform: translate(-17%, 92%) !important;
+}

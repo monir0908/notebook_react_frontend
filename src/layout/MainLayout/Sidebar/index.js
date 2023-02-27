@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-
+import React, { useState, useEffect } from 'react';
 // material-ui
 import { useTheme } from '@mui/material/styles';
 import { Box, Drawer, useMediaQuery } from '@mui/material';
@@ -14,11 +14,23 @@ import LogoSection from '../LogoSection';
 import MenuCard from './MenuCard';
 import { drawerWidth } from 'store/constant';
 
+import { useDispatch, useSelector } from 'react-redux';
+import { collectionList } from 'store/features/collection/collectionActions';
+
 // ==============================|| SIDEBAR DRAWER ||============================== //
 
 const Sidebar = ({ drawerOpen, drawerToggle, window }) => {
     const theme = useTheme();
     const matchUpMd = useMediaQuery(theme.breakpoints.up('md'));
+
+    const dispatch = useDispatch();
+    const userInfo = useSelector((state) => state.auth.userInfo);
+    const collection = useSelector((state) => state.collection.data);
+
+    useEffect(() => {
+        const url = `collection/list?creator_id=${userInfo.id}&page=1&page_size=100`;
+        dispatch(collectionList({ url }));
+    }, []);
 
     const drawer = (
         <>

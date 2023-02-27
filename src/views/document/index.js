@@ -18,7 +18,9 @@ import EditorToolbar, { modules, formats } from './EditorToolbar';
 import 'react-quill/dist/quill.snow.css';
 import 'react-quill/dist/quill.bubble.css';
 
-import AnimateButton from 'ui-component/extended/AnimateButton';
+import Fab from '@mui/material/Fab';
+// assets
+import { IconDeviceFloppy } from '@tabler/icons';
 
 import {
     TextField,
@@ -63,16 +65,14 @@ const Document = () => {
 
     const onTitleChange = (e) => {
         setDocTitle(e.target.value);
-        handleSubmit();
     };
     const onBodyChange = (value) => {
         setDocBody(value);
-        handleSubmit();
     };
 
     let quillRef = null;
     let reactQuillRef = null;
-    Quill.register('modules/cursors', QuillCursors);
+    // Quill.register('modules/cursors', QuillCursors);
 
     const attachQuillRefs = () => {
         if (typeof reactQuillRef.getEditor !== 'function') return;
@@ -80,7 +80,12 @@ const Document = () => {
         quillRef.getModule();
     };
 
+    // const userInfo = useSelector((state) => state.auth.userInfo);
+
     useEffect(() => {
+        // const url = `collection/list?creator_id=${userInfo.id}&page=1&page_size=5`;
+        // dispatch(collectionList({ url }));
+
         attachQuillRefs();
         getDocumentDetails();
         // const ydoc = new Y.Doc();
@@ -102,18 +107,20 @@ const Document = () => {
         }
     };
 
+    const fabStyle = {
+        position: 'absolute',
+        bottom: '50%',
+        right: 16
+    };
+
     return (
         <>
             <MainCard title="">
                 <form>
                     <TextField
+                        inputProps={{ style: { fontSize: 40, fontWeight: 600 } }}
                         fullWidth
                         id="standard-basic"
-                        style={{
-                            fontSize: '28px !important',
-                            lineHeight: '32px !important',
-                            fontWeight: '400 !important'
-                        }}
                         className="title-text"
                         value={docTitle}
                         onChange={onTitleChange}
@@ -121,20 +128,35 @@ const Document = () => {
                         label=""
                         variant="standard"
                     />
-                    <div className="editor">
+                    {/* <div className="editor-container1">
                         <EditorToolbar toolbarId={'t1'} />
                         <ReactQuill
                             ref={(el) => {
                                 reactQuillRef = el;
                             }}
-                            id="editor-container"
-                            bounds=".editor"
+                            bounds=".editor-container1"
+                            theme="bubble"
+                            value={docTitle}
+                            onChange={onTitleChange}
+                            placeholder={'Write something here...'}
+                            formats={formats}
+                            modules={modules('t1')}
+                        />
+                    </div> */}
+                    <div className="editor-container">
+                        <EditorToolbar toolbarId={'t1'} />
+                        <ReactQuill
+                            ref={(el) => {
+                                reactQuillRef = el;
+                            }}
+                            bounds=".editor-container"
                             theme="bubble"
                             value={docBody}
                             onChange={onBodyChange}
                             placeholder={'Write something here...'}
                             formats={formats}
                             modules={modules('t1')}
+                            preserveWhitespace
                         />
                     </div>
                     {/* <Box sx={{ mt: 2 }}>
@@ -145,6 +167,10 @@ const Document = () => {
                         </AnimateButton>
                     </Box> */}
                 </form>
+
+                <Fab sx={fabStyle} onClick={handleSubmit} aria-label="Save" color="primary">
+                    <IconDeviceFloppy />
+                </Fab>
             </MainCard>
         </>
     );
