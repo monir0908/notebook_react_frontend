@@ -44,6 +44,7 @@ import {
 // third party
 import * as Yup from 'yup';
 import { Formik } from 'formik';
+import { updateDocumentName, updateDocumentTitle } from 'store/features/collection/collectionSlice';
 
 // ==============================|| PAGE ||============================== //
 
@@ -51,21 +52,22 @@ const Document = () => {
     const dispatch = useDispatch();
     // const navigate = useNavigate();
     const { documentKey } = useParams();
-
     const [docTitle, setDocTitle] = useState('');
     const [docBody, setDocBody] = useState('');
 
     const getDocumentDetails = async () => {
         const res = await API.get(`document/${documentKey}`);
-        const doc = res.data.data;
 
+        let doc = res.data.data;
         setDocTitle(doc.doc_title);
         setDocBody(doc.doc_body);
     };
 
     const onTitleChange = (e) => {
         setDocTitle(e.target.value);
+        dispatch(updateDocumentTitle({ document_key: documentKey, doc_title: e.target.value }));
     };
+
     const onBodyChange = (value) => {
         setDocBody(value);
     };

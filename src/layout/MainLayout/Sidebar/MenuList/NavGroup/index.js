@@ -8,10 +8,21 @@ import { Divider, List, Typography } from '@mui/material';
 import NavItem from '../NavItem';
 import NavCollapse from '../NavCollapse';
 
+import { IconPlus } from '@tabler/icons';
+import { useDispatch, useSelector } from 'react-redux';
+import { collectionList, collectionCreate } from 'store/features/collection/collectionActions';
 // ==============================|| SIDEBAR MENU LIST GROUP ||============================== //
 
 const NavGroup = ({ item }) => {
     const theme = useTheme();
+    const dispatch = useDispatch();
+    const userInfo = useSelector((state) => state.auth.userInfo);
+    const handleCreateCollection = async () => {
+        dispatch(collectionCreate({ url: 'collection/create' }));
+
+        const url = `collection/list?creator_id=${userInfo.id}&page=1&page_size=100`;
+        dispatch(collectionList({ url }));
+    };
 
     // menu list collapse & items
     const items = item.children?.map((menu) => {
@@ -35,7 +46,13 @@ const NavGroup = ({ item }) => {
                 subheader={
                     item.title && (
                         <Typography variant="caption" sx={{ ...theme.typography.menuCaption }} display="block" gutterBottom>
-                            {item.title}
+                            {item.title}{' '}
+                            <IconPlus
+                                onClick={handleCreateCollection}
+                                stroke={2.5}
+                                size="1.5rem"
+                                style={{ float: 'right', marginRight: '5px', cursor: 'pointer' }}
+                            />
                             {item.caption && (
                                 <Typography variant="caption" sx={{ ...theme.typography.subMenuCaption }} display="block" gutterBottom>
                                     {item.caption}

@@ -25,7 +25,6 @@ const Sidebar = ({ drawerOpen, drawerToggle, window }) => {
 
     const dispatch = useDispatch();
     const userInfo = useSelector((state) => state.auth.userInfo);
-    const collection = useSelector((state) => state.collection.data);
 
     useEffect(() => {
         const url = `collection/list?creator_id=${userInfo.id}&page=1&page_size=100`;
@@ -49,13 +48,13 @@ const Sidebar = ({ drawerOpen, drawerToggle, window }) => {
                     }}
                 >
                     <MenuList />
-                    <MenuCard />
+                    {/* <MenuCard /> */}
                 </PerfectScrollbar>
             </BrowserView>
             <MobileView>
                 <Box sx={{ px: 2 }}>
                     <MenuList />
-                    <MenuCard />
+                    {/* <MenuCard /> */}
                 </Box>
             </MobileView>
         </>
