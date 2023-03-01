@@ -74,26 +74,27 @@ const Document = () => {
 
     let quillRef = null;
     let reactQuillRef = null;
-    // Quill.register('modules/cursors', QuillCursors);
-
+    Quill.register('modules/cursors', QuillCursors);
     const attachQuillRefs = () => {
         if (typeof reactQuillRef.getEditor !== 'function') return;
         quillRef = reactQuillRef.getEditor();
         quillRef.getModule();
+        let tooltip = quillRef.theme.tooltip;
+        let input = tooltip.root.querySelector('input[data-link]');
+        input.dataset.link = 'https://yourdomain.com';
     };
 
-    // const userInfo = useSelector((state) => state.auth.userInfo);
-
     useEffect(() => {
-        // const url = `collection/list?creator_id=${userInfo.id}&page=1&page_size=5`;
-        // dispatch(collectionList({ url }));
-
         attachQuillRefs();
         getDocumentDetails();
-        // const ydoc = new Y.Doc();
-        // const provider = new WebrtcProvider('ws://localhost:3000/document/', ydoc);
-        // const ytext = ydoc.getText('quill');
-        // new QuillBinding(ytext, quillRef, provider.awareness);
+        const ydoc = new Y.Doc();
+        const provider = new WebrtcProvider('ws://127.0.0.1:3001/document', ydoc);
+        const ytext = ydoc.getText('quill');
+        new QuillBinding(ytext, quillRef, provider.awareness);
+        // provider.awareness.setLocalStateField('user', {
+        //     name: 'Typing Jimmy',
+        //     color: 'blue'
+        // });
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [documentKey]);

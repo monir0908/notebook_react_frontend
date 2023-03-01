@@ -34,7 +34,7 @@ Quill.register(Size, true);
 
 // Add fonts to whitelist and register them
 const Font = Quill.import('formats/font');
-Font.whitelist = ['arial', 'comic-sans', 'courier-new', 'georgia', 'helvetica', 'Inter', 'lucida'];
+Font.whitelist = ['arial', 'comic-sans', 'courier-new', 'georgia', 'lucida'];
 Quill.register(Font, true);
 
 // class AnchorPromptModule {
@@ -74,7 +74,7 @@ Quill.register('modules/linkTooltip', LinkTooltip);
 
 // Modules object for setting up the Quill editor
 export const modules = (props) => ({
-    // cursors: true,
+    cursors: true,
     // cursors: {
     //   id: 1,
     //   name: "User 1",
@@ -132,23 +132,17 @@ export const QuillToolbar = (props) => {
                         <button className="ql-strike" />
                     </span>
                     <span className="ql-formats">
-                        {/* <select className="ql-font">
+                        <select className="ql-font" defaultValue={'arial'}>
                             <option value="arial"> Arial </option>
                             <option value="comic-sans">Comic Sans</option>
                             <option value="courier-new">Courier New</option>
                             <option value="georgia">Georgia</option>
-                            <option value="helvetica">Helvetica</option>
-                            <option value="Inter" selected>
-                                Inter
-                            </option>
                             <option value="lucida">Lucida</option>
-                        </select> */}
-                        {/* <select className="ql-size">
+                        </select>
+                        {/* <select className="ql-size" defaultValue={'small'}>
                             <option value="extra-small">Extra Small</option>
                             <option value="small">Small</option>
-                            <option value="medium" selected>
-                                Medium
-                            </option>
+                            <option value="medium">Medium</option>
                             <option value="large">Large</option>
                         </select> */}
                         <select defaultValue={'DEFAULT'} className="ql-header">
@@ -161,21 +155,21 @@ export const QuillToolbar = (props) => {
                             <option value="DEFAULT">Normal</option>
                         </select>
                     </span>
-                    {/* <span className="ql-formats">
+                    <span className="ql-formats">
                         <button className="ql-list" value="ordered" />
                         <button className="ql-list" value="bullet" />
-                        <button className="ql-indent" value="-1" />
-                        <button className="ql-indent" value="+1" />
+                        {/* <button className="ql-indent" value="-1" />
+                        <button className="ql-indent" value="+1" /> */}
                     </span>
-                    <span className="ql-formats">
+                    {/* <span className="ql-formats">
                         <button className="ql-script" value="super" />
                         <button className="ql-script" value="sub" />
                         <button className="ql-blockquote" />
                         <button className="ql-direction" />
-                    </span> */}
+                    </span>  */}
                     <span className="ql-formats">
-                        {/* <select className="ql-align" />
-                        <select className="ql-color" /> */}
+                        {/* <select className="ql-align" />*/}
+                        <select className="ql-color" />
                         <select className="ql-background" />
                     </span>
                     <span className="ql-formats">

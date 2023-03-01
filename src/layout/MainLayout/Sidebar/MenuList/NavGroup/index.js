@@ -7,7 +7,8 @@ import { Divider, List, Typography } from '@mui/material';
 // project imports
 import NavItem from '../NavItem';
 import NavCollapse from '../NavCollapse';
-
+import IconButton from '@mui/material/IconButton';
+import Tooltip from '@mui/material/Tooltip';
 import { IconPlus } from '@tabler/icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { collectionList, collectionCreate } from 'store/features/collection/collectionActions';
@@ -47,12 +48,22 @@ const NavGroup = ({ item }) => {
                     item.title && (
                         <Typography variant="caption" sx={{ ...theme.typography.menuCaption }} display="block" gutterBottom>
                             {item.title}{' '}
-                            <IconPlus
+                            <Tooltip title="Add Collection" arrow placement="top">
+                                <IconButton
+                                    onClick={handleCreateCollection}
+                                    aria-label="add"
+                                    size="small"
+                                    style={{ float: 'right', marginTop: '-5px', marginRight: '5px', cursor: 'pointer' }}
+                                >
+                                    <IconPlus fontSize="inherit" />
+                                </IconButton>
+                            </Tooltip>
+                            {/* <IconPlus
                                 onClick={handleCreateCollection}
                                 stroke={2.5}
                                 size="1.5rem"
                                 style={{ float: 'right', marginRight: '5px', cursor: 'pointer' }}
-                            />
+                            /> */}
                             {item.caption && (
                                 <Typography variant="caption" sx={{ ...theme.typography.subMenuCaption }} display="block" gutterBottom>
                                     {item.caption}
