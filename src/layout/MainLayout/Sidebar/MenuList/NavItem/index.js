@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { forwardRef, useEffect } from 'react';
+import { forwardRef, useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -12,7 +12,10 @@ import { MENU_OPEN, SET_MENU } from 'store/actions';
 
 // assets
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
-
+import IconButton from '@mui/material/IconButton';
+import { IconChevronDown, IconChevronUp, IconPlus, IconDots } from '@tabler/icons';
+import Tooltip from '@mui/material/Tooltip';
+import ContextMenu from '../NavCollapse/contextMenu';
 // ==============================|| SIDEBAR MENU LIST ITEMS ||============================== //
 
 const NavItem = ({ item, level }) => {
@@ -20,6 +23,29 @@ const NavItem = ({ item, level }) => {
     const dispatch = useDispatch();
     const customization = useSelector((state) => state.customization);
     const matchesSM = useMediaQuery(theme.breakpoints.down('lg'));
+
+    //////////////////////////// context menu //////////////////////////////
+    // const side = 300;
+    // const padding = 80;
+    // const margin = 100;
+    // const [coordinatesItem, setCoordinatesItem] = useState([0, 0]);
+    const [anchorElItem, setAnchorElItem] = useState(null);
+    const openContextMenuItem = Boolean(anchorElItem);
+    const handleContextMenuClick = (event) => {
+        // if (
+        //     event.pageX >= padding + margin &&
+        //     event.pageX <= side + padding + margin &&
+        //     event.pageY >= padding + margin &&
+        //     event.pageY <= side + padding + margin
+        // ) {
+        //     setCoordinatesItem([event.pageX, event.pageY]);
+        // }
+        setAnchorElItem(event.currentTarget);
+    };
+    const handleContextMenuItemClose = () => {
+        setAnchorElItem(null);
+    };
+    //////////////////////////// context menu //////////////////////////////
 
     const Icon = item.icon;
     const itemIcon = item?.icon ? (
@@ -64,45 +90,71 @@ const NavItem = ({ item, level }) => {
     }, []);
 
     return (
-        <ListItemButton
-            {...listItemProps}
-            disabled={item.disabled}
-            sx={{
-                borderRadius: `${customization.borderRadius}px`,
-                mb: 0.5,
-                alignItems: 'flex-start',
-                backgroundColor: level > 1 ? 'transparent !important' : 'inherit',
-                py: level > 1 ? 1 : 1.25,
-                pl: `${level * 24}px`
-            }}
-            selected={customization.isOpen.findIndex((id) => id === item.id) > -1}
-            onClick={() => itemHandler(item.id)}
-        >
-            <ListItemIcon sx={{ my: 'auto', minWidth: !item?.icon ? 18 : 36 }}>{itemIcon}</ListItemIcon>
-            <ListItemText
-                primary={
-                    <Typography variant={customization.isOpen.findIndex((id) => id === item.id) > -1 ? 'h5' : 'body1'} color="inherit">
-                        {item.title}
-                    </Typography>
-                }
-                secondary={
-                    item.caption && (
-                        <Typography variant="caption" sx={{ ...theme.typography.subMenuCaption }} display="block" gutterBottom>
-                            {item.caption}
+        <>
+            <ListItemButton
+                {...listItemProps}
+                disabled={item.disabled}
+                sx={{
+                    borderRadius: `${customization.borderRadius}px`,
+                    mb: 0.5,
+                    alignItems: 'flex-start',
+                    backgroundColor: level > 1 ? 'transparent !important' : 'inherit',
+                    py: level > 1 ? 1 : 1.25,
+                    pl: `${level * 24}px`
+                }}
+                selected={customization.isOpen.findIndex((id) => id === item.id) > -1}
+                onClick={() => itemHandler(item.id)}
+            >
+                <ListItemIcon sx={{ my: 'auto', minWidth: !item?.icon ? 18 : 36 }}>{itemIcon}</ListItemIcon>
+                <ListItemText
+                    primary={
+                        <Typography variant={customization.isOpen.findIndex((id) => id === item.id) > -1 ? 'h5' : 'body1'} color="inherit">
+                            {item.title}
                         </Typography>
-                    )
-                }
-            />
-            {item.chip && (
-                <Chip
-                    color={item.chip.color}
-                    variant={item.chip.variant}
-                    size={item.chip.size}
-                    label={item.chip.label}
-                    avatar={item.chip.avatar && <Avatar>{item.chip.avatar}</Avatar>}
+                    }
+                    secondary={
+                        item.caption && (
+                            <Typography variant="caption" sx={{ ...theme.typography.subMenuCaption }} display="block" gutterBottom>
+                                {item.caption}
+                            </Typography>
+                        )
+                    }
                 />
-            )}
-        </ListItemButton>
+                {item.chip && (
+                    <Chip
+                        color={item.chip.color}
+                        variant={item.chip.variant}
+                        size={item.chip.size}
+                        label={item.chip.label}
+                        avatar={item.chip.avatar && <Avatar>{item.chip.avatar}</Avatar>}
+                    />
+                )}
+                {item.dynamic && (
+                    <div>
+                        <Tooltip title="New Doc" arrow placement="top">
+                            <IconButton size="1rem" aria-label="add" style={{ marginTop: '-5px', marginRight: '-5px', cursor: 'pointer' }}>
+                                <IconPlus size="1rem" />
+                            </IconButton>
+                        </Tooltip>
+                        <IconButton
+                            onClick={handleContextMenuClick}
+                            size="1rem"
+                            aria-label="option"
+                            style={{ float: 'right', marginTop: '-5px', marginRight: '-15px', cursor: 'pointer' }}
+                        >
+                            <IconDots size="1rem" />
+                        </IconButton>
+                    </div>
+                )}
+            </ListItemButton>
+            <ContextMenu
+                type="document"
+                // coordinates={coordinatesItem}
+                anchorEl={anchorElItem}
+                open={openContextMenuItem}
+                handleClose={handleContextMenuItemClose}
+            />
+        </>
     );
 };
 

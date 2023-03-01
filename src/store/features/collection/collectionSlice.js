@@ -5,7 +5,8 @@ import { toast } from 'react-toastify';
 const initialState = {
     data: [],
     error: null,
-    loading: false
+    loading: false,
+    success: false
 };
 
 const collectionSlice = createSlice({
@@ -37,10 +38,12 @@ const collectionSlice = createSlice({
                 state.loading = false;
                 state.data = action.payload.data;
                 state.error = null;
+                state.success = true;
             }),
             builder.addCase(collectionList.rejected, (state, { payload }) => {
                 state.loading = false;
                 state.error = payload;
+                state.success = false;
             });
         builder.addCase(collectionCreate.pending, (state) => {
             state.loading = true;
@@ -49,12 +52,14 @@ const collectionSlice = createSlice({
             builder.addCase(collectionCreate.fulfilled, (state, action) => {
                 state.loading = false;
                 state.error = null;
-                toast.success('Collection Created', { autoClose: 3000 });
+                state.success = true;
             }),
             builder.addCase(collectionCreate.rejected, (state, { payload }) => {
                 state.loading = false;
                 state.error = payload;
+                state.success = false;
             });
+        // builder.addCase(revertAll, () => initialState);
     }
 });
 export const { updateDocumentTitle } = collectionSlice.actions;

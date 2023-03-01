@@ -41,8 +41,10 @@ const NavGroup = ({ item }) => {
     const handleCCDialogOk = (values) => {
         dispatch(collectionCreate({ url: 'collection/create', data: { collection_title: values.collecton_name } }));
 
-        const url = `collection/list?creator_id=${userInfo.id}&page=1&page_size=100`;
-        dispatch(collectionList({ url }));
+        setTimeout(() => {
+            const url = `collection/list?creator_id=${userInfo.id}&page=1&page_size=100`;
+            dispatch(collectionList({ url }));
+        }, 500);
 
         setOpenCCDialog(false);
     };
@@ -70,13 +72,6 @@ const NavGroup = ({ item }) => {
                     item.title && (
                         <Typography variant="caption" sx={{ ...theme.typography.menuCaption }} display="block" gutterBottom>
                             {item.title}{' '}
-                            {/* <IconButton
-                                aria-label="add"
-                                size="small"
-                                style={{ float: 'right', marginTop: '-5px', marginRight: '5px', cursor: 'pointer' }}
-                            >
-                                <IconDots />
-                            </IconButton> */}
                             <Tooltip title="Add Collection" arrow placement="top">
                                 <IconButton
                                     onClick={handleCCDialogClickOpen}
@@ -87,12 +82,6 @@ const NavGroup = ({ item }) => {
                                     <IconPlus fontSize="inherit" />
                                 </IconButton>
                             </Tooltip>
-                            {/* <IconPlus
-                                onClick={handleCreateCollection}
-                                stroke={2.5}
-                                size="1.5rem"
-                                style={{ float: 'right', marginRight: '5px', cursor: 'pointer' }}
-                            /> */}
                             {item.caption && (
                                 <Typography variant="caption" sx={{ ...theme.typography.subMenuCaption }} display="block" gutterBottom>
                                     {item.caption}

@@ -13,7 +13,9 @@ import NavItem from '../NavItem';
 // assets
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
 import IconButton from '@mui/material/IconButton';
-import { IconChevronDown, IconChevronUp, IconPlus } from '@tabler/icons';
+import { IconChevronDown, IconChevronUp, IconPlus, IconDots } from '@tabler/icons';
+import Tooltip from '@mui/material/Tooltip';
+import ContextMenu from './contextMenu';
 
 // ==============================|| SIDEBAR MENU LIST COLLAPSE ITEMS ||============================== //
 
@@ -24,9 +26,33 @@ const NavCollapse = ({ menu, level }) => {
     const [open, setOpen] = useState(false);
     const [selected, setSelected] = useState(null);
 
+    //////////////////////////// context menu //////////////////////////////
+    // const side = 300;
+    // const padding = 80;
+    // const margin = 100;
+    // const [coordinates, setCoordinates] = useState([0, 0]);
+    const [anchorEl, setAnchorEl] = useState(null);
+    const openContextMenu = Boolean(anchorEl);
+    const handleContextMenuClick = (event) => {
+        // if (
+        //     event.pageX >= padding + margin &&
+        //     event.pageX <= side + padding + margin &&
+        //     event.pageY >= padding + margin &&
+        //     event.pageY <= side + padding + margin
+        // ) {
+        //     setCoordinates([event.pageX, event.pageY]);
+        // }
+        setAnchorEl(event.currentTarget);
+    };
+    const handleContextMenuClose = () => {
+        setAnchorEl(null);
+    };
+    //////////////////////////// context menu //////////////////////////////
     const handleClick = () => {
         setOpen(!open);
         setSelected(!selected ? menu.id : null);
+
+        console.log(menu);
     };
 
     const { pathname } = useLocation();
@@ -96,15 +122,24 @@ const NavCollapse = ({ menu, level }) => {
                     alignItems: 'flex-start',
                     backgroundColor: level > 1 ? 'transparent !important' : 'inherit',
                     py: level > 1 ? 1 : 1.25,
-                    pl: `${level * 24}px`
+                    pl: `${level * 10}px`
                 }}
                 selected={selected === menu.id}
-                onClick={handleClick}
             >
+                {open ? (
+                    <IconChevronUp stroke={1.5} size="1rem" style={{ marginTop: 'auto', marginBottom: 'auto' }} />
+                ) : (
+                    <IconChevronDown stroke={1.5} size="1rem" style={{ marginTop: 'auto', marginBottom: 'auto' }} />
+                )}
                 <ListItemIcon sx={{ my: 'auto', minWidth: !menu.icon ? 18 : 36 }}>{menuIcon}</ListItemIcon>
                 <ListItemText
                     primary={
-                        <Typography variant={selected === menu.id ? 'h5' : 'body1'} color="inherit" sx={{ my: 'auto' }}>
+                        <Typography
+                            onClick={handleClick}
+                            variant={selected === menu.id ? 'h5' : 'body1'}
+                            color="inherit"
+                            sx={{ my: 'auto' }}
+                        >
                             {menu.title}
                         </Typography>
                     }
@@ -116,14 +151,19 @@ const NavCollapse = ({ menu, level }) => {
                         )
                     }
                 />
-                {open ? (
-                    <IconChevronUp stroke={1.5} size="1rem" style={{ marginTop: 'auto', marginBottom: 'auto' }} />
-                ) : (
-                    <IconChevronDown stroke={1.5} size="1rem" style={{ marginTop: 'auto', marginBottom: 'auto' }} />
-                )}
-                {/* <IconButton aria-label="add" size="small">
-                    <IconPlus fontSize="inherit" />
-                </IconButton> */}
+                <Tooltip title="New Doc" arrow placement="top">
+                    <IconButton size="1rem" aria-label="add" style={{ marginTop: '-5px', marginRight: '-5px', cursor: 'pointer' }}>
+                        <IconPlus size="1rem" />
+                    </IconButton>
+                </Tooltip>
+                <IconButton
+                    onClick={handleContextMenuClick}
+                    size="1rem"
+                    aria-label="option"
+                    style={{ float: 'right', marginTop: '-5px', marginRight: '-15px', cursor: 'pointer' }}
+                >
+                    <IconDots size="1rem" />
+                </IconButton>
             </ListItemButton>
             <Collapse in={open} timeout="auto" unmountOnExit>
                 <List
@@ -146,6 +186,14 @@ const NavCollapse = ({ menu, level }) => {
                     {menus}
                 </List>
             </Collapse>
+
+            <ContextMenu
+                // coordinates={coordinates}
+                type="collection"
+                anchorEl={anchorEl}
+                open={openContextMenu}
+                handleClose={handleContextMenuClose}
+            />
         </>
     );
 };

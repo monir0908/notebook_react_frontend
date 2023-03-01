@@ -1,5 +1,6 @@
 import API from 'helpers/jwt.interceptor';
 import { createAsyncThunk } from '@reduxjs/toolkit';
+import { toast } from 'react-toastify';
 
 export const collectionList = createAsyncThunk('collection/list', async ({ url }, { rejectWithValue }) => {
     try {
@@ -18,8 +19,14 @@ export const collectionList = createAsyncThunk('collection/list', async ({ url }
 export const collectionCreate = createAsyncThunk('collection/create', async ({ url, data }, { rejectWithValue }) => {
     try {
         const res = await API.post(url, data);
+        if (res.data.success) {
+            toast.success(res.data.message, { autoClose: 3000 });
+        } else {
+            toast.warn(res.data.message, { autoClose: 3000 });
+        }
         return res.data;
     } catch (error) {
+        toast.error(res.data.message, { autoClose: 3000 });
         // return custom error message from API if any
         if (error.response && error.response.data.message) {
             return rejectWithValue(error.response.data.message);

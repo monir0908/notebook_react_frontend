@@ -29,7 +29,8 @@ const MenuList = () => {
                 type: 'item',
                 url: '/home',
                 icon: icons.IconHome,
-                breadcrumbs: true
+                breadcrumbs: true,
+                dynamic: false
             },
             {
                 id: 'search-page',
@@ -37,7 +38,8 @@ const MenuList = () => {
                 type: 'item',
                 url: '/search',
                 icon: icons.IconSearch,
-                breadcrumbs: true
+                breadcrumbs: true,
+                dynamic: false
             },
             {
                 id: 'drafts-page',
@@ -45,53 +47,54 @@ const MenuList = () => {
                 type: 'item',
                 url: '/drafts',
                 icon: icons.IconPencil,
-                breadcrumbs: true
+                breadcrumbs: true,
+                dynamic: false
             }
         ]
     };
     menuItem.push(menuItemTop);
     // eslint-disable-next-line react/prop-types
-    if (collection.length > 0) {
-        ////////////////////////////////////// adding item //////////////////
-        let data = collection;
 
-        let collectionMenuItems = [];
-        data.forEach((element) => {
-            let itemChildren = [];
-            let initMenuItem = {
-                id: '',
-                title: '',
-                type: '',
-                icon: null,
-                children: []
-            };
-            initMenuItem.id = element.collection_key;
-            initMenuItem.title = element.collection_title;
-            initMenuItem.type = 'collapse';
-            initMenuItem.icon = icons.IconNotebook;
+    ////////////////////////////////////// adding item //////////////////
+    let data = collection;
 
-            element.documents.forEach((child) => {
-                itemChildren.push({
-                    id: child.doc_key,
-                    title: child.doc_title,
-                    type: 'item',
-                    url: '/document/' + child.doc_key,
-                    breadcrumbs: false
-                });
-            });
-            initMenuItem.children = itemChildren;
-            collectionMenuItems.push(initMenuItem);
-        });
-
-        const collectionMenu = {
-            id: 'collections',
-            title: 'Collections',
-            type: 'group',
-            children: collectionMenuItems
+    let collectionMenuItems = [];
+    data.forEach((element) => {
+        let itemChildren = [];
+        let initMenuItem = {
+            id: '',
+            title: '',
+            type: '',
+            icon: null,
+            children: []
         };
+        initMenuItem.id = element.collection_key;
+        initMenuItem.title = element.collection_title;
+        initMenuItem.type = 'collapse';
+        initMenuItem.icon = icons.IconNotebook;
 
-        menuItem.splice(1, 0, collectionMenu);
-    }
+        element.documents.forEach((child) => {
+            itemChildren.push({
+                id: child.doc_key,
+                title: child.doc_title,
+                type: 'item',
+                url: '/document/' + child.doc_key,
+                breadcrumbs: false,
+                dynamic: true
+            });
+        });
+        initMenuItem.children = itemChildren;
+        collectionMenuItems.push(initMenuItem);
+    });
+
+    const collectionMenu = {
+        id: 'collections',
+        title: 'Collections',
+        type: 'group',
+        children: collectionMenuItems
+    };
+
+    menuItem.splice(1, 0, collectionMenu);
 
     // useEffect(() => {
     //     console.log(collection);
