@@ -5,24 +5,46 @@ import { useTheme } from '@mui/material/styles';
 import { Divider, List, Typography } from '@mui/material';
 
 // project imports
+import React, { useState, useEffect } from 'react';
 import NavItem from '../NavItem';
 import NavCollapse from '../NavCollapse';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
-import { IconPlus } from '@tabler/icons';
+import { IconPlus, IconDots } from '@tabler/icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { collectionList, collectionCreate } from 'store/features/collection/collectionActions';
+
+import CollectionCreateDialog from './collectionCreateDialog';
 // ==============================|| SIDEBAR MENU LIST GROUP ||============================== //
 
 const NavGroup = ({ item }) => {
     const theme = useTheme();
     const dispatch = useDispatch();
     const userInfo = useSelector((state) => state.auth.userInfo);
-    const handleCreateCollection = async () => {
-        dispatch(collectionCreate({ url: 'collection/create' }));
+
+    // const { loading, error, success } = useSelector((state) => state.collection);
+    // const handleCreateCollection = async () => {
+    //     dispatch(collectionCreate({ url: 'collection/create' }));
+
+    //     const url = `collection/list?creator_id=${userInfo.id}&page=1&page_size=100`;
+    //     dispatch(collectionList({ url }));
+    // };
+
+    const [openCCDialog, setOpenCCDialog] = useState(false);
+    const handleCCDialogClickOpen = () => {
+        setOpenCCDialog(true);
+    };
+
+    const handleCCDialogClose = () => {
+        setOpenCCDialog(false);
+    };
+    const handleCCDialogOk = (values) => {
+        dispatch(collectionCreate({ url: 'collection/create', data: { collection_title: values.collecton_name } }));
 
         const url = `collection/list?creator_id=${userInfo.id}&page=1&page_size=100`;
         dispatch(collectionList({ url }));
+
+        setOpenCCDialog(false);
     };
 
     // menu list collapse & items
@@ -48,9 +70,16 @@ const NavGroup = ({ item }) => {
                     item.title && (
                         <Typography variant="caption" sx={{ ...theme.typography.menuCaption }} display="block" gutterBottom>
                             {item.title}{' '}
+                            {/* <IconButton
+                                aria-label="add"
+                                size="small"
+                                style={{ float: 'right', marginTop: '-5px', marginRight: '5px', cursor: 'pointer' }}
+                            >
+                                <IconDots />
+                            </IconButton> */}
                             <Tooltip title="Add Collection" arrow placement="top">
                                 <IconButton
-                                    onClick={handleCreateCollection}
+                                    onClick={handleCCDialogClickOpen}
                                     aria-label="add"
                                     size="small"
                                     style={{ float: 'right', marginTop: '-5px', marginRight: '5px', cursor: 'pointer' }}
@@ -78,6 +107,16 @@ const NavGroup = ({ item }) => {
 
             {/* group divider */}
             <Divider sx={{ mt: 0.25, mb: 1.25 }} />
+
+            <CollectionCreateDialog
+                title="Create a collection"
+                open={openCCDialog}
+                handleClose={handleCCDialogClose}
+                handleOk={handleCCDialogOk}
+                handleCCDialogOk={(values) => {
+                    handleCCDialogOk(values);
+                }}
+            />
         </>
     );
 };

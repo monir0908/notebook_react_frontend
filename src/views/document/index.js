@@ -87,10 +87,12 @@ const Document = () => {
     useEffect(() => {
         attachQuillRefs();
         getDocumentDetails();
-        const ydoc = new Y.Doc();
-        const provider = new WebrtcProvider('ws://127.0.0.1:3001/document', ydoc);
-        const ytext = ydoc.getText('quill');
-        new QuillBinding(ytext, quillRef, provider.awareness);
+
+        // const ydoc = new Y.Doc();
+        // const provider = new WebrtcProvider('ws://127.0.0.1:3001/document', ydoc);
+        // const ytext = ydoc.getText('quill');
+        // new QuillBinding(ytext, quillRef, provider.awareness);
+
         // provider.awareness.setLocalStateField('user', {
         //     name: 'Typing Jimmy',
         //     color: 'blue'

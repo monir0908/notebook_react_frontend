@@ -15,10 +15,9 @@ export const collectionList = createAsyncThunk('collection/list', async ({ url }
     }
 });
 
-export const collectionCreate = createAsyncThunk('collection/create', async ({ url }, { rejectWithValue }) => {
+export const collectionCreate = createAsyncThunk('collection/create', async ({ url, data }, { rejectWithValue }) => {
     try {
-        console.log(url);
-        const res = await API.post(url);
+        const res = await API.post(url, data);
         return res.data;
     } catch (error) {
         // return custom error message from API if any
