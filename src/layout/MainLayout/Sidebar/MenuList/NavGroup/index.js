@@ -14,7 +14,7 @@ import { IconPlus, IconDots } from '@tabler/icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { collectionList, collectionCreate } from 'store/features/collection/collectionActions';
 
-import CollectionCreateDialog from './collectionCreateDialog';
+import CollectionDialog from 'layout/components/collectionDialog';
 // ==============================|| SIDEBAR MENU LIST GROUP ||============================== //
 
 const NavGroup = ({ item }) => {
@@ -39,6 +39,7 @@ const NavGroup = ({ item }) => {
         setOpenCCDialog(false);
     };
     const handleCCDialogOk = (values) => {
+        console.log(values);
         dispatch(collectionCreate({ url: 'collection/create', data: { collection_title: values.collecton_name } }));
 
         setTimeout(() => {
@@ -97,11 +98,13 @@ const NavGroup = ({ item }) => {
             {/* group divider */}
             <Divider sx={{ mt: 0.25, mb: 1.25 }} />
 
-            <CollectionCreateDialog
+            <CollectionDialog
                 title="Create a collection"
+                description="Collections are for grouping your documents. They work best when organized around a topic or internal
+                team — Product or Engineering for example."
                 open={openCCDialog}
+                data={null}
                 handleClose={handleCCDialogClose}
-                handleOk={handleCCDialogOk}
                 handleCCDialogOk={(values) => {
                     handleCCDialogOk(values);
                 }}

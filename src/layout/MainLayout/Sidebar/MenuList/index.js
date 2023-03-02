@@ -63,12 +63,14 @@ const MenuList = () => {
         let itemChildren = [];
         let initMenuItem = {
             id: '',
+            pk: '',
             title: '',
             type: '',
             icon: null,
             children: []
         };
         initMenuItem.id = element.collection_key;
+        initMenuItem.pk = element.id;
         initMenuItem.title = element.collection_title;
         initMenuItem.type = 'collapse';
         initMenuItem.icon = icons.IconNotebook;
@@ -76,6 +78,8 @@ const MenuList = () => {
         element.documents.forEach((child) => {
             itemChildren.push({
                 id: child.doc_key,
+                col_key: element.collection_key,
+                pk: child.id,
                 title: child.doc_title,
                 type: 'item',
                 url: '/document/' + child.doc_key,

@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { documentDetails } from './documentActions';
+import { documentDetails, documentCreate, documentUpdate } from './documentActions';
 
 const initialState = {
     data: null,
@@ -8,7 +8,7 @@ const initialState = {
 };
 
 const documentSlice = createSlice({
-    name: 'userDocument',
+    name: 'document',
     initialState,
     reducers: {},
     extraReducers: (builder) => {
@@ -22,6 +22,31 @@ const documentSlice = createSlice({
                 state.error = null;
             }),
             builder.addCase(documentDetails.rejected, (state, { payload }) => {
+                state.loading = false;
+                state.error = payload;
+            }),
+            builder.addCase(documentCreate.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            }),
+            builder.addCase(documentCreate.fulfilled, (state, { payload }) => {
+                state.loading = false;
+                state.data = payload;
+                state.error = null;
+            }),
+            builder.addCase(documentCreate.rejected, (state, { payload }) => {
+                state.loading = false;
+                state.error = payload;
+            }),
+            builder.addCase(documentUpdate.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            }),
+            builder.addCase(documentUpdate.fulfilled, (state, { payload }) => {
+                state.loading = false;
+                state.error = null;
+            }),
+            builder.addCase(documentUpdate.rejected, (state, { payload }) => {
                 state.loading = false;
                 state.error = payload;
             });

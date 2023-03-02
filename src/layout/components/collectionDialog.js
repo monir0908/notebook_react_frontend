@@ -17,21 +17,26 @@ import useScriptRef from 'hooks/useScriptRef';
 import * as Yup from 'yup';
 import { Formik } from 'formik';
 
-const CollectionCreateDialog = (props) => {
+const CollectionDialog = (props) => {
     const theme = useTheme();
     return (
         <div>
-            <Dialog open={props.open} onClose={props.handleClose}>
+            <Dialog fullWidth={true} maxWidth="sm" open={props.open} onClose={props.handleClose}>
                 <Formik
                     initialValues={{
-                        collecton_name: ''
+                        collecton_name: props.data ? props.data.title : ''
                     }}
+                    enableReinitialize={true}
                     validationSchema={Yup.object().shape({
                         collecton_name: Yup.string().max(255).required('Collection name is required')
                     })}
                     onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
                         try {
-                            props.handleCCDialogOk(values);
+                            const obj = {
+                                collecton_name: values.collecton_name,
+                                collecton_key: props.data ? props.data.id : null
+                            };
+                            props.handleCCDialogOk(obj);
                         } catch (err) {}
                     }}
                 >
@@ -39,10 +44,7 @@ const CollectionCreateDialog = (props) => {
                         <form noValidate onSubmit={handleSubmit}>
                             <DialogTitle>{props.title}</DialogTitle>
                             <DialogContent>
-                                <DialogContentText>
-                                    Collections are for grouping your documents. They work best when organized around a topic or internal
-                                    team — Product or Engineering for example.
-                                </DialogContentText>
+                                <DialogContentText>{props.description}</DialogContentText>
                                 <FormControl fullWidth error={Boolean(touched.collecton_name && errors.collecton_name)}>
                                     <TextField
                                         sx={{
@@ -54,6 +56,7 @@ const CollectionCreateDialog = (props) => {
                                         label="Collection Name"
                                         type="text"
                                         onChange={handleChange}
+                                        value={values.collecton_name}
                                         variant="outlined"
                                         name="collecton_name"
                                     />
@@ -66,7 +69,7 @@ const CollectionCreateDialog = (props) => {
                             </DialogContent>
                             <DialogActions>
                                 <Button onClick={props.handleClose}>Cancel</Button>
-                                <Button type="submit">Save</Button>
+                                <Button type="submit">{props.saveButtonText ? props.saveButtonText : 'Save'}</Button>
                             </DialogActions>
                         </form>
                     )}
@@ -76,4 +79,4 @@ const CollectionCreateDialog = (props) => {
     );
 };
 
-export default CollectionCreateDialog;
+export default CollectionDialog;

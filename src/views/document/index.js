@@ -44,6 +44,7 @@ import {
 // third party
 import * as Yup from 'yup';
 import { Formik } from 'formik';
+import { IconPlus } from '@tabler/icons';
 import { updateDocumentName, updateDocumentTitle } from 'store/features/collection/collectionSlice';
 
 // ==============================|| PAGE ||============================== //
@@ -121,6 +122,22 @@ const Document = () => {
     return (
         <>
             <MainCard title="">
+                <Box sx={{ m: 1 }} style={{ float: 'right' }}>
+                    <Stack direction="row" spacing={1}>
+                        <Button variant="outlined" size="small">
+                            Share
+                        </Button>
+                        <Button variant="outlined" size="small">
+                            Publish
+                        </Button>
+                        <Button variant="outlined" size="small" startIcon={<IconPlus />}>
+                            New Doc
+                        </Button>
+                        {/* <Button variant="contained" endIcon={<IconPlus />}>
+                    Send
+                </Button> */}
+                    </Stack>
+                </Box>
                 <form>
                     <TextField
                         inputProps={{ style: { fontSize: 40, fontWeight: 600 } }}

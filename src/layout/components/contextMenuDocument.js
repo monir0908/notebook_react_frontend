@@ -17,23 +17,20 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import ShareIcon from '@mui/icons-material/Share';
 import PublishIcon from '@mui/icons-material/Publish';
-const ContextMenu = (props) => {
-    // const side = 300;
-    // const padding = 80;
-    // const margin = 100;
-    // console.log(props.coordinates[1]);
-    // console.log(props.coordinates[0]);
-    const isDoc = props.type == 'document' ? true : false;
+const ContextMenuDocument = (props) => {
+    const side = 300;
+    const padding = 80;
+    const margin = 100;
+
     return (
         <>
             <Menu
-                anchorEl={props.anchorEl}
-                // anchorReference="anchorPosition"
-                // anchorPosition={{ top: props.coordinates[1], left: props.coordinates[0] }}
-                // anchorOrigin={{
-                //     vertical: (props.coordinates[1] - (margin + padding)) / side <= 0.5 ? 'top' : 'bottom',
-                //     horizontal: (props.coordinates[0] - (margin + padding)) / side <= 0.5 ? 'left' : 'right'
-                // }}
+                anchorReference="anchorPosition"
+                anchorPosition={{ top: props.coordinates[1], left: props.coordinates[0] + 10 }}
+                anchorOrigin={{
+                    vertical: (props.coordinates[1] - (margin + padding)) / side <= 0.5 ? 'top' : 'bottom',
+                    horizontal: (props.coordinates[0] - (margin + padding)) / side <= 0.5 ? 'left' : 'right'
+                }}
                 id="account-menu"
                 open={props.open}
                 onClose={props.handleClose}
@@ -43,7 +40,7 @@ const ContextMenu = (props) => {
                     sx: {
                         overflow: 'visible',
                         filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
-                        mt: 0.5,
+                        mt: 1.5,
                         '& .MuiAvatar-root': {
                             width: 32,
                             height: 32,
@@ -64,40 +61,26 @@ const ContextMenu = (props) => {
                         }
                     }
                 }}
-                anchorOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'right'
-                }}
                 transformOrigin={{
                     vertical: 'top',
                     horizontal: 'right'
                 }}
             >
-                {isDoc && (
-                    <div>
-                        <MenuItem onClick={props.handleClose}>
-                            <ListItemIcon>
-                                <ShareIcon fontSize="1rem" />
-                            </ListItemIcon>
-                            Share
-                        </MenuItem>
-                        <MenuItem onClick={props.handleClose}>
-                            <ListItemIcon>
-                                <PublishIcon fontSize="small" />
-                            </ListItemIcon>
-                            Publish
-                        </MenuItem>
-                        <Divider />
-                    </div>
-                )}
-
                 <MenuItem onClick={props.handleClose}>
                     <ListItemIcon>
-                        <EditIcon fontSize="1rem" />
+                        <ShareIcon fontSize="1rem" />
                     </ListItemIcon>
-                    Edit
+                    Share
                 </MenuItem>
-                <MenuItem onClick={props.handleClose}>
+                <MenuItem onClick={props.handlePublishClick}>
+                    <ListItemIcon>
+                        <PublishIcon fontSize="small" />
+                    </ListItemIcon>
+                    Publish
+                </MenuItem>
+                <Divider />
+
+                <MenuItem onClick={props.handleDeleteClick}>
                     <ListItemIcon>
                         <DeleteForeverIcon fontSize="small" />
                     </ListItemIcon>
@@ -107,4 +90,4 @@ const ContextMenu = (props) => {
         </>
     );
 };
-export default ContextMenu;
+export default ContextMenuDocument;

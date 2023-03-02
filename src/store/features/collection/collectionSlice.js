@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { collectionList, collectionCreate } from './collectionActions';
+import { collectionList, collectionCreate, collectionUpdate, collectionDelete } from './collectionActions';
 import { toast } from 'react-toastify';
 
 const initialState = {
@@ -10,7 +10,7 @@ const initialState = {
 };
 
 const collectionSlice = createSlice({
-    name: 'userCollection',
+    name: 'collection',
     initialState,
     reducers: {
         updateDocumentTitle(state, action) {
@@ -55,6 +55,34 @@ const collectionSlice = createSlice({
                 state.success = true;
             }),
             builder.addCase(collectionCreate.rejected, (state, { payload }) => {
+                state.loading = false;
+                state.error = payload;
+                state.success = false;
+            }),
+            builder.addCase(collectionUpdate.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            }),
+            builder.addCase(collectionUpdate.fulfilled, (state, action) => {
+                state.loading = false;
+                state.error = null;
+                state.success = true;
+            }),
+            builder.addCase(collectionUpdate.rejected, (state, { payload }) => {
+                state.loading = false;
+                state.error = payload;
+                state.success = false;
+            }),
+            builder.addCase(collectionDelete.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            }),
+            builder.addCase(collectionDelete.fulfilled, (state, action) => {
+                state.loading = false;
+                state.error = null;
+                state.success = true;
+            }),
+            builder.addCase(collectionDelete.rejected, (state, { payload }) => {
                 state.loading = false;
                 state.error = payload;
                 state.success = false;

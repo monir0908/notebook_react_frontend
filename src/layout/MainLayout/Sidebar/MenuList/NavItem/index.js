@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import { forwardRef, useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-
+import { useNavigate } from 'react-router-dom';
 // material-ui
 import { useTheme } from '@mui/material/styles';
 import { Avatar, Chip, ListItemButton, ListItemIcon, ListItemText, Typography, useMediaQuery } from '@mui/material';
@@ -15,31 +15,35 @@ import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
 import IconButton from '@mui/material/IconButton';
 import { IconChevronDown, IconChevronUp, IconPlus, IconDots } from '@tabler/icons';
 import Tooltip from '@mui/material/Tooltip';
-import ContextMenu from '../NavCollapse/contextMenu';
+import ContextMenuDocument from 'layout/components/contextMenuDocument';
+import { documentUpdate } from 'store/features/document/documentActions';
+import { collectionList } from 'store/features/collection/collectionActions';
+import ConfirmationDialog from 'layout/components/confirmationDialog';
 // ==============================|| SIDEBAR MENU LIST ITEMS ||============================== //
 
 const NavItem = ({ item, level }) => {
     const theme = useTheme();
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const customization = useSelector((state) => state.customization);
     const matchesSM = useMediaQuery(theme.breakpoints.down('lg'));
-
+    const userInfo = useSelector((state) => state.auth.userInfo);
     //////////////////////////// context menu //////////////////////////////
-    // const side = 300;
-    // const padding = 80;
-    // const margin = 100;
-    // const [coordinatesItem, setCoordinatesItem] = useState([0, 0]);
+    const side = 300;
+    const padding = 80;
+    const margin = 100;
+    const [coordinatesItem, setCoordinatesItem] = useState([0, 0]);
     const [anchorElItem, setAnchorElItem] = useState(null);
     const openContextMenuItem = Boolean(anchorElItem);
     const handleContextMenuClick = (event) => {
-        // if (
-        //     event.pageX >= padding + margin &&
-        //     event.pageX <= side + padding + margin &&
-        //     event.pageY >= padding + margin &&
-        //     event.pageY <= side + padding + margin
-        // ) {
-        //     setCoordinatesItem([event.pageX, event.pageY]);
-        // }
+        if (
+            event.pageX >= padding + margin &&
+            event.pageX <= side + padding + margin &&
+            event.pageY >= padding + margin &&
+            event.pageY <= side + padding + margin
+        ) {
+            setCoordinatesItem([event.pageX, event.pageY]);
+        }
         setAnchorElItem(event.currentTarget);
     };
     const handleContextMenuItemClose = () => {
@@ -89,6 +93,61 @@ const NavItem = ({ item, level }) => {
         // eslint-disable-next-line
     }, []);
 
+    //////////////////////////////// delete confirmation /////////
+    const [openConfirmation, setOpenConfirmation] = useState(false);
+
+    const handleClickOpenConfirmation = () => {
+        setOpenConfirmation(true);
+    };
+
+    const handleCloseConfirmation = () => {
+        setOpenConfirmation(false);
+    };
+    const handleConfirmationDialogOk = (values) => {
+        dispatch(
+            documentUpdate({
+                url: 'document/update-status/' + values.id,
+                navigate,
+                data: {
+                    doc_status: 3
+                },
+                extraData: {
+                    status: 'delete',
+                    col_key: values.col_key,
+                    doc_url: values.url
+                }
+            })
+        );
+
+        setTimeout(() => {
+            const url = `collection/list?creator_id=${userInfo.id}&page=1&page_size=100`;
+            dispatch(collectionList({ url }));
+        }, 500);
+        setOpenConfirmation(false);
+    };
+
+    const handleDocPublish = (values) => {
+        dispatch(
+            documentUpdate({
+                url: 'document/update-status/' + values.id,
+                navigate,
+                data: {
+                    doc_status: 2
+                },
+                extraData: {
+                    status: 'publish',
+                    col_key: values.col_key,
+                    doc_url: values.url
+                }
+            })
+        );
+
+        setTimeout(() => {
+            const url = `collection/list?creator_id=${userInfo.id}&page=1&page_size=100`;
+            dispatch(collectionList({ url }));
+        }, 500);
+    };
+
     return (
         <>
             <ListItemButton
@@ -131,11 +190,6 @@ const NavItem = ({ item, level }) => {
                 )}
                 {item.dynamic && (
                     <div>
-                        <Tooltip title="New Doc" arrow placement="top">
-                            <IconButton size="1rem" aria-label="add" style={{ marginTop: '-5px', marginRight: '-5px', cursor: 'pointer' }}>
-                                <IconPlus size="1rem" />
-                            </IconButton>
-                        </Tooltip>
                         <IconButton
                             onClick={handleContextMenuClick}
                             size="1rem"
@@ -147,12 +201,22 @@ const NavItem = ({ item, level }) => {
                     </div>
                 )}
             </ListItemButton>
-            <ContextMenu
-                type="document"
-                // coordinates={coordinatesItem}
+            <ContextMenuDocument
+                coordinates={coordinatesItem}
                 anchorEl={anchorElItem}
                 open={openContextMenuItem}
                 handleClose={handleContextMenuItemClose}
+                handleDeleteClick={handleClickOpenConfirmation}
+                handlePublishClick={() => handleDocPublish(item)}
+            />
+
+            <ConfirmationDialog
+                title="Delete Decument"
+                description="If you delete this document,it will be moved to trash . Are you agree with that?"
+                open={openConfirmation}
+                data={item}
+                handleClose={handleCloseConfirmation}
+                handleOk={(values) => handleConfirmationDialogOk(values)}
             />
         </>
     );
