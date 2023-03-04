@@ -14,7 +14,7 @@ import Logout from '@mui/icons-material/Logout';
 
 // import { IconPencil, IconTrash } from '@tabler/icons';
 import EditIcon from '@mui/icons-material/Edit';
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import DeleteIcon from '@mui/icons-material/Delete';
 import ShareIcon from '@mui/icons-material/Share';
 import PublishIcon from '@mui/icons-material/Publish';
 const ContextMenuCollection = (props) => {
@@ -69,7 +69,7 @@ const ContextMenuCollection = (props) => {
                 </MenuItem>
                 <MenuItem onClick={props.handleDeleteClick}>
                     <ListItemIcon>
-                        <DeleteForeverIcon fontSize="small" />
+                        <DeleteIcon fontSize="small" />
                     </ListItemIcon>
                     <Typography>Delete</Typography>
                 </MenuItem>

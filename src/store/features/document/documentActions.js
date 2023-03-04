@@ -32,7 +32,7 @@ export const documentUpdate = createAsyncThunk('document/update', async ({ url, 
         }
         return res.data;
     } catch (error) {
-        toast.error(res.data.message, { autoClose: 3000 });
+        toast.error(error.response.data.message, { autoClose: 3000 });
         // return custom error message from API if any
         if (error.response && error.response.data.message) {
             return rejectWithValue(error.response.data.message);
@@ -53,7 +53,7 @@ export const documentCreate = createAsyncThunk('document/create', async ({ url, 
         }
         return res.data;
     } catch (error) {
-        toast.error(res.data.message, { autoClose: 3000 });
+        toast.error(error.response.data.message, { autoClose: 3000 });
         if (error.response && error.response.data.message) {
             return rejectWithValue(error.response.data.message);
         } else {

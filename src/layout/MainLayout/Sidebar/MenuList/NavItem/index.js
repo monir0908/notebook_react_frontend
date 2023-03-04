@@ -19,6 +19,7 @@ import ContextMenuDocument from 'layout/components/contextMenuDocument';
 import { documentUpdate } from 'store/features/document/documentActions';
 import { collectionList } from 'store/features/collection/collectionActions';
 import ConfirmationDialog from 'layout/components/confirmationDialog';
+import ShareDialog from 'layout/components/shareDialog';
 // ==============================|| SIDEBAR MENU LIST ITEMS ||============================== //
 
 const NavItem = ({ item, level }) => {
@@ -28,6 +29,7 @@ const NavItem = ({ item, level }) => {
     const customization = useSelector((state) => state.customization);
     const matchesSM = useMediaQuery(theme.breakpoints.down('lg'));
     const userInfo = useSelector((state) => state.auth.userInfo);
+    const [sharelink, setShareLnk] = useState('');
     //////////////////////////// context menu //////////////////////////////
     const side = 300;
     const padding = 80;
@@ -92,6 +94,19 @@ const NavItem = ({ item, level }) => {
         }
         // eslint-disable-next-line
     }, []);
+
+    //////////////////////////////// share dialog ///////////////////
+    const [openShareDialog, setOpenShareDialog] = useState(false);
+
+    const handleClickOpenShareDialog = () => {
+        const clientURL = process.env.REACT_APP_PUBLICSITE_BASEURL;
+        setOpenShareDialog(true);
+        setShareLnk(clientURL + 'document/' + item.id);
+    };
+
+    const handleCloseShareDialog = () => {
+        setOpenShareDialog(false);
+    };
 
     //////////////////////////////// delete confirmation /////////
     const [openConfirmation, setOpenConfirmation] = useState(false);
@@ -207,17 +222,20 @@ const NavItem = ({ item, level }) => {
                 open={openContextMenuItem}
                 handleClose={handleContextMenuItemClose}
                 handleDeleteClick={handleClickOpenConfirmation}
+                handleShareClick={handleClickOpenShareDialog}
                 handlePublishClick={() => handleDocPublish(item)}
             />
 
             <ConfirmationDialog
                 title="Delete Decument"
-                description="If you delete this document,it will be moved to trash . Are you agree with that?"
+                description="If you delete this document,it will be moved to trash . Do you agree with that?"
                 open={openConfirmation}
                 data={item}
                 handleClose={handleCloseConfirmation}
                 handleOk={(values) => handleConfirmationDialogOk(values)}
             />
+
+            <ShareDialog link={sharelink} open={openShareDialog} handleClose={handleCloseShareDialog} />
         </>
     );
 };

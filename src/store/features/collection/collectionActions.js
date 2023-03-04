@@ -26,7 +26,7 @@ export const collectionCreate = createAsyncThunk('collection/create', async ({ u
         }
         return res.data;
     } catch (error) {
-        toast.error(res.data.message, { autoClose: 3000 });
+        toast.error(error.response.data.message, { autoClose: 3000 });
         // return custom error message from API if any
         if (error.response && error.response.data.message) {
             return rejectWithValue(error.response.data.message);
@@ -46,7 +46,7 @@ export const collectionUpdate = createAsyncThunk('collection/update', async ({ u
         }
         return res.data;
     } catch (error) {
-        toast.error(res.data.message, { autoClose: 3000 });
+        toast.error(error.response.data.message, { autoClose: 3000 });
         // return custom error message from API if any
         if (error.response && error.response.data.message) {
             return rejectWithValue(error.response.data.message);
@@ -67,7 +67,7 @@ export const collectionDelete = createAsyncThunk('collection/delete', async ({ u
         }
         return res.data;
     } catch (error) {
-        toast.error(res.data.message, { autoClose: 3000 });
+        toast.error(error.response.data.message, { autoClose: 3000 });
         // return custom error message from API if any
         if (error.response && error.response.data.message) {
             return rejectWithValue(error.response.data.message);

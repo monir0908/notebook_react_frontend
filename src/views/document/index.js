@@ -44,15 +44,25 @@ import {
 // third party
 import * as Yup from 'yup';
 import { Formik } from 'formik';
-import { IconPlus } from '@tabler/icons';
+import { IconPlus, IconTrash } from '@tabler/icons';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { updateDocumentName, updateDocumentTitle } from 'store/features/collection/collectionSlice';
-
+import ConfirmationDialog from 'layout/components/confirmationDialog';
+import { documentUpdate } from 'store/features/document/documentActions';
+import { collectionList } from 'store/features/collection/collectionActions';
+import ShareDialog from 'layout/components/shareDialog';
 // ==============================|| PAGE ||============================== //
 
 const Document = () => {
     const dispatch = useDispatch();
-    // const navigate = useNavigate();
+    const userInfo = useSelector((state) => state.auth.userInfo);
+    const navigate = useNavigate();
     const { documentKey } = useParams();
+    const [docObj, setDocObj] = useState(null);
+    const [publishShow, setPublishShow] = useState(false);
+    const [unpublishShow, setUnpublishShow] = useState(false);
+    const [sharelink, setShareLnk] = useState('');
+    const [deleteShow, setDeleteShow] = useState(true);
     const [docTitle, setDocTitle] = useState('');
     const [docBody, setDocBody] = useState('');
 
@@ -60,8 +70,25 @@ const Document = () => {
         const res = await API.get(`document/${documentKey}`);
 
         let doc = res.data.data;
+        setDocObj(doc);
         setDocTitle(doc.doc_title);
         setDocBody(doc.doc_body);
+
+        if (doc.doc_status == 1) {
+            setPublishShow(true);
+            setUnpublishShow(false);
+        }
+        if (doc.doc_status == 2) {
+            setPublishShow(false);
+            setUnpublishShow(true);
+        }
+        if (doc.doc_status == 3 || doc.doc_status == 4) {
+            setDeleteShow(false);
+            setPublishShow(false);
+            setUnpublishShow(false);
+        } else {
+            setDeleteShow(true);
+        }
     };
 
     const onTitleChange = (e) => {
@@ -88,7 +115,6 @@ const Document = () => {
     useEffect(() => {
         attachQuillRefs();
         getDocumentDetails();
-
         // const ydoc = new Y.Doc();
         // const provider = new WebrtcProvider('ws://127.0.0.1:3001/document', ydoc);
         // const ytext = ydoc.getText('quill');
@@ -118,21 +144,163 @@ const Document = () => {
         bottom: '50%',
         right: 16
     };
+    //////////////////////////////// share dialog ///////////////////
+    const [openShareDialog, setOpenShareDialog] = useState(false);
+
+    const handleClickOpenShareDialog = () => {
+        const clientURL = process.env.REACT_APP_PUBLICSITE_BASEURL;
+        setOpenShareDialog(true);
+        setShareLnk(clientURL + 'document/' + docObj.doc_key);
+    };
+
+    const handleCloseShareDialog = () => {
+        setOpenShareDialog(false);
+    };
+
+    //////////////////////////////// delete confirmation /////////
+    const [openConfirmation, setOpenConfirmation] = useState(false);
+
+    const handleClickOpenConfirmation = () => {
+        setOpenConfirmation(true);
+    };
+
+    const handleCloseConfirmation = () => {
+        setOpenConfirmation(false);
+    };
+    const handleConfirmationDialogOk = () => {
+        dispatch(
+            documentUpdate({
+                url: 'document/update-status/' + docObj.doc_key,
+                navigate,
+                data: {
+                    doc_status: 3
+                },
+                extraData: {
+                    status: 'delete',
+                    doc_url: '/document/' + docObj.doc_key
+                }
+            })
+        );
+
+        setTimeout(() => {
+            const url = `collection/list?creator_id=${userInfo.id}&page=1&page_size=100`;
+            dispatch(collectionList({ url }));
+        }, 500);
+        setOpenConfirmation(false);
+    };
+
+    const handleDocPublish = (status) => {
+        dispatch(
+            documentUpdate({
+                url: 'document/update-status/' + docObj.doc_key,
+                navigate,
+                data: {
+                    doc_status: status
+                },
+                extraData: {
+                    status: 'publish',
+                    doc_url: '/document/' + docObj.doc_key
+                }
+            })
+        );
+
+        if (status == 1) {
+            setPublishShow(true);
+            setUnpublishShow(false);
+        }
+        if (status == 2) {
+            setPublishShow(false);
+            setUnpublishShow(true);
+        }
+
+        setTimeout(() => {
+            const url = `collection/list?creator_id=${userInfo.id}&page=1&page_size=100`;
+            dispatch(collectionList({ url }));
+        }, 500);
+    };
+
+    // function renderPublishOrUnpublishButton() {
+    //     if (docObj != null && docObj.status == 1) {
+    //         return (
+    //             <Button onClick={() => handleDocPublish(2)} variant="outlined" size="small">
+    //                 Publish
+    //             </Button>
+    //         );
+    //     } else if (docObj != null && docObj.status == 2) {
+    //         return (
+    //             <Button onClick={() => handleDocPublish(1)} variant="outlined" size="small">
+    //                 Unpublish
+    //             </Button>
+    //         );
+    //     }
+    // }
 
     return (
         <>
             <MainCard title="">
                 <Box sx={{ m: 1 }} style={{ float: 'right' }}>
                     <Stack direction="row" spacing={1}>
-                        <Button variant="outlined" size="small">
+                        <Button onClick={handleClickOpenShareDialog} variant="outlined" size="small">
                             Share
                         </Button>
-                        <Button variant="outlined" size="small">
+                        {docObj != null && (
+                            <>
+                                {publishShow && (
+                                    <Button onClick={() => handleDocPublish(2)} variant="outlined" size="small">
+                                        Publish
+                                    </Button>
+                                )}
+                                {unpublishShow && (
+                                    <Button onClick={() => handleDocPublish(1)} variant="outlined" size="small">
+                                        Unpublish
+                                    </Button>
+                                )}
+                                {deleteShow && (
+                                    <Button
+                                        onClick={handleClickOpenConfirmation}
+                                        variant="outlined"
+                                        size="small"
+                                        color="error"
+                                        startIcon={<DeleteIcon />}
+                                    >
+                                        Delete
+                                    </Button>
+                                )}
+                            </>
+                        )}
+                        {/* <Button onClick={handleDocPublish} variant="outlined" size="small">
                             Publish
-                        </Button>
-                        <Button variant="outlined" size="small" startIcon={<IconPlus />}>
-                            New Doc
-                        </Button>
+                        </Button> */}
+                        {/* <Choose>
+                            <When condition={docObj && docObj.status == 1}>
+                                <button>Logout</button>;
+                            </When>
+                            <When condition={docObj && docObj.status == 2}>
+                                <button>Login</button>;
+                            </When>
+                        </Choose> */}
+                        {/* {unpublishShow && (
+                            <Button onClick={() => handleDocPublish(1)} variant="outlined" size="small">
+                                Unpublish
+                            </Button>
+                        )}
+                        {publishShow && (
+                            <Button onClick={() => handleDocPublish(2)} variant="outlined" size="small">
+                                Publish
+                            </Button>
+                        )} */}
+                        {/* {(docObj && docObj.status != 3) ||
+                            (docObj.status != 4 && (
+                                <Button
+                                    onClick={handleClickOpenConfirmation}
+                                    variant="outlined"
+                                    size="small"
+                                    color="error"
+                                    startIcon={<DeleteIcon />}
+                                >
+                                    Delete
+                                </Button>
+                            ))} */}
                         {/* <Button variant="contained" endIcon={<IconPlus />}>
                     Send
                 </Button> */}
@@ -194,6 +362,15 @@ const Document = () => {
                     <IconDeviceFloppy />
                 </Fab>
             </MainCard>
+
+            <ConfirmationDialog
+                title="Delete Decument"
+                description="If you delete this document,it will be moved to trash . Do you agree with that?"
+                open={openConfirmation}
+                handleClose={handleCloseConfirmation}
+                handleOk={handleConfirmationDialogOk}
+            />
+            <ShareDialog link={sharelink} open={openShareDialog} handleClose={handleCloseShareDialog} />
         </>
     );
 };
