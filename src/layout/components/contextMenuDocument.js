@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState, useEffect } from 'react';
 import Box from '@mui/material/Box';
 import Avatar from '@mui/material/Avatar';
 import Menu from '@mui/material/Menu';
@@ -17,10 +17,23 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ShareIcon from '@mui/icons-material/Share';
 import PublishIcon from '@mui/icons-material/Publish';
+import UnpublishedIcon from '@mui/icons-material/Unpublished';
+
 const ContextMenuDocument = (props) => {
     const side = 300;
     const padding = 80;
     const margin = 100;
+    const [publishShow, setPublishShow] = useState(false);
+    const [unpublishShow, setUnpublishShow] = useState(false);
+
+    // if (props.data.doc_status == 1) {
+    //     setPublishShow(true);
+    //     setUnpublishShow(false);
+    // }
+    // if (props.data.doc_status == 2) {
+    //     setPublishShow(false);
+    //     setUnpublishShow(true);
+    // }
 
     return (
         <>
@@ -72,12 +85,22 @@ const ContextMenuDocument = (props) => {
                     </ListItemIcon>
                     Share
                 </MenuItem>
-                <MenuItem onClick={props.handlePublishClick}>
-                    <ListItemIcon>
-                        <PublishIcon fontSize="small" />
-                    </ListItemIcon>
-                    Publish
-                </MenuItem>
+                {/* {publishShow && (
+                    <MenuItem onClick={props.handlePublishClick}>
+                        <ListItemIcon>
+                            <PublishIcon fontSize="small" />
+                        </ListItemIcon>
+                        Publish
+                    </MenuItem>
+                )}
+                {unpublishShow && (
+                    <MenuItem onClick={props.handlePublishClick}>
+                        <ListItemIcon>
+                            <UnpublishedIcon fontSize="small" />
+                        </ListItemIcon>
+                        Unpublish
+                    </MenuItem>
+                )} */}
                 <Divider />
 
                 <MenuItem onClick={props.handleDeleteClick}>

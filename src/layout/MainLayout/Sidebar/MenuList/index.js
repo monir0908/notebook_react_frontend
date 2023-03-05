@@ -76,16 +76,19 @@ const MenuList = () => {
         initMenuItem.icon = icons.IconNotebook;
 
         element.documents.forEach((child) => {
-            itemChildren.push({
-                id: child.doc_key,
-                col_key: element.collection_key,
-                pk: child.id,
-                title: child.doc_title,
-                type: 'item',
-                url: '/document/' + child.doc_key,
-                breadcrumbs: false,
-                dynamic: true
-            });
+            if (child.doc_status == 1 || child.doc_status == 2) {
+                itemChildren.push({
+                    id: child.doc_key,
+                    col_key: element.collection_key,
+                    pk: child.id,
+                    title: child.doc_title,
+                    type: 'item',
+                    url: '/document/' + child.doc_key,
+                    breadcrumbs: false,
+                    dynamic: true,
+                    doc_status: child.doc_status
+                });
+            }
         });
         initMenuItem.children = itemChildren;
         collectionMenuItems.push(initMenuItem);

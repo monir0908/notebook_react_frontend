@@ -220,10 +220,11 @@ const NavItem = ({ item, level }) => {
                 coordinates={coordinatesItem}
                 anchorEl={anchorElItem}
                 open={openContextMenuItem}
+                // data={item}
                 handleClose={handleContextMenuItemClose}
                 handleDeleteClick={handleClickOpenConfirmation}
                 handleShareClick={handleClickOpenShareDialog}
-                handlePublishClick={() => handleDocPublish(item)}
+                // handlePublishClick={() => handleDocPublish(item)}
             />
 
             <ConfirmationDialog
