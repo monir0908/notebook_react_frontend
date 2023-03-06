@@ -19,6 +19,7 @@ const SamplePage = Loadable(lazy(() => import('views/sample-page')));
 const Home = Loadable(lazy(() => import('views/home')));
 const Search = Loadable(lazy(() => import('views/search')));
 const Drafts = Loadable(lazy(() => import('views/drafts')));
+const Trash = Loadable(lazy(() => import('views/trash')));
 const Document = Loadable(lazy(() => import('views/document')));
 
 // ==============================|| MAIN ROUTING ||============================== //
@@ -101,6 +102,10 @@ const MainRoutes = {
         {
             path: 'drafts',
             element: <Drafts />
+        },
+        {
+            path: 'trash',
+            element: <Trash />
         },
         {
             path: 'document/:documentKey',

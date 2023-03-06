@@ -10,9 +10,9 @@ import NavGroup from './NavGroup';
 //import menuItem from 'menu-items';
 
 // assets
-import { IconNotebook, IconHome, IconSearch, IconPencil } from '@tabler/icons';
+import { IconNotebook, IconHome, IconSearch, IconPencil, IconTrash } from '@tabler/icons';
 // constant
-const icons = { IconNotebook, IconHome, IconSearch, IconPencil };
+const icons = { IconNotebook, IconHome, IconSearch, IconPencil, IconTrash };
 
 // ==============================|| SIDEBAR MENU LIST ||============================== //
 
@@ -49,6 +49,15 @@ const MenuList = () => {
                 icon: icons.IconPencil,
                 breadcrumbs: true,
                 dynamic: false
+            },
+            {
+                id: 'trash-page',
+                title: 'Trash',
+                type: 'item',
+                url: '/trash',
+                icon: icons.IconTrash,
+                breadcrumbs: true,
+                dynamic: false
             }
         ]
     };
@@ -76,19 +85,19 @@ const MenuList = () => {
         initMenuItem.icon = icons.IconNotebook;
 
         element.documents.forEach((child) => {
-            if (child.doc_status == 1 || child.doc_status == 2) {
-                itemChildren.push({
-                    id: child.doc_key,
-                    col_key: element.collection_key,
-                    pk: child.id,
-                    title: child.doc_title,
-                    type: 'item',
-                    url: '/document/' + child.doc_key,
-                    breadcrumbs: false,
-                    dynamic: true,
-                    doc_status: child.doc_status
-                });
-            }
+            // if (child.doc_status == 1 || child.doc_status == 2) {
+            itemChildren.push({
+                id: child.doc_key,
+                col_key: element.collection_key,
+                pk: child.id,
+                title: child.doc_title,
+                type: 'item',
+                url: '/document/' + child.doc_key,
+                breadcrumbs: false,
+                dynamic: true,
+                doc_status: child.doc_status
+            });
+            // }
         });
         initMenuItem.children = itemChildren;
         collectionMenuItems.push(initMenuItem);

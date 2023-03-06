@@ -13,6 +13,11 @@ import { store } from 'store';
 import 'assets/scss/style.scss';
 import config from './config';
 
+import TimeAgo from 'javascript-time-ago';
+import en from 'javascript-time-ago/locale/en.json';
+
+TimeAgo.addDefaultLocale(en);
+
 // ==============================|| REACT DOM RENDER  ||============================== //
 
 const container = document.getElementById('root');

@@ -90,3 +90,27 @@
   font-weight: 400 !important; 
 }
 
+.ql-bubble .ql-editor h1 {
+  font-size: 32px !important;
+}
+
+.ql-bubble .ql-editor h2 {
+  font-size: 24px !important;
+}
+
+.ql-bubble .ql-editor h3 {
+  font-size: 18.72px !important;
+}
+
+.ql-bubble .ql-editor h4 {
+  font-size: 16px!important;
+}
+
+.ql-bubble .ql-editor h5 {
+  font-size: 13.28px !important;
+}
+
+.ql-bubble .ql-editor h6 {
+  font-size: 10.72px !important;
+}
+

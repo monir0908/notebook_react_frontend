@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { documentDetails, documentCreate, documentUpdate } from './documentActions';
+import { documentDetails, documentCreate, documentUpdate, documentList } from './documentActions';
 
 const initialState = {
     data: null,
@@ -47,6 +47,19 @@ const documentSlice = createSlice({
                 state.error = null;
             }),
             builder.addCase(documentUpdate.rejected, (state, { payload }) => {
+                state.loading = false;
+                state.error = payload;
+            }),
+            builder.addCase(documentList.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            }),
+            builder.addCase(documentList.fulfilled, (state, { payload }) => {
+                state.loading = false;
+                state.data = payload.data;
+                state.error = null;
+            }),
+            builder.addCase(documentList.rejected, (state, { payload }) => {
                 state.loading = false;
                 state.error = payload;
             });

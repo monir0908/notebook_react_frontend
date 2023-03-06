@@ -16,6 +16,20 @@ export const documentDetails = createAsyncThunk('document/details', async ({ url
     }
 });
 
+export const documentList = createAsyncThunk('document/list', async ({ url }, { rejectWithValue }) => {
+    try {
+        const res = await API.get(url);
+        return res.data;
+    } catch (error) {
+        // return custom error message from API if any
+        if (error.response && error.response.data.message) {
+            return rejectWithValue(error.response.data.message);
+        } else {
+            return rejectWithValue(error.message);
+        }
+    }
+});
+
 export const documentUpdate = createAsyncThunk('document/update', async ({ url, navigate, data, extraData }, { rejectWithValue }) => {
     try {
         const res = await API.patch(url, data);
