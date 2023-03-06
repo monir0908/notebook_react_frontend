@@ -37,6 +37,8 @@ export const documentUpdate = createAsyncThunk('document/update', async ({ url, 
             if (extraData.status == 'delete') {
                 //navigate('/collection/'+extraData.col_key);
                 navigate('/home');
+            } else if (extraData.status == 'restore') {
+                navigate(extraData.doc_url);
             } else if (extraData.status == 'publish') {
                 navigate(extraData.doc_url);
             }
@@ -68,6 +70,27 @@ export const documentCreate = createAsyncThunk('document/create', async ({ url, 
         return res.data;
     } catch (error) {
         toast.error(error.response.data.message, { autoClose: 3000 });
+        if (error.response && error.response.data.message) {
+            return rejectWithValue(error.response.data.message);
+        } else {
+            return rejectWithValue(error.message);
+        }
+    }
+});
+
+export const documentDelete = createAsyncThunk('document/delete', async ({ url, navigate }, { rejectWithValue }) => {
+    try {
+        const res = await API.delete(url);
+        navigate('/trash');
+        if (res.data.success) {
+            toast.success(res.data.message, { autoClose: 3000 });
+        } else {
+            toast.warn(res.data.message, { autoClose: 3000 });
+        }
+        return res.data;
+    } catch (error) {
+        toast.error(error.response.data.message, { autoClose: 3000 });
+        // return custom error message from API if any
         if (error.response && error.response.data.message) {
             return rejectWithValue(error.response.data.message);
         } else {

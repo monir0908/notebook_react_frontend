@@ -1,10 +1,12 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, createAction } from '@reduxjs/toolkit';
 import { documentDetails, documentCreate, documentUpdate, documentList } from './documentActions';
 
+export const resetState = createAction('Reset_all');
 const initialState = {
     data: null,
     error: null,
-    loading: false
+    loading: false,
+    documentList: []
 };
 
 const documentSlice = createSlice({
@@ -56,13 +58,14 @@ const documentSlice = createSlice({
             }),
             builder.addCase(documentList.fulfilled, (state, { payload }) => {
                 state.loading = false;
-                state.data = payload.data;
+                state.documentList = payload.data;
                 state.error = null;
             }),
             builder.addCase(documentList.rejected, (state, { payload }) => {
                 state.loading = false;
                 state.error = payload;
-            });
+            }),
+            builder.addCase(resetState, () => initialState);
     }
 });
 export default documentSlice.reducer;

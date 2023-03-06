@@ -115,6 +115,9 @@ const Document = () => {
     useEffect(() => {
         attachQuillRefs();
         getDocumentDetails();
+
+        const url = `collection/list?creator_id=${userInfo.id}&page=1&page_size=100`;
+        dispatch(collectionList({ url }));
         // const ydoc = new Y.Doc();
         // const provider = new WebrtcProvider('ws://127.0.0.1:3001/document', ydoc);
         // const ytext = ydoc.getText('quill');
@@ -240,9 +243,11 @@ const Document = () => {
             <MainCard title="">
                 <Box sx={{ m: 1 }} style={{ float: 'right' }}>
                     <Stack direction="row" spacing={1}>
-                        <Button onClick={handleClickOpenShareDialog} variant="outlined" size="small">
-                            Share
-                        </Button>
+                        {deleteShow && (
+                            <Button onClick={handleClickOpenShareDialog} variant="outlined" size="small">
+                                Share
+                            </Button>
+                        )}
                         {docObj != null && (
                             <>
                                 {publishShow && (

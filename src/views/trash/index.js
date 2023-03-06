@@ -26,19 +26,24 @@ import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { documentList } from 'store/features/document/documentActions';
+import { documentList, documentUpdate } from 'store/features/document/documentActions';
+import { collectionList } from 'store/features/collection/collectionActions';
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
 import ReactTimeAgo from 'react-time-ago';
 import IconButton from '@mui/material/IconButton';
 import { IconChevronRight, IconChevronDown, IconChevronUp, IconPlus, IconDots } from '@tabler/icons';
 import ContextMenuTrash from 'layout/components/contextMenuTrash';
+import ConfirmationDialog from 'layout/components/confirmationDialog';
+import { documentDelete } from 'store/features/document/documentActions';
 // ==============================|| SAMPLE PAGE ||============================== //
 
 const Trash = () => {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const userInfo = useSelector((state) => state.auth.userInfo);
-    const data = useSelector((state) => state.document.data);
+    const data = useSelector((state) => state.document.documentList);
+
     const [selectedItem, setSelectedItem] = useState(null);
     //////////////////////////// context menu //////////////////////////////
     const [anchorEl, setAnchorEl] = useState(null);
@@ -52,10 +57,64 @@ const Trash = () => {
     };
 
     useEffect(() => {
+        // setTimeout(() => {
         const url = `document/list?doc_status=3&creator_id=${userInfo.id}`;
         dispatch(documentList({ url }));
-        console.log(data);
+
+        // }, 300);
     }, []);
+
+    //////////////////////////////// delete confirmation /////////
+    const [openConfirmation, setOpenConfirmation] = useState(false);
+
+    const handleClickOpenConfirmation = () => {
+        setOpenConfirmation(true);
+    };
+
+    const handleCloseConfirmation = () => {
+        setOpenConfirmation(false);
+    };
+    const handleConfirmationDialogOk = (values) => {
+        dispatch(
+            documentDelete({
+                url: 'document/delete-doc/' + values.id,
+                navigate
+            })
+        );
+        setTimeout(() => {
+            const url = `document/list?doc_status=3&creator_id=${userInfo.id}`;
+            dispatch(documentList({ url }));
+            if (data) {
+                setList(data.data);
+            } else {
+                setList([]);
+            }
+        }, 300);
+
+        setOpenConfirmation(false);
+    };
+
+    const handleDocRestore = (values) => {
+        dispatch(
+            documentUpdate({
+                url: 'document/update-status/' + values.doc_key,
+                navigate,
+                data: {
+                    doc_status: 1
+                },
+                extraData: {
+                    status: 'restore',
+                    col_key: null,
+                    doc_url: '/document/' + values.doc_key
+                }
+            })
+        );
+
+        // setTimeout(() => {
+        //     const url = `document/list?doc_status=3&creator_id=${userInfo.id}`;
+        //     dispatch(documentList({ url }));
+        // }, 500);
+    };
 
     return (
         <>
@@ -72,27 +131,27 @@ const Trash = () => {
                 </Grid>
                 <Divider />
 
-                <List sx={{ px: 4, width: '100%', bgcolor: 'background.paper' }} component="nav">
-                    {data &&
+                <List sx={{ width: '100%', bgcolor: 'background.paper' }} component="data">
+                    {data.length > 0 &&
                         data.map((item, index) => (
                             <div key={item.id}>
-                                <Grid container direction="row" justifyContent="space-around" alignItems="center">
-                                    <Grid item>
+                                <Grid container direction="row" alignItems="center" sx={{ px: 2 }}>
+                                    <Grid item md={8}>
                                         <h3 sx={{ mt: 2 }}>{item.doc_title}</h3>
                                         <p style={{ color: 'rgb(155, 166, 178)' }} sx={{ mb: 2 }} variant="subtitle1">
-                                            You Deleted this document about {item && <ReactTimeAgo date={item.updated_at} locale="en-US" />}{' '}
-                                            in
+                                            You deleted this document about{' '}
+                                            {item && <ReactTimeAgo date={Date.parse(item.updated_at)} locale="en-US" />} in
                                             <b> {item.collection_title}</b>
                                         </p>
                                     </Grid>
-                                    <Grid item>
+                                    <Grid item md={4}>
                                         <IconButton
                                             onClick={(event) => handleContextMenuClick(event, item)}
                                             size="1rem"
                                             aria-label="option"
                                             style={{ float: 'right', marginTop: '-5px', marginRight: '-15px', cursor: 'pointer' }}
                                         >
-                                            <IconDots size="1rem" />
+                                            <IconDots size="1.5rem" />
                                         </IconButton>
                                     </Grid>
                                 </Grid>
@@ -106,8 +165,16 @@ const Trash = () => {
                 anchorEl={anchorEl}
                 open={openContextMenu}
                 handleClose={handleContextMenuClose}
-                handleEditClick={handleContextMenuClose}
-                handleDeleteClick={handleContextMenuClose}
+                handleRestoreClick={() => handleDocRestore(selectedItem)}
+                handleDeleteClick={handleClickOpenConfirmation}
+            />
+            <ConfirmationDialog
+                title="Delete Decument Permanently"
+                description="If you delete this document,it will be deleted permanently. Do you agree with that?"
+                open={openConfirmation}
+                data={selectedItem}
+                handleClose={handleCloseConfirmation}
+                handleOk={(values) => handleConfirmationDialogOk(values)}
             />
         </>
     );

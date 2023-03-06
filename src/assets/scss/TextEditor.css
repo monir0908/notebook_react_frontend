@@ -47,8 +47,10 @@
 }
 
 .ql-editor {
-  min-height: 50vh; 
-  font-size: 16px;
+  min-height: 80vh; 
+}
+.ql-container {
+  font-size: 14px !important;
 }
 .App .ql-snow .ql-tooltip.ql-flip {
   width: auto;
