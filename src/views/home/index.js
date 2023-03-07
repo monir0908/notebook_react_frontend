@@ -86,12 +86,14 @@ const Home = () => {
                                 <ListItemButton onClick={() => itemClicked(item)} component="a">
                                     <Grid container direction="row" alignItems="center" sx={{ px: 2 }}>
                                         <Grid item md={12}>
-                                            <h3 sx={{ mt: 2 }}>{item.doc_title}</h3>
-                                            <p style={{ color: 'rgb(155, 166, 178)' }} variant="subtitle1">
+                                            <Typography variant="h3" sx={{ mt: 2 }}>
+                                                {item.doc_title}
+                                            </Typography>
+                                            <Typography sx={{ pt: 1 }} variant="body1" style={{ color: 'rgb(155, 166, 178)' }}>
                                                 You updated this document about{' '}
                                                 {item && <ReactTimeAgo date={Date.parse(item.updated_at)} locale="en-US" />} in
                                                 <b> {item.collection_title}</b>
-                                            </p>
+                                            </Typography>
                                         </Grid>
                                     </Grid>
                                 </ListItemButton>

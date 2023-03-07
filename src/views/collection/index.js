@@ -57,12 +57,6 @@ const Collection = () => {
     useEffect(() => {
         // dispatch(resetState());
         getCollectionDetails();
-
-        // setTimeout(() => {
-        //     if (collectionData) {
-        //         getList('Documents');
-        //     }
-        // }, 500);
     }, [collectionKey]);
 
     useEffect(() => {
@@ -150,8 +144,8 @@ const Collection = () => {
                                                         </Typography>
                                                     </Grid>
                                                 </Grid>
+                                                <Divider />
                                             </ListItemButton>
-                                            <Divider />
                                         </div>
                                     ))}
                             </List>
@@ -174,8 +168,8 @@ const Collection = () => {
                                                         </Typography>
                                                     </Grid>
                                                 </Grid>
+                                                <Divider />
                                             </ListItemButton>
-                                            <Divider />
                                         </div>
                                     ))}
                             </List>
@@ -198,8 +192,8 @@ const Collection = () => {
                                                         </Typography>
                                                     </Grid>
                                                 </Grid>
+                                                <Divider />
                                             </ListItemButton>
-                                            <Divider />
                                         </div>
                                     ))}
                             </List>
@@ -222,8 +216,8 @@ const Collection = () => {
                                                         </Typography>
                                                     </Grid>
                                                 </Grid>
+                                                <Divider />
                                             </ListItemButton>
-                                            <Divider />
                                         </div>
                                     ))}
                             </List>
