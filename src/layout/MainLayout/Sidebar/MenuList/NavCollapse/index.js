@@ -136,6 +136,10 @@ const NavCollapse = ({ menu, level }) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [pathname, menu.children]);
 
+    const itemCollectionClicked = (item) => {
+        navigate('/collection/' + item.id);
+    };
+
     // menu collapse & item
     const menus = menu.children?.map((item) => {
         switch (item.type) {
@@ -186,10 +190,14 @@ const NavCollapse = ({ menu, level }) => {
                 <ListItemIcon onClick={handleClick} sx={{ my: 'auto', minWidth: !menu.icon ? 18 : 36 }}>
                     {menuIcon}
                 </ListItemIcon>
+
                 <ListItemText
+                    onClick={handleClick}
                     primary={
                         <Typography
-                            onClick={handleClick}
+                            onClick={() => {
+                                itemCollectionClicked(menu);
+                            }}
                             variant={selected === menu.id ? 'h5' : 'body1'}
                             color="inherit"
                             sx={{ my: 'auto' }}

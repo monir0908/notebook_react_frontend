@@ -12,7 +12,7 @@ import { collectionList } from 'store/features/collection/collectionActions';
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
 import { IconAdjustmentsHorizontal, IconSearch, IconX } from '@tabler/icons';
-import { shouldForwardProp } from '@mui/system';
+
 import { IconPlus } from '@tabler/icons';
 import ReactTimeAgo from 'react-time-ago';
 import IconButton from '@mui/material/IconButton';
@@ -22,25 +22,6 @@ import { documentList, documentCreate } from 'store/features/document/documentAc
 import { resetState } from 'store/features/document/documentSlice';
 // ==============================|| SAMPLE PAGE ||============================== //
 
-const OutlineInputStyle = styled(OutlinedInput, { shouldForwardProp })(({ theme }) => ({
-    width: 300,
-    marginLeft: 5,
-    paddingLeft: 16,
-    paddingRight: 16,
-    '& input': {
-        background: 'transparent !important',
-        paddingLeft: '4px !important'
-    },
-    [theme.breakpoints.down('lg')]: {
-        width: 200
-    },
-    [theme.breakpoints.down('md')]: {
-        width: '100%',
-        marginLeft: 4,
-        background: '#fff'
-    }
-}));
-
 const Home = () => {
     const theme = useTheme();
     const userInfo = useSelector((state) => state.auth.userInfo);
@@ -49,7 +30,7 @@ const Home = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        const url = `document/list?creator_id=${userInfo.id}`;
+        const url = `document/list?creator_id=${userInfo.id}&date_range_str=week`;
         dispatch(resetState());
         dispatch(documentList({ url }));
     }, []);
@@ -81,24 +62,6 @@ const Home = () => {
         <>
             <MainCard title="">
                 <Grid container direction="row" justifyContent="end" alignItems="center">
-                    {/* <Grid item>
-                        <Box sx={{ display: { xs: 'none', md: 'block' } }}>
-                            <OutlineInputStyle
-                                id="input-search-header"
-                                style={{ height: '3em' }}
-                                value={value}
-                                onChange={(e) => setValue(e.target.value)}
-                                placeholder="Search.."
-                                startAdornment={
-                                    <InputAdornment position="start">
-                                        <IconSearch stroke={1.5} size="1rem" color={theme.palette.grey[500]} />
-                                    </InputAdornment>
-                                }
-                                aria-describedby="search-helper-text"
-                                inputProps={{ 'aria-label': 'weight' }}
-                            />
-                        </Box>
-                    </Grid> */}
                     <Grid item>
                         <Button onClick={handleContextMenuNewDocClick} variant="contained" color="info" startIcon={<IconPlus />}>
                             <Typography stroke={2.5}>New Doc..</Typography>

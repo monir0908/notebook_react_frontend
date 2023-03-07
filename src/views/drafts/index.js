@@ -41,22 +41,10 @@ const Drafts = () => {
     const [time, setTime] = useState('Any Time');
 
     const handleCollectionTitleChange = (event) => {
-        // setCollectionSelected(event.target.value);
-
         setCollectionSelected(event.target.value);
-        console.log(collectionSelected);
-        console.log(event.target.value);
-
-        setTimeout(() => {
-            getList();
-        }, 500);
     };
     const handleTimeChange = (event) => {
         setTime(event.target.value);
-
-        setTimeout(() => {
-            getList();
-        }, 500);
     };
 
     const getList = () => {
@@ -88,7 +76,6 @@ const Drafts = () => {
     const itemClicked = (item) => {
         navigate('/document/' + item.doc_key);
     };
-    useEffect(() => console.log(collectionSelected), [collectionSelected]);
 
     useEffect(() => {
         dispatch(resetState());
@@ -97,6 +84,9 @@ const Drafts = () => {
         }, 300);
     }, []);
 
+    useEffect(() => {
+        getList();
+    }, [collectionSelected, time]);
     return (
         <>
             <MainCard title="">
@@ -157,11 +147,13 @@ const Drafts = () => {
                                 <ListItemButton onClick={() => itemClicked(item)} component="a">
                                     <Grid container direction="row" alignItems="center" sx={{ px: 2 }}>
                                         <Grid item md={12}>
-                                            <h3 sx={{ mt: 2 }}>{item.doc_title}</h3>
-                                            <p style={{ color: 'rgb(155, 166, 178)' }} variant="subtitle1">
+                                            <Typography variant="h3" sx={{ mt: 2 }}>
+                                                {item.doc_title}
+                                            </Typography>
+                                            <Typography sx={{ pt: 1 }} variant="body1" style={{ color: 'rgb(155, 166, 178)' }}>
                                                 You saved {item && <ReactTimeAgo date={Date.parse(item.updated_at)} locale="en-US" />} in
                                                 <b> {item.collection_title}</b>
-                                            </p>
+                                            </Typography>
                                         </Grid>
                                     </Grid>
                                 </ListItemButton>

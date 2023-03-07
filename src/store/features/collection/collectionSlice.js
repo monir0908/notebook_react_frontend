@@ -1,9 +1,11 @@
-import { createSlice } from '@reduxjs/toolkit';
-import { collectionList, collectionCreate, collectionUpdate, collectionDelete } from './collectionActions';
+import { createSlice, createAction } from '@reduxjs/toolkit';
+import { collectionList, collectionCreate, collectionUpdate, collectionDelete, collectionDetails } from './collectionActions';
 import { toast } from 'react-toastify';
 
+export const resetStateCollection = createAction('Reset_all_collection');
 const initialState = {
     data: [],
+    collection: null,
     error: null,
     loading: false,
     success: false
@@ -30,10 +32,23 @@ const collectionSlice = createSlice({
         }
     },
     extraReducers: (builder) => {
-        builder.addCase(collectionList.pending, (state) => {
+        builder.addCase(collectionDetails.pending, (state) => {
             state.loading = true;
             state.error = null;
         }),
+            builder.addCase(collectionDetails.fulfilled, (state, { payload }) => {
+                state.loading = false;
+                state.collection = payload;
+                state.error = null;
+            }),
+            builder.addCase(collectionDetails.rejected, (state, { payload }) => {
+                state.loading = false;
+                state.error = payload;
+            }),
+            builder.addCase(collectionList.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            }),
             builder.addCase(collectionList.fulfilled, (state, action) => {
                 state.loading = false;
                 state.data = action.payload.data;
@@ -86,8 +101,8 @@ const collectionSlice = createSlice({
                 state.loading = false;
                 state.error = payload;
                 state.success = false;
-            });
-        // builder.addCase(revertAll, () => initialState);
+            }),
+            builder.addCase(resetStateCollection, () => initialState);
     }
 });
 export const { updateDocumentTitle } = collectionSlice.actions;

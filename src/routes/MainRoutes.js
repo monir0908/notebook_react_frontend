@@ -21,6 +21,7 @@ const Search = Loadable(lazy(() => import('views/search')));
 const Drafts = Loadable(lazy(() => import('views/drafts')));
 const Trash = Loadable(lazy(() => import('views/trash')));
 const Document = Loadable(lazy(() => import('views/document')));
+const Collection = Loadable(lazy(() => import('views/collection')));
 
 // ==============================|| MAIN ROUTING ||============================== //
 
@@ -110,6 +111,10 @@ const MainRoutes = {
         {
             path: 'document/:documentKey',
             element: <Document />
+        },
+        {
+            path: 'collection/:collectionKey',
+            element: <Collection />
         }
     ]
 };
