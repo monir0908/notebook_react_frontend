@@ -60,11 +60,15 @@ const Collection = () => {
     }, [collectionKey]);
 
     useEffect(() => {
-        getList(0);
+        if (collectionData) {
+            getList(0);
+        }
     }, [collection_id]);
 
     useEffect(() => {
-        getList(tabValue);
+        if (collectionData) {
+            getList(tabValue);
+        }
     }, [tabValue]);
 
     const handleTabChange = (event, newValue) => {
@@ -76,27 +80,45 @@ const Collection = () => {
     };
 
     const getList = (type) => {
-        let url = {
-            creator_id: userInfo.id,
-            collection_id: collection_id,
-            order_by: null
-        };
+        const p = new URLSearchParams();
+
+        // let paramJson = {
+        //     creator_id: userInfo.id,
+        //     collection_id: collection_id,
+        //     order_by: null,
+        //     doc_status: []
+        // };
 
         switch (type) {
             case 0:
-                delete url.order_by;
+                p.append('creator_id', userInfo.id);
+                p.append('collection_id', collection_id);
+                p.append('doc_status', 1);
+                p.append('doc_status', 2);
                 break;
             case 1:
-                url.order_by = '-updated_at';
+                p.append('creator_id', userInfo.id);
+                p.append('collection_id', collection_id);
+                p.append('doc_status', 1);
+                p.append('doc_status', 2);
+                p.append('order_by', '-updated_at');
                 break;
             case 2:
-                url.order_by = '-published_at';
+                p.append('creator_id', userInfo.id);
+                p.append('collection_id', collection_id);
+                p.append('doc_status', 2);
+                p.append('order_by', '-published_at');
                 break;
             case 3:
-                url.order_by = 'doc_title';
+                p.append('creator_id', userInfo.id);
+                p.append('collection_id', collection_id);
+                p.append('doc_status', 1);
+                p.append('doc_status', 2);
+                p.append('order_by', '-doc_title');
                 break;
         }
-        const objString = 'document/list?' + new URLSearchParams(url).toString();
+
+        const objString = 'document/list?' + p.toString();
         console.log(objString);
         dispatch(documentList({ url: objString }));
     };
@@ -138,14 +160,14 @@ const Collection = () => {
                                                             {item.doc_title}
                                                         </Typography>
                                                         <Typography sx={{ pt: 1 }} variant="body1" style={{ color: 'rgb(155, 166, 178)' }}>
-                                                            You saved{' '}
+                                                            You updated{' '}
                                                             {item && <ReactTimeAgo date={Date.parse(item.updated_at)} locale="en-US" />} in
                                                             <b> {item.collection_title}</b>
                                                         </Typography>
                                                     </Grid>
                                                 </Grid>
-                                                <Divider />
                                             </ListItemButton>
+                                            <Divider />
                                         </div>
                                     ))}
                             </List>
@@ -162,14 +184,14 @@ const Collection = () => {
                                                             {item.doc_title}
                                                         </Typography>
                                                         <Typography sx={{ pt: 1 }} variant="body1" style={{ color: 'rgb(155, 166, 178)' }}>
-                                                            You saved{' '}
+                                                            You updated{' '}
                                                             {item && <ReactTimeAgo date={Date.parse(item.updated_at)} locale="en-US" />} in
                                                             <b> {item.collection_title}</b>
                                                         </Typography>
                                                     </Grid>
                                                 </Grid>
-                                                <Divider />
                                             </ListItemButton>
+                                            <Divider />
                                         </div>
                                     ))}
                             </List>
@@ -186,14 +208,14 @@ const Collection = () => {
                                                             {item.doc_title}
                                                         </Typography>
                                                         <Typography sx={{ pt: 1 }} variant="body1" style={{ color: 'rgb(155, 166, 178)' }}>
-                                                            You saved{' '}
+                                                            You published{' '}
                                                             {item && <ReactTimeAgo date={Date.parse(item.updated_at)} locale="en-US" />} in
                                                             <b> {item.collection_title}</b>
                                                         </Typography>
                                                     </Grid>
                                                 </Grid>
-                                                <Divider />
                                             </ListItemButton>
+                                            <Divider />
                                         </div>
                                     ))}
                             </List>
@@ -210,14 +232,14 @@ const Collection = () => {
                                                             {item.doc_title}
                                                         </Typography>
                                                         <Typography sx={{ pt: 1 }} variant="body1" style={{ color: 'rgb(155, 166, 178)' }}>
-                                                            You saved{' '}
+                                                            You updated{' '}
                                                             {item && <ReactTimeAgo date={Date.parse(item.updated_at)} locale="en-US" />} in
                                                             <b> {item.collection_title}</b>
                                                         </Typography>
                                                     </Grid>
                                                 </Grid>
-                                                <Divider />
                                             </ListItemButton>
+                                            <Divider />
                                         </div>
                                     ))}
                             </List>

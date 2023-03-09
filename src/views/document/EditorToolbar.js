@@ -1,6 +1,6 @@
 import React from 'react';
 import { Quill } from 'react-quill';
-
+import QuillBetterTable from 'quill-better-table';
 // Custom Undo button icon component for Quill editor. You can import it directly
 // from 'quill/assets/icons/undo.svg' but I found that a number of loaders do not
 // handle them correctly
@@ -80,11 +80,19 @@ Quill.register('modules/linkTooltip', LinkTooltip);
 // Modules object for setting up the Quill editor
 export const modules = (props) => ({
     cursors: true,
-    // cursors: {
-    //   id: 1,
-    //   name: "User 1",
-    //   color: "green",
-    //   range: { index:0, length:5 }
+    imageDrop: true,
+    // table: true, // disable table module
+    // 'better-table': {
+    //     operationMenu: {
+    //         items: {
+    //             unmergeCells: {
+    //                 text: 'Another unmerge cells name'
+    //             }
+    //         }
+    //     }
+    // },
+    // keyboard: {
+    //     bindings: QuillBetterTable.keyboardBindings
     // },
     toolbar: {
         container: '#' + props
@@ -185,8 +193,8 @@ export const QuillToolbar = (props) => {
                     </span>
                     <span className="ql-formats">
                         <button className="ql-link" />
-                        {/* <button className="ql-image" />
-                        <button className="ql-video" /> */}
+                        <button className="ql-image" />
+                        {/*<button className="ql-video" /> */}
                     </span>
                     {/* <span className="ql-formats">
                         <button className="ql-formula" />

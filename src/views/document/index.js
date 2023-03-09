@@ -1,6 +1,7 @@
 // material-ui
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
+import LoadingBar from 'react-top-loading-bar';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { documentDetails } from 'store/features/document/documentActions';
@@ -14,6 +15,11 @@ import { Quill } from 'react-quill';
 import QuillCursors from 'quill-cursors';
 import * as Y from 'yjs';
 import ReactQuill from 'react-quill';
+import { ImageDrop } from 'quill-image-drop-module';
+import ImageResize from 'quill-image-resize-module-react';
+import BlotFormatter from 'quill-blot-formatter';
+import QuillBetterTable from 'quill-better-table';
+import * as QuillTableUI from 'quill-table-ui';
 import EditorToolbar, { modules, formats } from './EditorToolbar';
 import 'react-quill/dist/quill.snow.css';
 import 'react-quill/dist/quill.bubble.css';
@@ -38,9 +44,12 @@ import {
     OutlinedInput,
     Stack,
     Typography,
-    useMediaQuery
+    useMediaQuery,
+    AppBar,
+    CssBaseline,
+    Toolbar
 } from '@mui/material';
-
+import { styled, useTheme } from '@mui/material/styles';
 // third party
 import * as Yup from 'yup';
 import { Formik } from 'formik';
@@ -51,9 +60,11 @@ import ConfirmationDialog from 'layout/components/confirmationDialog';
 import { documentUpdate } from 'store/features/document/documentActions';
 import { collectionList } from 'store/features/collection/collectionActions';
 import ShareDialog from 'layout/components/shareDialog';
+
 // ==============================|| PAGE ||============================== //
 
 const Document = () => {
+    const theme = useTheme();
     const dispatch = useDispatch();
     const userInfo = useSelector((state) => state.auth.userInfo);
     const navigate = useNavigate();
@@ -65,6 +76,7 @@ const Document = () => {
     const [deleteShow, setDeleteShow] = useState(true);
     const [docTitle, setDocTitle] = useState('');
     const [docBody, setDocBody] = useState('');
+    const [progress, setProgress] = useState(0);
 
     const getDocumentDetails = async () => {
         const res = await API.get(`document/${documentKey}`);
@@ -102,14 +114,43 @@ const Document = () => {
 
     let quillRef = null;
     let reactQuillRef = null;
+
     Quill.register('modules/cursors', QuillCursors);
+    Quill.register('modules/imageDrop', ImageDrop);
+    Quill.register('modules/imageResize', ImageResize);
+    Quill.register('modules/blotFormatter', BlotFormatter);
+    Quill.register(
+        {
+            'modules/better-table': QuillBetterTable
+        },
+        true
+    );
+
     const attachQuillRefs = () => {
         if (typeof reactQuillRef.getEditor !== 'function') return;
         quillRef = reactQuillRef.getEditor();
         quillRef.getModule();
-        let tooltip = quillRef.theme.tooltip;
-        let input = tooltip.root.querySelector('input[data-link]');
-        input.dataset.link = 'https://yourdomain.com';
+
+        // let tableModule = quillRef.getModule('better-table');
+        // tableModule.insertTable(3, 3);
+        // console.log(tableModule);
+
+        // let tooltip = quillRef.theme.tooltip;
+        // let input = tooltip.root.querySelector('input[data-link]');
+        // input.dataset.link = 'https://yourdomain.com';
+
+        // quillRef.on('editor-change', function (eventName) {
+        //     if (eventName === 'text-change') {
+        //         setTimeout(() => {
+        //             console.log(docBody);
+        //             console.log(docTitle);
+        //             if (docBody || docTitle) handleSubmit();
+        //         }, 5000);
+        //         console.log('changed data');
+        //     } else if (eventName === 'selection-change') {
+        //         // args[0] will be old range
+        //     }
+        // });
     };
 
     useEffect(() => {
@@ -131,22 +172,56 @@ const Document = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [documentKey]);
 
+    useEffect(() => {
+        const interval = setInterval(() => {
+            // if (typeof reactQuillRef.getEditor !== 'function') return;
+            // quillRef = reactQuillRef.getEditor();
+            // quillRef.getModule();
+            // quillRef.on('editor-change', function (eventName) {
+            //     if (eventName === 'text-change') {
+            //         console.log(docBody);
+            //         console.log(docTitle);
+            //         if (docBody || docTitle) handleSubmit();
+            //         console.log('changed data');
+            //     } else if (eventName === 'selection-change') {
+            //         // args[0] will be old range
+            //     }
+            // });
+
+            if (docBody || docTitle) handleSubmit();
+        }, 10 * 1000);
+        return () => clearInterval(interval);
+    }, [docBody, docTitle]);
+
     const handleSubmit = async () => {
         try {
             const res = await API.patch(`document/update-doc/${documentKey}`, {
                 doc_title: docTitle,
                 doc_body: docBody
             });
+            if (res.data.state == 'success') {
+                setProgress(100);
+            }
         } catch (error) {
             throw error;
         }
     };
 
     const fabStyle = {
-        position: 'absolute',
-        bottom: '50%',
+        position: 'fixed',
+        bottom: 25,
         right: 16
     };
+    // const fabStyle2 = {
+    //     position: 'fixed',
+    //     bottom: 100,
+    //     right: 16
+    // };
+    // const fabStyle3 = {
+    //     position: 'fixed',
+    //     bottom: 200,
+    //     right: 16
+    // };
     //////////////////////////////// share dialog ///////////////////
     const [openShareDialog, setOpenShareDialog] = useState(false);
 
@@ -273,42 +348,6 @@ const Document = () => {
                                 )}
                             </>
                         )}
-                        {/* <Button onClick={handleDocPublish} variant="outlined" size="small">
-                            Publish
-                        </Button> */}
-                        {/* <Choose>
-                            <When condition={docObj && docObj.status == 1}>
-                                <button>Logout</button>;
-                            </When>
-                            <When condition={docObj && docObj.status == 2}>
-                                <button>Login</button>;
-                            </When>
-                        </Choose> */}
-                        {/* {unpublishShow && (
-                            <Button onClick={() => handleDocPublish(1)} variant="outlined" size="small">
-                                Unpublish
-                            </Button>
-                        )}
-                        {publishShow && (
-                            <Button onClick={() => handleDocPublish(2)} variant="outlined" size="small">
-                                Publish
-                            </Button>
-                        )} */}
-                        {/* {(docObj && docObj.status != 3) ||
-                            (docObj.status != 4 && (
-                                <Button
-                                    onClick={handleClickOpenConfirmation}
-                                    variant="outlined"
-                                    size="small"
-                                    color="error"
-                                    startIcon={<DeleteIcon />}
-                                >
-                                    Delete
-                                </Button>
-                            ))} */}
-                        {/* <Button variant="contained" endIcon={<IconPlus />}>
-                    Send
-                </Button> */}
                     </Stack>
                 </Box>
                 <form>
@@ -353,6 +392,10 @@ const Document = () => {
                             modules={modules('t1')}
                             preserveWhitespace
                         />
+
+                        <Fab sx={fabStyle} onClick={handleSubmit} aria-label="Save" color="primary">
+                            <IconDeviceFloppy />
+                        </Fab>
                     </div>
                     {/* <Box sx={{ mt: 2 }}>
                         <AnimateButton>
@@ -362,10 +405,6 @@ const Document = () => {
                         </AnimateButton>
                     </Box> */}
                 </form>
-
-                <Fab sx={fabStyle} onClick={handleSubmit} aria-label="Save" color="primary">
-                    <IconDeviceFloppy />
-                </Fab>
             </MainCard>
 
             <ConfirmationDialog
@@ -376,6 +415,7 @@ const Document = () => {
                 handleOk={handleConfirmationDialogOk}
             />
             <ShareDialog link={sharelink} open={openShareDialog} handleClose={handleCloseShareDialog} />
+            <LoadingBar color="#8800ff" progress={progress} onLoaderFinished={() => setProgress(0)} />
         </>
     );
 };

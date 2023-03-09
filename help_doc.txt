@@ -1,0 +1,25 @@
+let barColor = ''
+  switch (color) {
+    case 'red':
+      barColor = '#f11946'
+      break
+    case 'purple':
+      barColor = '#8800ff'
+      break
+    case 'green':
+      barColor = '#28b485'
+      break
+    case 'teal':
+      barColor = '#00ffe2'
+      break
+    case 'orange':
+      barColor = '#ff7c05'
+      break
+    case 'blue':
+      barColor = '#2998ff'
+      break
+
+    default:
+      barColor = '#f11946'
+      break
+  }
