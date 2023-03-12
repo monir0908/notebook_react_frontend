@@ -9,15 +9,12 @@ import { documentDetails } from 'store/features/document/documentActions';
 import MainCard from 'ui-component/cards/MainCard';
 import API from 'helpers/jwt.interceptor';
 
-import { WebrtcProvider } from 'y-webrtc';
+//import { WebrtcProvider } from 'y-webrtc';
+import { WebsocketProvider } from 'y-websocket';
 import { QuillBinding } from 'y-quill';
 import { Quill } from 'react-quill';
-import QuillCursors from 'quill-cursors';
 import * as Y from 'yjs';
 import ReactQuill from 'react-quill';
-import { ImageDrop } from 'quill-image-drop-module';
-import ImageResize from 'quill-image-resize-module-react';
-import BlotFormatter from 'quill-blot-formatter';
 import QuillBetterTable from 'quill-better-table';
 import * as QuillTableUI from 'quill-table-ui';
 import EditorToolbar, { modules, formats } from './EditorToolbar';
@@ -108,68 +105,114 @@ const Document = () => {
         dispatch(updateDocumentTitle({ document_key: documentKey, doc_title: e.target.value }));
     };
 
+    const onTitleBlur = (e) => {
+        dispatch(
+            documentUpdate({
+                url: 'document/update-doc/' + docObj.doc_key,
+                navigate,
+                data: {
+                    doc_title: e.target.value
+                },
+                extraData: {}
+            })
+        );
+
+        // setDocTitle(e.target.value);
+        //  dispatch(updateDocumentTitle({ document_key: documentKey, doc_title: e.target.value }));
+    };
+
     const onBodyChange = (value) => {
         setDocBody(value);
     };
 
     let quillRef = null;
     let reactQuillRef = null;
+    let isQuillText = false;
 
-    Quill.register('modules/cursors', QuillCursors);
-    Quill.register('modules/imageDrop', ImageDrop);
-    Quill.register('modules/imageResize', ImageResize);
-    Quill.register('modules/blotFormatter', BlotFormatter);
-    Quill.register(
-        {
-            'modules/better-table': QuillBetterTable
-        },
-        true
-    );
+    const colors = [
+        '#F47F66',
+        '#99A85A',
+        '#5AA886',
+        '#4BADAA',
+        '#C9D5A5',
+        '#656B9C',
+        '#9068A7',
+        '#C682B6',
+        '#A24C6F',
+        '#D09C8F',
+        '#7AB5C8'
+    ];
+
+    const getRamndomColors = () => {
+        return colors[Math.floor(Math.random() * colors.length)];
+    };
 
     const attachQuillRefs = () => {
         if (typeof reactQuillRef.getEditor !== 'function') return;
         quillRef = reactQuillRef.getEditor();
         quillRef.getModule();
-
-        // let tableModule = quillRef.getModule('better-table');
-        // tableModule.insertTable(3, 3);
-        // console.log(tableModule);
-
-        // let tooltip = quillRef.theme.tooltip;
-        // let input = tooltip.root.querySelector('input[data-link]');
-        // input.dataset.link = 'https://yourdomain.com';
-
-        // quillRef.on('editor-change', function (eventName) {
-        //     if (eventName === 'text-change') {
-        //         setTimeout(() => {
-        //             console.log(docBody);
-        //             console.log(docTitle);
-        //             if (docBody || docTitle) handleSubmit();
-        //         }, 5000);
-        //         console.log('changed data');
-        //     } else if (eventName === 'selection-change') {
-        //         // args[0] will be old range
-        //     }
-        // });
+        let tooltip = quillRef.theme.tooltip;
+        let input = tooltip.root.querySelector('input[data-link]');
+        input.dataset.link = 'https://yourdomain.com';
     };
-
     useEffect(() => {
         attachQuillRefs();
         getDocumentDetails();
-
         const url = `collection/list?creator_id=${userInfo.id}&page=1&page_size=100`;
         dispatch(collectionList({ url }));
-        // const ydoc = new Y.Doc();
-        // const provider = new WebrtcProvider('ws://127.0.0.1:3001/document', ydoc);
-        // const ytext = ydoc.getText('quill');
-        // new QuillBinding(ytext, quillRef, provider.awareness);
 
-        // provider.awareness.setLocalStateField('user', {
-        //     name: 'Typing Jimmy',
-        //     color: 'blue'
-        // });
+        // console.log(userInfo.first_name + ' document key is : ' + documentKey);
+        // console.log('Executing useEffect...');
 
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+        const ydoc = new Y.Doc();
+        const provider = new WebsocketProvider('ws://localhost:1234', documentKey, ydoc);
+        const ytext = ydoc.getText('quill');
+        // ytext.insert(0, 'my string');
+        let binding = null;
+
+        setTimeout(() => {
+            // console.log(ytext);
+            // console.log(ytext.toString());
+
+            // let quillObj = JSON.stringify(ydoc);
+            // console.log(quillObj);
+            // if (JSON.parse(quillObj).quill) {
+            //     quillText = JSON.parse(quillObj).quill;
+            // }
+            // console.log(quillText);
+            if (ytext.toJSON().length > 0) isQuillText = true;
+            binding = new QuillBinding(ytext, quillRef, provider.awareness);
+        }, 500);
+
+        provider.awareness.on('change', ({ added, removed, updated }) => {
+            // console.log('state updated:', updated);
+            // console.log('awareness object', provider.awareness);
+            // console.log('awareness object getStates()', provider.awareness.getStates());
+
+            // const memberCount = provider.awareness.getStates().size;
+            // console.log('Number of members:', memberCount);
+            // console.log('connected users:', added);
+            // console.log('disconnected users:', removed);
+            // console.log('====================');
+            const users = [];
+            for (const [clientId, state] of provider.awareness.getStates()) {
+                const user = state.user;
+                users.push(user);
+            }
+            // console.log('Connected users:', users);
+        });
+
+        provider.awareness.setLocalStateField('user', {
+            name: userInfo.first_name,
+            color: getRamndomColors()
+        });
+
+        return () => {
+            // Clean up Yjs document
+            provider.disconnect();
+            //binding.destroy();
+            ydoc.destroy();
+        };
     }, [documentKey]);
 
     useEffect(() => {
@@ -187,14 +230,14 @@ const Document = () => {
             //         // args[0] will be old range
             //     }
             // });
-
             if (docBody || docTitle) handleSubmit();
-        }, 10 * 1000);
+        }, 60 * 1000);
         return () => clearInterval(interval);
     }, [docBody, docTitle]);
 
     const handleSubmit = async () => {
         try {
+            console.log(docBody);
             const res = await API.patch(`document/update-doc/${documentKey}`, {
                 doc_title: docTitle,
                 doc_body: docBody
@@ -212,16 +255,7 @@ const Document = () => {
         bottom: 25,
         right: 16
     };
-    // const fabStyle2 = {
-    //     position: 'fixed',
-    //     bottom: 100,
-    //     right: 16
-    // };
-    // const fabStyle3 = {
-    //     position: 'fixed',
-    //     bottom: 200,
-    //     right: 16
-    // };
+
     //////////////////////////////// share dialog ///////////////////
     const [openShareDialog, setOpenShareDialog] = useState(false);
 
@@ -297,22 +331,6 @@ const Document = () => {
         }, 500);
     };
 
-    // function renderPublishOrUnpublishButton() {
-    //     if (docObj != null && docObj.status == 1) {
-    //         return (
-    //             <Button onClick={() => handleDocPublish(2)} variant="outlined" size="small">
-    //                 Publish
-    //             </Button>
-    //         );
-    //     } else if (docObj != null && docObj.status == 2) {
-    //         return (
-    //             <Button onClick={() => handleDocPublish(1)} variant="outlined" size="small">
-    //                 Unpublish
-    //             </Button>
-    //         );
-    //     }
-    // }
-
     return (
         <>
             <MainCard title="">
@@ -358,28 +376,15 @@ const Document = () => {
                         className="title-text"
                         value={docTitle}
                         onChange={onTitleChange}
+                        onBlur={onTitleBlur}
                         name="docTitle"
                         label=""
                         variant="standard"
                     />
-                    {/* <div className="editor-container1">
-                        <EditorToolbar toolbarId={'t1'} />
-                        <ReactQuill
-                            ref={(el) => {
-                                reactQuillRef = el;
-                            }}
-                            bounds=".editor-container1"
-                            theme="bubble"
-                            value={docTitle}
-                            onChange={onTitleChange}
-                            placeholder={'Write something here...'}
-                            formats={formats}
-                            modules={modules('t1')}
-                        />
-                    </div> */}
+
                     <div className="editor-container">
                         <EditorToolbar toolbarId={'t1'} />
-                        <ReactQuill
+                        {/* <ReactQuill
                             ref={(el) => {
                                 reactQuillRef = el;
                             }}
@@ -391,19 +396,40 @@ const Document = () => {
                             formats={formats}
                             modules={modules('t1')}
                             preserveWhitespace
-                        />
+                        /> */}
+                        {isQuillText == true ? (
+                            <ReactQuill
+                                ref={(el) => {
+                                    reactQuillRef = el;
+                                }}
+                                bounds=".editor-container"
+                                theme="bubble"
+                                onChange={onBodyChange}
+                                placeholder={'Write something here...'}
+                                formats={formats}
+                                modules={modules('t1')}
+                                preserveWhitespace
+                            />
+                        ) : (
+                            <ReactQuill
+                                ref={(el) => {
+                                    reactQuillRef = el;
+                                }}
+                                bounds=".editor-container"
+                                theme="bubble"
+                                value={docBody}
+                                onChange={onBodyChange}
+                                placeholder={'Write something here...'}
+                                formats={formats}
+                                modules={modules('t1')}
+                                preserveWhitespace
+                            />
+                        )}
 
                         <Fab sx={fabStyle} onClick={handleSubmit} aria-label="Save" color="primary">
                             <IconDeviceFloppy />
                         </Fab>
                     </div>
-                    {/* <Box sx={{ mt: 2 }}>
-                        <AnimateButton>
-                            <Button type="submit" fullWidth size="large" variant="contained" color="secondary">
-                                Submit
-                            </Button>
-                        </AnimateButton>
-                    </Box> */}
                 </form>
             </MainCard>
 

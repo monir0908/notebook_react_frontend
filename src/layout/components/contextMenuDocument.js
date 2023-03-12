@@ -35,16 +35,33 @@ const ContextMenuDocument = (props) => {
     //     setUnpublishShow(true);
     // }
 
+    // // active menu item on page load
+    // useEffect(() => {
+    //     console.log(props.data);
+    //     if (props.data.doc_status) {
+    //         if (props.data.doc_status == 1) {
+    //             setPublishShow(true);
+    //             setUnpublishShow(false);
+    //         }
+    //         if (props.data.doc_status == 2) {
+    //             setPublishShow(false);
+    //             setUnpublishShow(true);
+    //         }
+    //     }
+    //     // eslint-disable-next-line
+    // }, []);
+
     return (
         <>
             <Menu
                 anchorReference="anchorPosition"
-                anchorPosition={{ top: props.coordinates[1], left: props.coordinates[0] + 10 }}
+                anchorPosition={props.anchorPosition}
+                // anchorPosition={{ top: props.coordinates[1], left: props.coordinates[0] + 10 }}
                 anchorOrigin={{
                     vertical: (props.coordinates[1] - (margin + padding)) / side <= 0.5 ? 'top' : 'bottom',
                     horizontal: (props.coordinates[0] - (margin + padding)) / side <= 0.5 ? 'left' : 'right'
                 }}
-                id="account-menu"
+                id="menu-document"
                 open={props.open}
                 onClose={props.handleClose}
                 onClick={props.handleClose}

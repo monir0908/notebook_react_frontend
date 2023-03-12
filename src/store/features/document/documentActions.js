@@ -34,13 +34,15 @@ export const documentUpdate = createAsyncThunk('document/update', async ({ url, 
     try {
         const res = await API.patch(url, data);
         if (res.data.success) {
-            if (extraData.status == 'delete') {
-                //navigate('/collection/'+extraData.col_key);
-                navigate('/home');
-            } else if (extraData.status == 'restore') {
-                navigate(extraData.doc_url);
-            } else if (extraData.status == 'publish') {
-                navigate(extraData.doc_url);
+            if (extraData) {
+                if (extraData.status == 'delete') {
+                    //navigate('/collection/'+extraData.col_key);
+                    navigate('/home');
+                } else if (extraData.status == 'restore') {
+                    navigate(extraData.doc_url);
+                } else if (extraData.status == 'publish') {
+                    navigate(extraData.doc_url);
+                }
             }
             toast.success(res.data.message, { autoClose: 3000 });
         } else {

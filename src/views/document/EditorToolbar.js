@@ -1,6 +1,13 @@
 import React from 'react';
 import { Quill } from 'react-quill';
+import QuillCursors from 'quill-cursors';
+import { ImageDrop } from 'quill-image-drop-module';
+import ImageResize from 'quill-image-resize-module-react';
+import BlotFormatter from 'quill-blot-formatter';
 import QuillBetterTable from 'quill-better-table';
+
+// import Size from 'quill/attributors/style/size';
+
 // Custom Undo button icon component for Quill editor. You can import it directly
 // from 'quill/assets/icons/undo.svg' but I found that a number of loaders do not
 // handle them correctly
@@ -75,12 +82,35 @@ class LinkTooltip {
         }
     }
 }
+Quill.register('modules/cursors', QuillCursors);
 Quill.register('modules/linkTooltip', LinkTooltip);
+Quill.register('modules/imageDrop', ImageDrop);
+Quill.register('modules/imageResize', ImageResize);
+// Quill.register('modules/blotFormatter', BlotFormatter);
+// Quill.register(
+//     {
+//         'modules/better-table': QuillBetterTable
+//     },
+//     true
+// );
 
 // Modules object for setting up the Quill editor
 export const modules = (props) => ({
-    cursors: true,
+    cursors: {
+        transformOnTextChange: true
+    },
     imageDrop: true,
+    imageResize: {
+        parchment: Quill.import('parchment'),
+        handleStyles: {
+            displaySize: true,
+            backgroundColor: 'black',
+            border: 'none',
+            color: 'white'
+        },
+        modules: ['Resize', 'DisplaySize', 'Toolbar']
+    },
+    // blotFormatter: {},
     // table: true, // disable table module
     // 'better-table': {
     //     operationMenu: {
@@ -96,6 +126,16 @@ export const modules = (props) => ({
     // },
     toolbar: {
         container: '#' + props
+        // handlers: {
+        //     image: function (value) {
+        //         consle.log(value);
+        //         if (value) {
+        //             document.querySelector('#imageUpload').click();
+        //         } else {
+        //             this.quill.format('image', false);
+        //         }
+        //     }
+        // }
         // handlers: {
         //     undo: undoChange,
         //     redo: redoChange

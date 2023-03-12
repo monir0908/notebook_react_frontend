@@ -119,7 +119,6 @@ const Collection = () => {
         }
 
         const objString = 'document/list?' + p.toString();
-        console.log(objString);
         dispatch(documentList({ url: objString }));
     };
 
@@ -261,7 +260,7 @@ const Collection = () => {
                                     color="info"
                                     startIcon={<IconPlus />}
                                 >
-                                    <Typography stroke={1.5}>Create a document</Typography>
+                                    Create a document
                                 </Button>
                             </Typography>
                         </Grid>

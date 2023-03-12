@@ -36,17 +36,31 @@ const NavItem = ({ item, level }) => {
     const margin = 100;
     const [coordinatesItem, setCoordinatesItem] = useState([0, 0]);
     const [anchorElItem, setAnchorElItem] = useState(null);
+    const [menuPosition, setMenuPosition] = useState(null);
     const openContextMenuItem = Boolean(anchorElItem);
     const handleContextMenuClick = (event) => {
+        //console.log(event);
+
+        // if (menuPosition) {
+        //     return;
+        // }
+
+        setMenuPosition({
+            top: event.pageY,
+            left: event.pageX
+        });
+
         if (
             event.pageX >= padding + margin &&
             event.pageX <= side + padding + margin &&
             event.pageY >= padding + margin &&
             event.pageY <= side + padding + margin
         ) {
+            console.log('c');
             setCoordinatesItem([event.pageX, event.pageY]);
         }
         setAnchorElItem(event.currentTarget);
+        // event.preventDefault();
     };
     const handleContextMenuItemClose = () => {
         setAnchorElItem(null);
@@ -142,25 +156,26 @@ const NavItem = ({ item, level }) => {
     };
 
     const handleDocPublish = (values) => {
-        dispatch(
-            documentUpdate({
-                url: 'document/update-status/' + values.id,
-                navigate,
-                data: {
-                    doc_status: 2
-                },
-                extraData: {
-                    status: 'publish',
-                    col_key: values.col_key,
-                    doc_url: values.url
-                }
-            })
-        );
+        console.log(values);
+        // dispatch(
+        //     documentUpdate({
+        //         url: 'document/update-status/' + values.id,
+        //         navigate,
+        //         data: {
+        //             doc_status: 2
+        //         },
+        //         extraData: {
+        //             status: 'publish',
+        //             col_key: values.col_key,
+        //             doc_url: values.url
+        //         }
+        //     })
+        // );
 
-        setTimeout(() => {
-            const url = `collection/list?creator_id=${userInfo.id}&page=1&page_size=100`;
-            dispatch(collectionList({ url }));
-        }, 500);
+        // setTimeout(() => {
+        //     const url = `collection/list?creator_id=${userInfo.id}&page=1&page_size=100`;
+        //     dispatch(collectionList({ url }));
+        // }, 500);
     };
 
     return (
@@ -219,12 +234,13 @@ const NavItem = ({ item, level }) => {
             <ContextMenuDocument
                 coordinates={coordinatesItem}
                 anchorEl={anchorElItem}
+                anchorPosition={menuPosition}
                 open={openContextMenuItem}
-                // data={item}
+                data={item}
                 handleClose={handleContextMenuItemClose}
                 handleDeleteClick={handleClickOpenConfirmation}
                 handleShareClick={handleClickOpenShareDialog}
-                // handlePublishClick={() => handleDocPublish(item)}
+                handlePublishClick={(values) => handleDocPublish(values)}
             />
 
             <ConfirmationDialog

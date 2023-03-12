@@ -68,7 +68,6 @@ const Drafts = () => {
         }
 
         const objString = 'document/list?' + new URLSearchParams(url).toString();
-        console.log(objString);
 
         dispatch(documentList({ url: objString }));
     };
