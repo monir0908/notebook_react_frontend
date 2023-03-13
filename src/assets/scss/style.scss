@@ -1,12 +1,13 @@
 // color variants
 @import 'themes-vars.module.scss';
 
+
 // third-party
 @import '~react-perfect-scrollbar/dist/css/styles.css';
 
 @import 'TextEditor.css';
 @import 'custom.css';
-
+@import 'authentication.scss';
 // ==============================|| LIGHT BOX ||============================== //
 .fullscreen .react-images__blanket {
     z-index: 1200;

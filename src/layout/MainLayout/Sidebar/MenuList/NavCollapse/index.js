@@ -20,6 +20,7 @@ import { documentCreate } from 'store/features/document/documentActions';
 import { collectionList, collectionUpdate, collectionDelete } from 'store/features/collection/collectionActions';
 import CollectionDialog from 'layout/components/collectionDialog';
 import ConfirmationDialog from 'layout/components/confirmationDialog';
+import { updateDoc, updateDocId, resetStateHeader } from 'store/features/header/headerSlice';
 // ==============================|| SIDEBAR MENU LIST COLLAPSE ITEMS ||============================== //
 
 const NavCollapse = ({ menu, level }) => {
@@ -72,6 +73,7 @@ const NavCollapse = ({ menu, level }) => {
     const handleClick = () => {
         setOpen(!open);
         setSelected(!selected ? menu.id : null);
+        //dispatch(resetStateHeader());
     };
 
     const { pathname } = useLocation();
@@ -137,6 +139,7 @@ const NavCollapse = ({ menu, level }) => {
     }, [pathname, menu.children]);
 
     const itemCollectionClicked = (item) => {
+        dispatch(resetStateHeader());
         navigate('/collection/' + item.id);
     };
 

@@ -57,7 +57,15 @@ import ConfirmationDialog from 'layout/components/confirmationDialog';
 import { documentUpdate } from 'store/features/document/documentActions';
 import { collectionList } from 'store/features/collection/collectionActions';
 import ShareDialog from 'layout/components/shareDialog';
-
+import {
+    updateDoc,
+    updateDocId,
+    updateShareButton,
+    updatePublishButton,
+    updateUnpublishButton,
+    updateDeleteButton,
+    resetStateHeader
+} from 'store/features/header/headerSlice';
 // ==============================|| PAGE ||============================== //
 
 const Document = () => {
@@ -80,24 +88,22 @@ const Document = () => {
 
         let doc = res.data.data;
         setDocObj(doc);
+        dispatch(updateDocId({ doc_id: doc.doc_key }));
+        dispatch(updateDoc({ doc: doc }));
+        switch (doc.doc_status) {
+            case 1:
+                dispatch(updatePublishButton({ isPublishShow: true }));
+                dispatch(updateUnpublishButton({ isUnpublishShow: false }));
+                dispatch(updateShareButton({ isShareShow: false }));
+                break;
+            case 2:
+                dispatch(updatePublishButton({ isPublishShow: false }));
+                dispatch(updateUnpublishButton({ isUnpublishShow: true }));
+                dispatch(updateShareButton({ isShareShow: true }));
+                break;
+        }
         setDocTitle(doc.doc_title);
         setDocBody(doc.doc_body);
-
-        if (doc.doc_status == 1) {
-            setPublishShow(true);
-            setUnpublishShow(false);
-        }
-        if (doc.doc_status == 2) {
-            setPublishShow(false);
-            setUnpublishShow(true);
-        }
-        if (doc.doc_status == 3 || doc.doc_status == 4) {
-            setDeleteShow(false);
-            setPublishShow(false);
-            setUnpublishShow(false);
-        } else {
-            setDeleteShow(true);
-        }
     };
 
     const onTitleChange = (e) => {
@@ -180,7 +186,10 @@ const Document = () => {
             //     quillText = JSON.parse(quillObj).quill;
             // }
             // console.log(quillText);
-            if (ytext.toJSON().length > 0) isQuillText = true;
+            // console.log(ytext.toJSON().length);
+            if (ytext.toJSON().length > 0) {
+                isQuillText = true;
+            }
             binding = new QuillBinding(ytext, quillRef, provider.awareness);
         }, 500);
 
@@ -284,6 +293,7 @@ const Document = () => {
             documentUpdate({
                 url: 'document/update-status/' + docObj.doc_key,
                 navigate,
+                dispatch,
                 data: {
                     doc_status: 3
                 },
@@ -306,6 +316,7 @@ const Document = () => {
             documentUpdate({
                 url: 'document/update-status/' + docObj.doc_key,
                 navigate,
+                dispatch,
                 data: {
                     doc_status: status
                 },
@@ -316,14 +327,14 @@ const Document = () => {
             })
         );
 
-        if (status == 1) {
-            setPublishShow(true);
-            setUnpublishShow(false);
-        }
-        if (status == 2) {
-            setPublishShow(false);
-            setUnpublishShow(true);
-        }
+        // if (status == 1) {
+        //     setPublishShow(true);
+        //     setUnpublishShow(false);
+        // }
+        // if (status == 2) {
+        //     setPublishShow(false);
+        //     setUnpublishShow(true);
+        // }
 
         setTimeout(() => {
             const url = `collection/list?creator_id=${userInfo.id}&page=1&page_size=100`;
@@ -334,7 +345,7 @@ const Document = () => {
     return (
         <>
             <MainCard title="">
-                <Box sx={{ m: 1 }} style={{ float: 'right' }}>
+                {/* <Box sx={{ m: 1 }} style={{ float: 'right' }}>
                     <Stack direction="row" spacing={1}>
                         {deleteShow && (
                             <Button onClick={handleClickOpenShareDialog} variant="outlined" size="small">
@@ -367,7 +378,7 @@ const Document = () => {
                             </>
                         )}
                     </Stack>
-                </Box>
+                </Box> */}
                 <form>
                     <TextField
                         inputProps={{ style: { fontSize: 40, fontWeight: 600 } }}

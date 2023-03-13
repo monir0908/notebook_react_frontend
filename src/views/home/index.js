@@ -30,7 +30,8 @@ const Home = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        const url = `document/list?creator_id=${userInfo.id}&date_range_str=week`;
+        //const url = `document/list?creator_id=${userInfo.id}&date_range_str=week`;
+        const url = `document/list?creator_id=${userInfo.id}&doc_status=1&doc_status=2&order_by=-updated_at`;
         dispatch(resetState());
         dispatch(documentList({ url }));
     }, []);

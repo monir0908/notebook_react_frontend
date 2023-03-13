@@ -22,6 +22,16 @@ import ConfirmationDialog from 'layout/components/confirmationDialog';
 import ShareDialog from 'layout/components/shareDialog';
 // ==============================|| SIDEBAR MENU LIST ITEMS ||============================== //
 
+import {
+    updateDoc,
+    updateDocId,
+    updateShareButton,
+    updatePublishButton,
+    updateUnpublishButton,
+    updateDeleteButton,
+    resetStateHeader
+} from 'store/features/header/headerSlice';
+
 const NavItem = ({ item, level }) => {
     const theme = useTheme();
     const dispatch = useDispatch();
@@ -56,7 +66,6 @@ const NavItem = ({ item, level }) => {
             event.pageY >= padding + margin &&
             event.pageY <= side + padding + margin
         ) {
-            console.log('c');
             setCoordinatesItem([event.pageX, event.pageY]);
         }
         setAnchorElItem(event.currentTarget);
@@ -95,6 +104,12 @@ const NavItem = ({ item, level }) => {
     const itemHandler = (id) => {
         dispatch({ type: MENU_OPEN, id });
         if (matchesSM) dispatch({ type: SET_MENU, opened: false });
+        if (item.dynamic) {
+            dispatch(updateDoc({ doc: item }));
+            dispatch(updateDocId({ doc_id: item.id }));
+        } else {
+            dispatch(resetStateHeader());
+        }
     };
 
     // active menu item on page load
@@ -137,6 +152,7 @@ const NavItem = ({ item, level }) => {
             documentUpdate({
                 url: 'document/update-status/' + values.id,
                 navigate,
+                dispatch,
                 data: {
                     doc_status: 3
                 },
@@ -156,26 +172,48 @@ const NavItem = ({ item, level }) => {
     };
 
     const handleDocPublish = (values) => {
-        console.log(values);
-        // dispatch(
-        //     documentUpdate({
-        //         url: 'document/update-status/' + values.id,
-        //         navigate,
-        //         data: {
-        //             doc_status: 2
-        //         },
-        //         extraData: {
-        //             status: 'publish',
-        //             col_key: values.col_key,
-        //             doc_url: values.url
-        //         }
-        //     })
-        // );
+        dispatch(updatePublishButton({ isPublishShow: false }));
+        dispatch(updateUnpublishButton({ isUnpublishShow: true }));
+        dispatch(updateShareButton({ isShareShow: true }));
+        dispatch(
+            documentUpdate({
+                url: 'document/update-status/' + values.id,
+                navigate,
+                dispatch,
+                data: {
+                    doc_status: 2
+                },
+                extraData: {}
+            })
+        );
 
-        // setTimeout(() => {
-        //     const url = `collection/list?creator_id=${userInfo.id}&page=1&page_size=100`;
-        //     dispatch(collectionList({ url }));
-        // }, 500);
+        setTimeout(() => {
+            const url = `collection/list?creator_id=${userInfo.id}&page=1&page_size=100`;
+            dispatch(collectionList({ url }));
+        }, 500);
+    };
+
+    const handleDocUnpublish = (values) => {
+        dispatch(updatePublishButton({ isPublishShow: true }));
+        dispatch(updateUnpublishButton({ isUnpublishShow: false }));
+        dispatch(updateShareButton({ isShareShow: false }));
+
+        dispatch(
+            documentUpdate({
+                url: 'document/update-status/' + values.id,
+                navigate,
+                dispatch,
+                data: {
+                    doc_status: 1
+                },
+                extraData: {}
+            })
+        );
+
+        setTimeout(() => {
+            const url = `collection/list?creator_id=${userInfo.id}&page=1&page_size=100`;
+            dispatch(collectionList({ url }));
+        }, 500);
     };
 
     return (
@@ -241,6 +279,7 @@ const NavItem = ({ item, level }) => {
                 handleDeleteClick={handleClickOpenConfirmation}
                 handleShareClick={handleClickOpenShareDialog}
                 handlePublishClick={(values) => handleDocPublish(values)}
+                handleDocUnpublish={(values) => handleDocUnpublish(values)}
             />
 
             <ConfirmationDialog

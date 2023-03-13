@@ -116,6 +116,7 @@ const MainRoutes = {
             path: 'collection/:collectionKey',
             element: <Collection />
         }
+        
     ]
 };
 

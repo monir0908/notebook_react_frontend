@@ -114,7 +114,7 @@ const Collection = () => {
                 p.append('collection_id', collection_id);
                 p.append('doc_status', 1);
                 p.append('doc_status', 2);
-                p.append('order_by', '-doc_title');
+                p.append('order_by', 'doc_title');
                 break;
         }
 

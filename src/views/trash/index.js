@@ -99,6 +99,7 @@ const Trash = () => {
             documentUpdate({
                 url: 'document/update-status/' + values.doc_key,
                 navigate,
+                dispatch,
                 data: {
                     doc_status: 1
                 },

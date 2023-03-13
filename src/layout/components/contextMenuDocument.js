@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import Box from '@mui/material/Box';
 import Avatar from '@mui/material/Avatar';
 import Menu from '@mui/material/Menu';
@@ -19,37 +21,59 @@ import ShareIcon from '@mui/icons-material/Share';
 import PublishIcon from '@mui/icons-material/Publish';
 import UnpublishedIcon from '@mui/icons-material/Unpublished';
 
+import {
+    updateDoc,
+    updateDocId,
+    updateShareButton,
+    updatePublishButton,
+    updateUnpublishButton,
+    updateDeleteButton,
+    resetStateHeader
+} from 'store/features/header/headerSlice';
+
 const ContextMenuDocument = (props) => {
     const side = 300;
     const padding = 80;
     const margin = 100;
-    const [publishShow, setPublishShow] = useState(false);
-    const [unpublishShow, setUnpublishShow] = useState(false);
+    const dispatch = useDispatch();
+    const { doc_id, doc, share_show, publish_show, unpublish_show, delete_show } = useSelector((state) => state.header);
 
-    // if (props.data.doc_status == 1) {
-    //     setPublishShow(true);
-    //     setUnpublishShow(false);
-    // }
-    // if (props.data.doc_status == 2) {
-    //     setPublishShow(false);
-    //     setUnpublishShow(true);
+    // if (doc.doc_status == 1) {
+    //     dispatch(updatePublishButton({ isPublishShow: true }));
+    //     dispatch(updateUnpublishButton({ isUnpublishShow: false }));
+    //     dispatch(updateDeleteButton({ isDeleteShow: true }));
+    //     dispatch(updateShareButton({ isDeleteShow: false }));
+    // } else if (doc.doc_status == 2) {
+    //     dispatch(updatePublishButton({ isPublishShow: false }));
+    //     dispatch(updateUnpublishButton({ isUnpublishShow: true }));
+    //     dispatch(updateShareButton({ isShareShow: true }));
+    //     dispatch(updateDeleteButton({ isDeleteShow: true }));
+    // } else if (doc.doc_status == 3 || doc.doc_status == 4) {
+    //     dispatch(updatePublishButton({ isPublishShow: false }));
+    //     dispatch(updateShareButton({ isShareShow: false }));
+    //     dispatch(updateUnpublishButton({ isDeleteShow: false }));
+    //     dispatch(updateDeleteButton({ isDeleteShow: false }));
     // }
 
     // // active menu item on page load
-    // useEffect(() => {
-    //     console.log(props.data);
-    //     if (props.data.doc_status) {
-    //         if (props.data.doc_status == 1) {
-    //             setPublishShow(true);
-    //             setUnpublishShow(false);
-    //         }
-    //         if (props.data.doc_status == 2) {
-    //             setPublishShow(false);
-    //             setUnpublishShow(true);
-    //         }
-    //     }
-    //     // eslint-disable-next-line
-    // }, []);
+    useEffect(() => {
+        if (doc.doc_status == 1) {
+            dispatch(updatePublishButton({ isPublishShow: true }));
+            dispatch(updateUnpublishButton({ isUnpublishShow: false }));
+            dispatch(updateDeleteButton({ isDeleteShow: true }));
+            dispatch(updateShareButton({ isDeleteShow: false }));
+        } else if (doc.doc_status == 2) {
+            dispatch(updatePublishButton({ isPublishShow: false }));
+            dispatch(updateUnpublishButton({ isUnpublishShow: true }));
+            dispatch(updateShareButton({ isShareShow: true }));
+            dispatch(updateDeleteButton({ isDeleteShow: true }));
+        } else if (doc.doc_status == 3 || doc.doc_status == 4) {
+            dispatch(updatePublishButton({ isPublishShow: false }));
+            dispatch(updateShareButton({ isShareShow: false }));
+            dispatch(updateUnpublishButton({ isDeleteShow: false }));
+            dispatch(updateDeleteButton({ isDeleteShow: false }));
+        }
+    }, [doc]);
 
     return (
         <>
@@ -96,36 +120,39 @@ const ContextMenuDocument = (props) => {
                     horizontal: 'right'
                 }}
             >
-                <MenuItem onClick={props.handleShareClick}>
-                    <ListItemIcon>
-                        <ShareIcon fontSize="1rem" />
-                    </ListItemIcon>
-                    Share
-                </MenuItem>
-                {/* {publishShow && (
-                    <MenuItem onClick={props.handlePublishClick}>
+                {share_show && (
+                    <MenuItem onClick={props.handleShareClick}>
+                        <ListItemIcon>
+                            <ShareIcon fontSize="1rem" />
+                        </ListItemIcon>
+                        Share
+                    </MenuItem>
+                )}
+                {publish_show && (
+                    <MenuItem onClick={() => props.handlePublishClick(doc)}>
                         <ListItemIcon>
                             <PublishIcon fontSize="small" />
                         </ListItemIcon>
                         Publish
                     </MenuItem>
                 )}
-                {unpublishShow && (
-                    <MenuItem onClick={props.handlePublishClick}>
+                {unpublish_show && (
+                    <MenuItem onClick={() => props.handleDocUnpublish(doc)}>
                         <ListItemIcon>
                             <UnpublishedIcon fontSize="small" />
                         </ListItemIcon>
                         Unpublish
                     </MenuItem>
-                )} */}
+                )}
                 <Divider />
-
-                <MenuItem onClick={props.handleDeleteClick}>
-                    <ListItemIcon>
-                        <DeleteIcon fontSize="small" />
-                    </ListItemIcon>
-                    Delete
-                </MenuItem>
+                {delete_show && (
+                    <MenuItem onClick={props.handleDeleteClick}>
+                        <ListItemIcon>
+                            <DeleteIcon fontSize="small" />
+                        </ListItemIcon>
+                        Delete
+                    </MenuItem>
+                )}
             </Menu>
         </>
     );
