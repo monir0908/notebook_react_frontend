@@ -133,7 +133,7 @@ const Document = () => {
     };
 
     const onBodyBlur = (value) => {
-        console.log(value);
+        bodyText = value;
         // dispatch(
         //     documentUpdate({
         //         url: 'document/update-doc/' + docObj.doc_key,
@@ -294,10 +294,10 @@ const Document = () => {
 
     useEffect(() => {
         return () => {
-            if (docBody || docTitle) {
-                console.log('saved');
-                handleSubmit();
-            }
+            console.log('saved');
+            // API.patch(`document/update-doc/${documentKey}`, {
+            //     doc_body: bodyText
+            // });
         };
     }, []);
 
@@ -305,7 +305,7 @@ const Document = () => {
         try {
             const res = await API.patch(`document/update-doc/${documentKey}`, {
                 doc_title: docTitle,
-                doc_body: docBody
+                doc_body: docBody ?? bodyText
             });
             if (res.data.state == 'success') {
                 setProgress(100);
