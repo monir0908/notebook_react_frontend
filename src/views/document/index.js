@@ -93,6 +93,7 @@ const Document = () => {
             setDocObj(doc);
             dispatch(updateDocId({ doc_id: doc.doc_key }));
             dispatch(updateDoc({ doc: doc }));
+
             switch (doc.doc_status) {
                 case 1:
                     dispatch(updatePublishButton({ isPublishShow: true }));
@@ -105,6 +106,7 @@ const Document = () => {
                     dispatch(updateShareButton({ isShareShow: true }));
                     break;
             }
+
             setDocTitle(doc.doc_title);
             setDocBody(doc.doc_body);
             bodyText = doc.doc_body;
@@ -295,6 +297,10 @@ const Document = () => {
     useEffect(() => {
         return () => {
             console.log('saved');
+            console.log(docBody);
+            console.log(bodyText);
+            bodyText = null;
+            console.log(bodyText);
             // API.patch(`document/update-doc/${documentKey}`, {
             //     doc_body: bodyText
             // });

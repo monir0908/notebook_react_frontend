@@ -164,13 +164,7 @@ const ButtonSection = () => {
 
     useEffect(() => {
         // getDocumentDetails();
-        if (userInfo.id == doc.doc_creator_id) {
-            setShow(true);
-        } else {
-            setShow(false);
-        }
-        //userInfo.id == doc.doc_creator_id
-
+        // if (userInfo.id == doc.doc_creator_id) {
         if (doc.doc_status == 1) {
             dispatch(updatePublishButton({ isPublishShow: true }));
             dispatch(updateUnpublishButton({ isUnpublishShow: false }));
@@ -181,12 +175,13 @@ const ButtonSection = () => {
             dispatch(updateUnpublishButton({ isUnpublishShow: true }));
             dispatch(updateShareButton({ isShareShow: true }));
             dispatch(updateDeleteButton({ isDeleteShow: true }));
-        } else if (doc.doc_status == 3 || doc.doc_status == 4) {
-            dispatch(updatePublishButton({ isPublishShow: false }));
-            dispatch(updateShareButton({ isShareShow: false }));
-            dispatch(updateUnpublishButton({ isDeleteShow: false }));
-            dispatch(updateDeleteButton({ isDeleteShow: false }));
         }
+        // } else {
+        //     dispatch(updatePublishButton({ isPublishShow: false }));
+        //     dispatch(updateShareButton({ isShareShow: false }));
+        //     dispatch(updateUnpublishButton({ isDeleteShow: false }));
+        //     dispatch(updateDeleteButton({ isDeleteShow: false }));
+        // }
 
         return () => {
             //dispatch(resetStateHeader());
@@ -197,39 +192,38 @@ const ButtonSection = () => {
     return (
         <>
             {/* <Box sx={{ display: { xs: 'block', md: 'none' } }}></Box> */}
-            {show && (
-                <Box sx={{ display: { xs: 'block', md: 'block' } }}>
-                    <Stack direction="row" spacing={1} sx={{ mr: 4 }}>
-                        {share_show && (
-                            <Button onClick={handleClickOpenShareDialog} variant="outlined" size="small">
-                                Share
-                            </Button>
-                        )}
 
-                        {publish_show && (
-                            <Button onClick={() => handleDocPublish(2)} variant="outlined" size="small">
-                                Publish
-                            </Button>
-                        )}
-                        {unpublish_show && (
-                            <Button onClick={() => handleDocPublish(1)} variant="outlined" size="small">
-                                Unpublish
-                            </Button>
-                        )}
-                        {delete_show && (
-                            <Button
-                                onClick={handleClickOpenConfirmation}
-                                variant="outlined"
-                                size="small"
-                                color="error"
-                                startIcon={<DeleteIcon />}
-                            >
-                                Delete
-                            </Button>
-                        )}
-                    </Stack>
-                </Box>
-            )}
+            <Box sx={{ display: { xs: 'block', md: 'block' } }}>
+                <Stack direction="row" spacing={1} sx={{ mr: 4 }}>
+                    {share_show && (
+                        <Button onClick={handleClickOpenShareDialog} variant="outlined" size="small">
+                            Share
+                        </Button>
+                    )}
+
+                    {publish_show && (
+                        <Button onClick={() => handleDocPublish(2)} variant="outlined" size="small">
+                            Publish
+                        </Button>
+                    )}
+                    {unpublish_show && (
+                        <Button onClick={() => handleDocPublish(1)} variant="outlined" size="small">
+                            Unpublish
+                        </Button>
+                    )}
+                    {delete_show && (
+                        <Button
+                            onClick={handleClickOpenConfirmation}
+                            variant="outlined"
+                            size="small"
+                            color="error"
+                            startIcon={<DeleteIcon />}
+                        >
+                            Delete
+                        </Button>
+                    )}
+                </Stack>
+            </Box>
 
             <ConfirmationDialog
                 title="Delete Decument"

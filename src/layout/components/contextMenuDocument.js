@@ -36,6 +36,7 @@ const ContextMenuDocument = (props) => {
     const padding = 80;
     const margin = 100;
     const dispatch = useDispatch();
+    const userInfo = useSelector((state) => state.auth.userInfo);
     const { doc_id, doc, share_show, publish_show, unpublish_show, delete_show } = useSelector((state) => state.header);
 
     // if (doc.doc_status == 1) {
@@ -57,6 +58,7 @@ const ContextMenuDocument = (props) => {
 
     // // active menu item on page load
     useEffect(() => {
+        // if (userInfo.id == doc.doc_creator_id) {
         if (doc.doc_status == 1) {
             dispatch(updatePublishButton({ isPublishShow: true }));
             dispatch(updateUnpublishButton({ isUnpublishShow: false }));
@@ -67,12 +69,13 @@ const ContextMenuDocument = (props) => {
             dispatch(updateUnpublishButton({ isUnpublishShow: true }));
             dispatch(updateShareButton({ isShareShow: true }));
             dispatch(updateDeleteButton({ isDeleteShow: true }));
-        } else if (doc.doc_status == 3 || doc.doc_status == 4) {
-            dispatch(updatePublishButton({ isPublishShow: false }));
-            dispatch(updateShareButton({ isShareShow: false }));
-            dispatch(updateUnpublishButton({ isDeleteShow: false }));
-            dispatch(updateDeleteButton({ isDeleteShow: false }));
         }
+        // } else {
+        //     dispatch(updatePublishButton({ isPublishShow: false }));
+        //     dispatch(updateShareButton({ isShareShow: false }));
+        //     dispatch(updateUnpublishButton({ isDeleteShow: false }));
+        //     dispatch(updateDeleteButton({ isDeleteShow: false }));
+        // }
     }, [doc]);
 
     return (
