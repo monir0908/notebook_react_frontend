@@ -132,6 +132,23 @@ const Document = () => {
         //  dispatch(updateDocumentTitle({ document_key: documentKey, doc_title: e.target.value }));
     };
 
+    const onBodyBlur = (value) => {
+        console.log(value);
+        // dispatch(
+        //     documentUpdate({
+        //         url: 'document/update-doc/' + docObj.doc_key,
+        //         navigate,
+        //         data: {
+        //             doc_title: e.target.value
+        //         },
+        //         extraData: {}
+        //     })
+        // );
+
+        // setDocTitle(e.target.value);
+        //  dispatch(updateDocumentTitle({ document_key: documentKey, doc_title: e.target.value }));
+    };
+
     const onBodyChange = (value) => {
         setDocBody(value);
         bodyText = value;
@@ -206,9 +223,12 @@ const Document = () => {
                     setIsQuillText(true);
                     new QuillBinding(ytext, quillRef, provider.awareness);
                 } else {
-                    ytext.insert(0, bodyText);
-                    const state = Y.encodeStateAsUpdateV2(ytext.ydoc);
-                    Y.applyUpdate(ydoc, state);
+                    if (bodyText) {
+                        ytext.insert(0, bodyText);
+                        const state = Y.encodeStateAsUpdateV2(ytext.ydoc);
+                        Y.applyUpdate(ydoc, state);
+                    }
+
                     new QuillBinding(ytext, quillRef, provider.awareness);
                     setIsQuillText(false);
                 }
@@ -453,6 +473,9 @@ const Document = () => {
                                 bounds=".editor-container"
                                 theme="bubble"
                                 onChange={onBodyChange}
+                                onBlur={(range, source, quill) => {
+                                    onBodyBlur(quill.getHTML());
+                                }}
                                 placeholder={'Write something here...'}
                                 formats={formats}
                                 modules={modules('t1')}
@@ -467,6 +490,9 @@ const Document = () => {
                                 theme="bubble"
                                 value={docBody}
                                 onChange={onBodyChange}
+                                onBlur={(range, source, quill) => {
+                                    onBodyBlur(quill.getHTML());
+                                }}
                                 placeholder={'Write something here...'}
                                 formats={formats}
                                 modules={modules('t1')}
