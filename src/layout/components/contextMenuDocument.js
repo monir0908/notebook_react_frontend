@@ -39,44 +39,27 @@ const ContextMenuDocument = (props) => {
     const userInfo = useSelector((state) => state.auth.userInfo);
     const { doc_id, doc, share_show, publish_show, unpublish_show, delete_show } = useSelector((state) => state.header);
 
-    // if (doc.doc_status == 1) {
-    //     dispatch(updatePublishButton({ isPublishShow: true }));
-    //     dispatch(updateUnpublishButton({ isUnpublishShow: false }));
-    //     dispatch(updateDeleteButton({ isDeleteShow: true }));
-    //     dispatch(updateShareButton({ isDeleteShow: false }));
-    // } else if (doc.doc_status == 2) {
-    //     dispatch(updatePublishButton({ isPublishShow: false }));
-    //     dispatch(updateUnpublishButton({ isUnpublishShow: true }));
-    //     dispatch(updateShareButton({ isShareShow: true }));
-    //     dispatch(updateDeleteButton({ isDeleteShow: true }));
-    // } else if (doc.doc_status == 3 || doc.doc_status == 4) {
-    //     dispatch(updatePublishButton({ isPublishShow: false }));
-    //     dispatch(updateShareButton({ isShareShow: false }));
-    //     dispatch(updateUnpublishButton({ isDeleteShow: false }));
-    //     dispatch(updateDeleteButton({ isDeleteShow: false }));
-    // }
-
     // // active menu item on page load
-    useEffect(() => {
-        // if (userInfo.id == doc.doc_creator_id) {
-        if (doc.doc_status == 1) {
-            dispatch(updatePublishButton({ isPublishShow: true }));
-            dispatch(updateUnpublishButton({ isUnpublishShow: false }));
-            dispatch(updateDeleteButton({ isDeleteShow: true }));
-            dispatch(updateShareButton({ isShareShow: false }));
-        } else if (doc.doc_status == 2) {
-            dispatch(updatePublishButton({ isPublishShow: false }));
-            dispatch(updateUnpublishButton({ isUnpublishShow: true }));
-            dispatch(updateShareButton({ isShareShow: true }));
-            dispatch(updateDeleteButton({ isDeleteShow: true }));
-        }
-        // } else {
-        //     dispatch(updatePublishButton({ isPublishShow: false }));
-        //     dispatch(updateShareButton({ isShareShow: false }));
-        //     dispatch(updateUnpublishButton({ isDeleteShow: false }));
-        //     dispatch(updateDeleteButton({ isDeleteShow: false }));
-        // }
-    }, [doc]);
+    // useEffect(() => {
+    //     // if (userInfo.id == doc.doc_creator_id) {
+    //     // if (doc.doc_status == 1) {
+    //     //     dispatch(updatePublishButton({ isPublishShow: true }));
+    //     //     dispatch(updateUnpublishButton({ isUnpublishShow: false }));
+    //     //     dispatch(updateDeleteButton({ isDeleteShow: true }));
+    //     //     dispatch(updateShareButton({ isShareShow: false }));
+    //     // } else if (doc.doc_status == 2) {
+    //     //     dispatch(updatePublishButton({ isPublishShow: false }));
+    //     //     dispatch(updateUnpublishButton({ isUnpublishShow: true }));
+    //     //     dispatch(updateShareButton({ isShareShow: true }));
+    //     //     dispatch(updateDeleteButton({ isDeleteShow: true }));
+    //     // }
+    //     // } else {
+    //     //     dispatch(updatePublishButton({ isPublishShow: false }));
+    //     //     dispatch(updateShareButton({ isShareShow: false }));
+    //     //     dispatch(updateUnpublishButton({ isDeleteShow: false }));
+    //     //     dispatch(updateDeleteButton({ isDeleteShow: false }));
+    //     // }
+    // }, []);
 
     return (
         <>

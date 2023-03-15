@@ -98,6 +98,7 @@ const MenuList = () => {
             itemChildren.push({
                 id: child.doc_key,
                 doc_key: child.doc_key,
+                doc_creator_id: child.doc_creator_id,
                 col_key: element.collection_key,
                 pk: child.id,
                 title: child.doc_title,

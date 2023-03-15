@@ -45,6 +45,24 @@ export const documentList = createAsyncThunk('document/list', async ({ url }, { 
     }
 });
 
+export const documentUpdateOnEditorLeave = createAsyncThunk(
+    'document/update-on-editor-change',
+    async ({ url, navigate, dispatch, data, extraData }, { rejectWithValue }) => {
+        try {
+            const res = await API.patch(url, data);
+            return res.data;
+        } catch (error) {
+            toast.error(error.response.data.message, { autoClose: 3000 });
+            // return custom error message from API if any
+            if (error.response && error.response.data.message) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue(error.message);
+            }
+        }
+    }
+);
+
 export const documentUpdate = createAsyncThunk(
     'document/update',
     async ({ url, navigate, dispatch, data, extraData }, { rejectWithValue }) => {

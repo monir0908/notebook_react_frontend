@@ -5,6 +5,7 @@ export const resetStateHeader = createAction('Reset_all_header');
 const initialState = {
     doc_id: '',
     doc: {},
+    upload_show: true,
     share_show: false,
     publish_show: false,
     unpublish_show: false,
@@ -38,6 +39,10 @@ const headerSlice = createSlice({
         updateDeleteButton(state, action) {
             const { isDeleteShow } = action.payload;
             state.delete_show = isDeleteShow;
+        },
+        updateUploadButton(state, action) {
+            const { isUploadShow } = action.payload;
+            state.upload_show = isUploadShow;
         }
     },
     extraReducers: (builder) => {
@@ -45,6 +50,13 @@ const headerSlice = createSlice({
     }
 });
 
-export const { updateDocId, updateDoc, updateShareButton, updatePublishButton, updateUnpublishButton, updateDeleteButton } =
-    headerSlice.actions;
+export const {
+    updateDocId,
+    updateDoc,
+    updateShareButton,
+    updatePublishButton,
+    updateUnpublishButton,
+    updateDeleteButton,
+    updateUploadButton
+} = headerSlice.actions;
 export default headerSlice.reducer;
