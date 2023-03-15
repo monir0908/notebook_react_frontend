@@ -1,5 +1,5 @@
 import { createSlice, createAction } from '@reduxjs/toolkit';
-import { documentDetails, documentCreate, documentUpdate, documentList } from './documentActions';
+import { documentDetails, documentCreate, documentUpdate, documentList, sharedDocumentList } from './documentActions';
 
 export const resetState = createAction('Reset_all');
 const initialState = {
@@ -62,6 +62,19 @@ const documentSlice = createSlice({
                 state.error = null;
             }),
             builder.addCase(documentList.rejected, (state, { payload }) => {
+                state.loading = false;
+                state.error = payload;
+            }),
+            builder.addCase(sharedDocumentList.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            }),
+            builder.addCase(sharedDocumentList.fulfilled, (state, { payload }) => {
+                state.loading = false;
+                state.documentList = payload.data;
+                state.error = null;
+            }),
+            builder.addCase(sharedDocumentList.rejected, (state, { payload }) => {
                 state.loading = false;
                 state.error = payload;
             }),

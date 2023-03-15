@@ -12,11 +12,11 @@ import Sidebar from './Sidebar';
 import Customization from '../Customization';
 import navigation from 'menu-items';
 import { drawerWidth } from 'store/constant';
-import { SET_MENU } from 'store/actions';
+import { SET_MENU, SET_LOADER } from 'store/actions';
 
 // assets
 import { IconChevronRight } from '@tabler/icons';
-
+import BlockUI from 'ui-component/block-ui/block-ui';
 // styles
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(({ theme, open }) => ({
     ...theme.typography.mainContent,
@@ -68,40 +68,44 @@ const MainLayout = () => {
     const matchDownMd = useMediaQuery(theme.breakpoints.down('md'));
     // Handle left drawer
     const leftDrawerOpened = useSelector((state) => state.customization.opened);
+    const loader = useSelector((state) => state.customization.loader);
     const dispatch = useDispatch();
     const handleLeftDrawerToggle = () => {
         dispatch({ type: SET_MENU, opened: !leftDrawerOpened });
     };
 
     return (
-        <Box sx={{ display: 'flex' }}>
-            <CssBaseline />
-            {/* header */}
-            <AppBar
-                enableColorOnDark
-                position="fixed"
-                color="inherit"
-                elevation={0}
-                sx={{
-                    bgcolor: theme.palette.background.default,
-                    transition: leftDrawerOpened ? theme.transitions.create('width') : 'none'
-                }}
-            >
-                <Toolbar>
-                    <Header handleLeftDrawerToggle={handleLeftDrawerToggle} />
-                </Toolbar>
-            </AppBar>
+        <>
+            <Box sx={{ display: 'flex' }}>
+                <CssBaseline />
+                {/* header */}
+                <AppBar
+                    enableColorOnDark
+                    position="fixed"
+                    color="inherit"
+                    elevation={0}
+                    sx={{
+                        bgcolor: theme.palette.background.default,
+                        transition: leftDrawerOpened ? theme.transitions.create('width') : 'none'
+                    }}
+                >
+                    <Toolbar>
+                        <Header handleLeftDrawerToggle={handleLeftDrawerToggle} />
+                    </Toolbar>
+                </AppBar>
 
-            {/* drawer */}
-            <Sidebar drawerOpen={!matchDownMd ? leftDrawerOpened : !leftDrawerOpened} drawerToggle={handleLeftDrawerToggle} />
+                {/* drawer */}
+                <Sidebar drawerOpen={!matchDownMd ? leftDrawerOpened : !leftDrawerOpened} drawerToggle={handleLeftDrawerToggle} />
 
-            {/* main content */}
-            <Main theme={theme} open={leftDrawerOpened}>
-                <Breadcrumbs separator={IconChevronRight} navigation={navigation} icon title rightAlign />
-                <Outlet />
-            </Main>
-            {/* <Customization /> */}
-        </Box>
+                {/* main content */}
+                <Main theme={theme} open={leftDrawerOpened}>
+                    <Breadcrumbs separator={IconChevronRight} navigation={navigation} icon title rightAlign />
+                    <Outlet />
+                </Main>
+                {/* <Customization /> */}
+            </Box>
+            <BlockUI blocking={loader} />
+        </>
     );
 };
 

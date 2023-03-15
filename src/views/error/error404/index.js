@@ -18,6 +18,7 @@ import img2 from '../../../assets/images/pages/img-error-text.svg';
 import img3 from '../../../assets/images/pages/img-error-primary-widget.svg';
 import img4 from '../../../assets/images/pages/img-error-secondary-widget.svg';
 import HomeIcon from '@mui/icons-material/Home';
+import LoginIcon from '@mui/icons-material/Login';
 // assets
 
 // ================================|| AUTH3 - LOGIN ||================================ //
@@ -31,8 +32,8 @@ const Error404 = () => {
     //         navigate('/home');
     //     }
     // }, [navigate, userInfo]);
-    const homeClicked = () => {
-        navigate('/home');
+    const loginClicked = () => {
+        navigate('/login');
     };
     const theme = useTheme();
 
@@ -56,8 +57,8 @@ const Error404 = () => {
                                 <br />
                                 renamed, or might never exist!
                             </p>
-                            <Button onClick={homeClicked} variant="contained" startIcon={<HomeIcon />}>
-                                Home
+                            <Button onClick={loginClicked} variant="contained" startIcon={<LoginIcon />}>
+                                Login
                             </Button>
                         </div>
                     </CardContent>

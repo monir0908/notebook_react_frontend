@@ -87,7 +87,7 @@ const ButtonSection = () => {
     const handleClickOpenShareDialog = () => {
         const clientURL = process.env.REACT_APP_PUBLICSITE_BASEURL;
         setOpenShareDialog(true);
-        setShareLnk(clientURL + 'document/' + doc.doc_key);
+        setShareLnk(clientURL + 'document/' + doc_id);
     };
 
     const handleCloseShareDialog = () => {
@@ -107,7 +107,7 @@ const ButtonSection = () => {
     const handleConfirmationDialogOk = () => {
         dispatch(
             documentUpdate({
-                url: 'document/update-status/' + doc.doc_key,
+                url: 'document/update-status/' + doc_id,
                 navigate,
                 dispatch,
                 data: {
@@ -115,7 +115,7 @@ const ButtonSection = () => {
                 },
                 extraData: {
                     status: 'delete',
-                    doc_url: '/document/' + doc.doc_key
+                    doc_url: '/document/' + doc_id
                 }
             })
         );
@@ -142,7 +142,7 @@ const ButtonSection = () => {
         }
         dispatch(
             documentUpdate({
-                url: 'document/update-status/' + doc.doc_key,
+                url: 'document/update-status/' + doc_id,
                 navigate,
                 dispatch,
                 data: {
@@ -150,10 +150,15 @@ const ButtonSection = () => {
                 },
                 extraData: {
                     status: 'publish',
-                    doc_url: '/document/' + doc.doc_key
+                    doc_url: '/document/' + doc_id
                 }
             })
         );
+
+        setTimeout(() => {
+            const url = `collection/list?creator_id=${userInfo.id}&page=1&page_size=100`;
+            dispatch(collectionList({ url }));
+        }, 500);
     };
 
     useEffect(() => {
@@ -163,7 +168,7 @@ const ButtonSection = () => {
             dispatch(updatePublishButton({ isPublishShow: true }));
             dispatch(updateUnpublishButton({ isUnpublishShow: false }));
             dispatch(updateDeleteButton({ isDeleteShow: true }));
-            dispatch(updateShareButton({ isShareShow: true }));
+            dispatch(updateShareButton({ isShareShow: false }));
         } else if (doc.doc_status == 2) {
             dispatch(updatePublishButton({ isPublishShow: false }));
             dispatch(updateUnpublishButton({ isUnpublishShow: true }));

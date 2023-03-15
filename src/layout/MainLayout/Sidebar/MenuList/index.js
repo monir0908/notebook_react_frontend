@@ -10,9 +10,9 @@ import NavGroup from './NavGroup';
 //import menuItem from 'menu-items';
 
 // assets
-import { IconNotebook, IconHome, IconSearch, IconPencil, IconTrash } from '@tabler/icons';
+import { IconNotebook, IconHome, IconSearch, IconPencil, IconTrash, IconShare } from '@tabler/icons';
 // constant
-const icons = { IconNotebook, IconHome, IconSearch, IconPencil, IconTrash };
+const icons = { IconNotebook, IconHome, IconSearch, IconPencil, IconTrash, IconShare };
 
 // ==============================|| SIDEBAR MENU LIST ||============================== //
 
@@ -58,6 +58,15 @@ const MenuList = () => {
                 icon: icons.IconTrash,
                 breadcrumbs: true,
                 dynamic: false
+            },
+            {
+                id: 'shared-with-me-page',
+                title: 'Shared With Me',
+                type: 'item',
+                url: '/shared-with-me',
+                icon: icons.IconShare,
+                breadcrumbs: true,
+                dynamic: false
             }
         ]
     };
@@ -88,6 +97,7 @@ const MenuList = () => {
             // if (child.doc_status == 1 || child.doc_status == 2) {
             itemChildren.push({
                 id: child.doc_key,
+                doc_key: child.doc_key,
                 col_key: element.collection_key,
                 pk: child.id,
                 title: child.doc_title,

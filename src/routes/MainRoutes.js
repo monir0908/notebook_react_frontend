@@ -22,6 +22,7 @@ const Drafts = Loadable(lazy(() => import('views/drafts')));
 const Trash = Loadable(lazy(() => import('views/trash')));
 const Document = Loadable(lazy(() => import('views/document')));
 const Collection = Loadable(lazy(() => import('views/collection')));
+const SharedWithMe = Loadable(lazy(() => import('views/shared-with-me')));
 
 // ==============================|| MAIN ROUTING ||============================== //
 
@@ -109,6 +110,10 @@ const MainRoutes = {
             element: <Trash />
         },
         {
+            path: 'shared-with-me',
+            element: <SharedWithMe />
+        },
+        {
             path: 'document/:documentKey',
             element: <Document />
         },
@@ -116,7 +121,6 @@ const MainRoutes = {
             path: 'collection/:collectionKey',
             element: <Collection />
         }
-        
     ]
 };
 

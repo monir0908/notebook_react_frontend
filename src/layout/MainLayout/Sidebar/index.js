@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React, { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 // material-ui
 import { useTheme } from '@mui/material/styles';
 import { Box, Drawer, useMediaQuery } from '@mui/material';
@@ -22,14 +23,18 @@ import { collectionList } from 'store/features/collection/collectionActions';
 const Sidebar = ({ drawerOpen, drawerToggle, window }) => {
     const theme = useTheme();
     const matchUpMd = useMediaQuery(theme.breakpoints.up('md'));
-
+    const navigate = useNavigate();
     const dispatch = useDispatch();
     const userInfo = useSelector((state) => state.auth.userInfo);
 
     useEffect(() => {
-        const url = `collection/list?creator_id=${userInfo.id}&page=1&page_size=100`;
-        dispatch(collectionList({ url }));
-    }, []);
+        if (!userInfo) {
+            navigate('/login');
+        } else {
+            const url = `collection/list?creator_id=${userInfo.id}&page=1&page_size=100`;
+            dispatch(collectionList({ url }));
+        }
+    }, [navigate, userInfo]);
 
     const drawer = (
         <>

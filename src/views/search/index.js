@@ -15,6 +15,7 @@ import MainCard from 'ui-component/cards/MainCard';
 import { IconAdjustmentsHorizontal, IconSearch, IconX } from '@tabler/icons';
 import { documentList } from 'store/features/document/documentActions';
 import { resetState } from 'store/features/document/documentSlice';
+import { SET_LOADER } from 'store/actions';
 // ==============================|| SAMPLE PAGE ||============================== //
 
 const OutlineInputStyle = styled(OutlinedInput, { shouldForwardProp })(({ theme }) => ({
@@ -51,14 +52,18 @@ const HeaderAvatarStyle = styled(Avatar, { shouldForwardProp })(({ theme }) => (
 const Search = () => {
     const userInfo = useSelector((state) => state.auth.userInfo);
     const data = useSelector((state) => state.document.documentList);
+    const { error, loading } = useSelector((state) => state.document);
     const theme = useTheme();
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [value, setValue] = useState('');
     const [initPage, setInitPage] = useState(false);
     useEffect(() => {
+        if (!userInfo) {
+            navigate('/login');
+        }
         dispatch(resetState());
-    }, []);
+    }, [navigate, userInfo]);
     useEffect(() => {}, [value]);
 
     const itemClicked = (item) => {
@@ -80,8 +85,14 @@ const Search = () => {
     };
 
     const getList = () => {
-        let url = `document/list?creator_id=${userInfo.id}&search_param=${value}`;
-        dispatch(documentList({ url }));
+        dispatch({ type: SET_LOADER, loader: true });
+        setTimeout(() => {
+            let url = `document/list?creator_id=${userInfo.id}&search_param=${value}`;
+            dispatch(documentList({ url }));
+            if (!loading) {
+                dispatch({ type: SET_LOADER, loader: false });
+            }
+        }, 500);
     };
 
     return (
@@ -96,7 +107,7 @@ const Search = () => {
                                 value={value}
                                 onChange={(e) => setValue(e.target.value)}
                                 onKeyDown={onEnter}
-                                placeholder="Search.."
+                                placeholder="Search by document title, document texts or collection title.."
                                 startAdornment={
                                     <InputAdornment position="start">
                                         <IconSearch stroke={2} size="1rem" color={theme.palette.grey[500]} />
@@ -141,9 +152,13 @@ const Search = () => {
                                     </div>
                                 ))
                             ) : (
-                                <Typography sx={{ ml: 5 }} variant="p" style={{ color: 'rgb(155, 166, 178)' }}>
-                                    {initPage && `No documents found for your search filters.`}
-                                </Typography>
+                                <Grid container direction="row" justifyContent="center" alignItems="center">
+                                    <Grid item md={12} style={{ textAlign: 'center' }}>
+                                        <Typography variant="p" style={{ color: 'rgb(155, 166, 178)' }}>
+                                            {initPage && `No documents found for your search filters.`}
+                                        </Typography>
+                                    </Grid>
+                                </Grid>
                             )}
                         </List>
                         {/* {data.length == 0 && (

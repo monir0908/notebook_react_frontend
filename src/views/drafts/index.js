@@ -28,6 +28,7 @@ import { IconChevronRight, IconChevronDown, IconChevronUp, IconPlus, IconDots } 
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { resetState } from 'store/features/document/documentSlice';
 import { documentList } from 'store/features/document/documentActions';
+import { SET_LOADER } from 'store/actions';
 // ==============================|| SAMPLE PAGE ||============================== //
 
 const Drafts = () => {
@@ -36,7 +37,7 @@ const Drafts = () => {
     const collection = useSelector((state) => state.collection.data);
     const userInfo = useSelector((state) => state.auth.userInfo);
     const data = useSelector((state) => state.document.documentList);
-
+    const { error, loading } = useSelector((state) => state.document);
     const [collectionSelected, setCollectionSelected] = useState('Any Collection');
     const [time, setTime] = useState('Any Time');
 
@@ -51,6 +52,7 @@ const Drafts = () => {
         let url = {
             doc_status: 1,
             creator_id: userInfo.id,
+            order_by: '-updated_at',
             collection_id: null,
             date_range_str: null
         };
@@ -68,8 +70,13 @@ const Drafts = () => {
         }
 
         const objString = 'document/list?' + new URLSearchParams(url).toString();
-
-        dispatch(documentList({ url: objString }));
+        dispatch({ type: SET_LOADER, loader: true });
+        setTimeout(() => {
+            dispatch(documentList({ url: objString }));
+            if (!loading) {
+                dispatch({ type: SET_LOADER, loader: false });
+            }
+        }, 500);
     };
 
     const itemClicked = (item) => {
@@ -77,11 +84,14 @@ const Drafts = () => {
     };
 
     useEffect(() => {
+        if (!userInfo) {
+            navigate('/login');
+        }
         dispatch(resetState());
         setTimeout(() => {
             getList();
         }, 300);
-    }, []);
+    }, [navigate, userInfo]);
 
     useEffect(() => {
         getList();

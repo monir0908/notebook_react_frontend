@@ -66,12 +66,13 @@ import {
     updateDeleteButton,
     resetStateHeader
 } from 'store/features/header/headerSlice';
+import { SET_LOADER } from 'store/actions';
 // ==============================|| PAGE ||============================== //
 
 const Document = () => {
     const theme = useTheme();
     const dispatch = useDispatch();
-    const userInfo = useSelector((state) => state.auth.userInfo);
+    const { loading, userInfo, error } = useSelector((state) => state.auth);
     const navigate = useNavigate();
     const { documentKey } = useParams();
     const [docObj, setDocObj] = useState(null);
@@ -79,31 +80,35 @@ const Document = () => {
     const [unpublishShow, setUnpublishShow] = useState(false);
     const [sharelink, setShareLnk] = useState('');
     const [deleteShow, setDeleteShow] = useState(true);
+    const [isQuillText, setIsQuillText] = useState(false);
     const [docTitle, setDocTitle] = useState('');
     const [docBody, setDocBody] = useState('');
     const [progress, setProgress] = useState(0);
+    let bodyText = '';
 
     const getDocumentDetails = async () => {
         const res = await API.get(`document/${documentKey}`);
-
-        let doc = res.data.data;
-        setDocObj(doc);
-        dispatch(updateDocId({ doc_id: doc.doc_key }));
-        dispatch(updateDoc({ doc: doc }));
-        switch (doc.doc_status) {
-            case 1:
-                dispatch(updatePublishButton({ isPublishShow: true }));
-                dispatch(updateUnpublishButton({ isUnpublishShow: false }));
-                dispatch(updateShareButton({ isShareShow: false }));
-                break;
-            case 2:
-                dispatch(updatePublishButton({ isPublishShow: false }));
-                dispatch(updateUnpublishButton({ isUnpublishShow: true }));
-                dispatch(updateShareButton({ isShareShow: true }));
-                break;
+        if (res) {
+            let doc = res.data.data;
+            setDocObj(doc);
+            dispatch(updateDocId({ doc_id: doc.doc_key }));
+            dispatch(updateDoc({ doc: doc }));
+            switch (doc.doc_status) {
+                case 1:
+                    dispatch(updatePublishButton({ isPublishShow: true }));
+                    dispatch(updateUnpublishButton({ isUnpublishShow: false }));
+                    dispatch(updateShareButton({ isShareShow: false }));
+                    break;
+                case 2:
+                    dispatch(updatePublishButton({ isPublishShow: false }));
+                    dispatch(updateUnpublishButton({ isUnpublishShow: true }));
+                    dispatch(updateShareButton({ isShareShow: true }));
+                    break;
+            }
+            setDocTitle(doc.doc_title);
+            setDocBody(doc.doc_body);
+            bodyText = doc.doc_body;
         }
-        setDocTitle(doc.doc_title);
-        setDocBody(doc.doc_body);
     };
 
     const onTitleChange = (e) => {
@@ -129,11 +134,12 @@ const Document = () => {
 
     const onBodyChange = (value) => {
         setDocBody(value);
+        bodyText = value;
     };
 
     let quillRef = null;
     let reactQuillRef = null;
-    let isQuillText = false;
+    //let isQuillText = false;
 
     const colors = [
         '#F47F66',
@@ -162,6 +168,10 @@ const Document = () => {
         input.dataset.link = 'https://yourdomain.com';
     };
     useEffect(() => {
+        if (!userInfo) {
+            navigate('/login');
+        }
+
         attachQuillRefs();
         getDocumentDetails();
         const url = `collection/list?creator_id=${userInfo.id}&page=1&page_size=100`;
@@ -174,8 +184,7 @@ const Document = () => {
         const provider = new WebsocketProvider('ws://localhost:1234', documentKey, ydoc);
         const ytext = ydoc.getText('quill');
         // ytext.insert(0, 'my string');
-        let binding = null;
-
+        dispatch({ type: SET_LOADER, loader: true });
         setTimeout(() => {
             // console.log(ytext);
             // console.log(ytext.toString());
@@ -185,13 +194,30 @@ const Document = () => {
             // if (JSON.parse(quillObj).quill) {
             //     quillText = JSON.parse(quillObj).quill;
             // }
-            // console.log(quillText);
+            // console.log(JSON.parse(quillObj).quill);
             // console.log(ytext.toJSON().length);
-            if (ytext.toJSON().length > 0) {
-                isQuillText = true;
+            // if (ytext.toJSON().length > 0) {
+            //     setIsQuillText(true);
+            // } else {
+            //     setIsQuillText(false);
+            // }
+            if (provider.wsconnected) {
+                if (ytext.toJSON().length > 0) {
+                    setIsQuillText(true);
+                    new QuillBinding(ytext, quillRef, provider.awareness);
+                } else {
+                    ytext.insert(0, bodyText);
+                    const state = Y.encodeStateAsUpdateV2(ytext.ydoc);
+                    Y.applyUpdate(ydoc, state);
+                    new QuillBinding(ytext, quillRef, provider.awareness);
+                    setIsQuillText(false);
+                }
+            } else {
+                setIsQuillText(false);
             }
-            binding = new QuillBinding(ytext, quillRef, provider.awareness);
-        }, 500);
+            //new QuillBinding(ytext, quillRef, provider.awareness);
+            dispatch({ type: SET_LOADER, loader: false });
+        }, 1000);
 
         provider.awareness.on('change', ({ added, removed, updated }) => {
             // console.log('state updated:', updated);
@@ -222,7 +248,7 @@ const Document = () => {
             //binding.destroy();
             ydoc.destroy();
         };
-    }, [documentKey]);
+    }, [navigate, userInfo, documentKey]);
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -241,12 +267,22 @@ const Document = () => {
             // });
             if (docBody || docTitle) handleSubmit();
         }, 60 * 1000);
-        return () => clearInterval(interval);
+        return () => {
+            clearInterval(interval);
+        };
     }, [docBody, docTitle]);
+
+    useEffect(() => {
+        return () => {
+            if (docBody || docTitle) {
+                console.log('saved');
+                handleSubmit();
+            }
+        };
+    }, []);
 
     const handleSubmit = async () => {
         try {
-            console.log(docBody);
             const res = await API.patch(`document/update-doc/${documentKey}`, {
                 doc_title: docTitle,
                 doc_body: docBody
@@ -408,6 +444,7 @@ const Document = () => {
                             modules={modules('t1')}
                             preserveWhitespace
                         /> */}
+
                         {isQuillText == true ? (
                             <ReactQuill
                                 ref={(el) => {
@@ -436,7 +473,6 @@ const Document = () => {
                                 preserveWhitespace
                             />
                         )}
-
                         <Fab sx={fabStyle} onClick={handleSubmit} aria-label="Save" color="primary">
                             <IconDeviceFloppy />
                         </Fab>

@@ -61,7 +61,7 @@ const ContextMenuDocument = (props) => {
             dispatch(updatePublishButton({ isPublishShow: true }));
             dispatch(updateUnpublishButton({ isUnpublishShow: false }));
             dispatch(updateDeleteButton({ isDeleteShow: true }));
-            dispatch(updateShareButton({ isDeleteShow: false }));
+            dispatch(updateShareButton({ isShareShow: false }));
         } else if (doc.doc_status == 2) {
             dispatch(updatePublishButton({ isPublishShow: false }));
             dispatch(updateUnpublishButton({ isUnpublishShow: true }));

@@ -9,6 +9,7 @@ import ListItemButton from '@mui/material/ListItemButton';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { collectionList } from 'store/features/collection/collectionActions';
+import API from 'helpers/jwt.interceptor';
 // project imports
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
@@ -22,6 +23,7 @@ import { IconDots } from '@tabler/icons';
 import { documentList, documentCreate } from 'store/features/document/documentActions';
 import { resetState } from 'store/features/document/documentSlice';
 import { collectionDetails } from 'store/features/collection/collectionActions';
+import { SET_LOADER } from 'store/actions';
 // ==============================|| SAMPLE PAGE ||============================== //
 
 function TabPanel(props) {
@@ -46,6 +48,10 @@ const Collection = () => {
     const collectionData = useSelector((state) => state.collection.collection);
     const collection_id = collectionData ? collectionData.data.id : null;
     const [tabValue, setTabValue] = useState(0);
+    const [documentTabData, setDocumentTabData] = useState({ data: [], meta_data: {} });
+    const [recentlyUpdatedTabData, setRecentlyUpdatedTabData] = useState({ data: [], meta_data: {} });
+    const [recentlyPublishedTabData, setRecentlyPublishedTabData] = useState({ data: [], meta_data: {} });
+    const [atozTabData, setAtoZTabData] = useState({ data: [], meta_data: {} });
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
@@ -55,12 +61,16 @@ const Collection = () => {
     };
 
     useEffect(() => {
+        if (!userInfo) {
+            navigate('/login');
+        }
         // dispatch(resetState());
         getCollectionDetails();
-    }, [collectionKey]);
+    }, [navigate, userInfo, collectionKey]);
 
     useEffect(() => {
         if (collectionData) {
+            setTabValue(0);
             getList(0);
         }
     }, [collection_id]);
@@ -79,9 +89,10 @@ const Collection = () => {
         navigate('/document/' + item.doc_key);
     };
 
-    const getList = (type) => {
-        const p = new URLSearchParams();
-
+    const getList = async (type) => {
+        let p = new URLSearchParams();
+        p.append('creator_id', userInfo.id);
+        p.append('collection_id', collection_id);
         // let paramJson = {
         //     creator_id: userInfo.id,
         //     collection_id: collection_id,
@@ -91,35 +102,58 @@ const Collection = () => {
 
         switch (type) {
             case 0:
-                p.append('creator_id', userInfo.id);
-                p.append('collection_id', collection_id);
                 p.append('doc_status', 1);
                 p.append('doc_status', 2);
                 break;
             case 1:
-                p.append('creator_id', userInfo.id);
-                p.append('collection_id', collection_id);
                 p.append('doc_status', 1);
                 p.append('doc_status', 2);
                 p.append('order_by', '-updated_at');
                 break;
             case 2:
-                p.append('creator_id', userInfo.id);
-                p.append('collection_id', collection_id);
                 p.append('doc_status', 2);
                 p.append('order_by', '-published_at');
                 break;
             case 3:
-                p.append('creator_id', userInfo.id);
-                p.append('collection_id', collection_id);
                 p.append('doc_status', 1);
                 p.append('doc_status', 2);
                 p.append('order_by', 'doc_title');
                 break;
         }
+        dispatch({ type: SET_LOADER, loader: true });
 
         const objString = 'document/list?' + p.toString();
-        dispatch(documentList({ url: objString }));
+        const res = await API.get(objString);
+        // console.log(res.data);
+        setTimeout(() => {
+            if (res) {
+                dispatch({ type: SET_LOADER, loader: false });
+            }
+        }, 200);
+        switch (type) {
+            case 0:
+                if (res.data.success) {
+                    setDocumentTabData(res.data);
+                }
+                break;
+            case 1:
+                if (res.data.success) {
+                    setRecentlyUpdatedTabData(res.data);
+                }
+                break;
+            case 2:
+                if (res.data.success) {
+                    setRecentlyPublishedTabData(res.data);
+                }
+                break;
+            case 3:
+                if (res.data.success) {
+                    setAtoZTabData(res.data);
+                }
+                break;
+        }
+        // console.log(res.data.success);
+        // dispatch(documentList({ url: objString }));
     };
 
     const handleAddNewDocClick = () => {
@@ -137,7 +171,7 @@ const Collection = () => {
                     {collectionData && collectionData.data.collection_title}
                 </Typography>
                 <Divider />
-                {data.length > 0 ? (
+                {documentTabData.data.length > 0 ? (
                     <Box sx={{ width: '100%' }}>
                         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                             <Tabs value={tabValue} onChange={handleTabChange} aria-label="basic tabs example">
@@ -149,8 +183,8 @@ const Collection = () => {
                         </Box>
                         <TabPanel value={tabValue} index={0}>
                             <List sx={{ width: '100%', bgcolor: 'background.paper' }} component="data">
-                                {data.length > 0 &&
-                                    data.map((item, index) => (
+                                {documentTabData.data.length > 0 &&
+                                    documentTabData.data.map((item, index) => (
                                         <div key={item.id}>
                                             <ListItemButton onClick={() => itemClicked(item)} component="a">
                                                 <Grid container direction="row" alignItems="center" sx={{ px: 2 }}>
@@ -173,8 +207,8 @@ const Collection = () => {
                         </TabPanel>
                         <TabPanel value={tabValue} index={1}>
                             <List sx={{ width: '100%', bgcolor: 'background.paper' }} component="data">
-                                {data.length > 0 &&
-                                    data.map((item, index) => (
+                                {recentlyUpdatedTabData.data.length > 0 &&
+                                    recentlyUpdatedTabData.data.map((item, index) => (
                                         <div key={item.id}>
                                             <ListItemButton onClick={() => itemClicked(item)} component="a">
                                                 <Grid container direction="row" alignItems="center" sx={{ px: 2 }}>
@@ -197,8 +231,8 @@ const Collection = () => {
                         </TabPanel>
                         <TabPanel value={tabValue} index={2}>
                             <List sx={{ width: '100%', bgcolor: 'background.paper' }} component="data">
-                                {data.length > 0 &&
-                                    data.map((item, index) => (
+                                {recentlyPublishedTabData.data.length > 0 &&
+                                    recentlyPublishedTabData.data.map((item, index) => (
                                         <div key={item.id}>
                                             <ListItemButton onClick={() => itemClicked(item)} component="a">
                                                 <Grid container direction="row" alignItems="center" sx={{ px: 2 }}>
@@ -221,8 +255,8 @@ const Collection = () => {
                         </TabPanel>
                         <TabPanel value={tabValue} index={3}>
                             <List sx={{ width: '100%', bgcolor: 'background.paper' }} component="data">
-                                {data.length > 0 &&
-                                    data.map((item, index) => (
+                                {atozTabData.data.length > 0 &&
+                                    atozTabData.data.map((item, index) => (
                                         <div key={item.id}>
                                             <ListItemButton onClick={() => itemClicked(item)} component="a">
                                                 <Grid container direction="row" alignItems="center" sx={{ px: 2 }}>

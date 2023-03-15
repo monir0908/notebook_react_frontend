@@ -36,6 +36,7 @@ import { IconChevronRight, IconChevronDown, IconChevronUp, IconPlus, IconDots } 
 import ContextMenuTrash from 'layout/components/contextMenuTrash';
 import ConfirmationDialog from 'layout/components/confirmationDialog';
 import { documentDelete } from 'store/features/document/documentActions';
+import { SET_LOADER } from 'store/actions';
 // ==============================|| SAMPLE PAGE ||============================== //
 
 const Trash = () => {
@@ -43,7 +44,7 @@ const Trash = () => {
     const navigate = useNavigate();
     const userInfo = useSelector((state) => state.auth.userInfo);
     const data = useSelector((state) => state.document.documentList);
-
+    const { error, loading } = useSelector((state) => state.document);
     const [selectedItem, setSelectedItem] = useState(null);
     //////////////////////////// context menu //////////////////////////////
     const [anchorEl, setAnchorEl] = useState(null);
@@ -57,12 +58,21 @@ const Trash = () => {
     };
 
     useEffect(() => {
+        if (!userInfo) {
+            navigate('/login');
+        }
         // setTimeout(() => {
-        const url = `document/list?doc_status=3&creator_id=${userInfo.id}`;
-        dispatch(documentList({ url }));
+        dispatch({ type: SET_LOADER, loader: true });
+        setTimeout(() => {
+            const url = `document/list?doc_status=3&creator_id=${userInfo.id}&order_by=-updated_at`;
+            dispatch(documentList({ url }));
+            if (!loading) {
+                dispatch({ type: SET_LOADER, loader: false });
+            }
+        }, 100);
 
         // }, 300);
-    }, []);
+    }, [navigate, userInfo]);
 
     //////////////////////////////// delete confirmation /////////
     const [openConfirmation, setOpenConfirmation] = useState(false);
@@ -82,7 +92,7 @@ const Trash = () => {
             })
         );
         setTimeout(() => {
-            const url = `document/list?doc_status=3&creator_id=${userInfo.id}`;
+            const url = `document/list?doc_status=3&creator_id=${userInfo.id}&order_by=-updated_at`;
             dispatch(documentList({ url }));
             if (data) {
                 setList(data.data);

@@ -150,7 +150,7 @@ const NavItem = ({ item, level }) => {
     const handleConfirmationDialogOk = (values) => {
         dispatch(
             documentUpdate({
-                url: 'document/update-status/' + values.id,
+                url: 'document/update-status/' + values.doc_key,
                 navigate,
                 dispatch,
                 data: {
@@ -175,9 +175,10 @@ const NavItem = ({ item, level }) => {
         dispatch(updatePublishButton({ isPublishShow: false }));
         dispatch(updateUnpublishButton({ isUnpublishShow: true }));
         dispatch(updateShareButton({ isShareShow: true }));
+        console.log(values);
         dispatch(
             documentUpdate({
-                url: 'document/update-status/' + values.id,
+                url: 'document/update-status/' + values.doc_key,
                 navigate,
                 dispatch,
                 data: {
@@ -197,10 +198,10 @@ const NavItem = ({ item, level }) => {
         dispatch(updatePublishButton({ isPublishShow: true }));
         dispatch(updateUnpublishButton({ isUnpublishShow: false }));
         dispatch(updateShareButton({ isShareShow: false }));
-
+        console.log(values);
         dispatch(
             documentUpdate({
-                url: 'document/update-status/' + values.id,
+                url: 'document/update-status/' + values.doc_key,
                 navigate,
                 dispatch,
                 data: {
