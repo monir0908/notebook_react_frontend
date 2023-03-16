@@ -2,9 +2,24 @@ import { createSlice } from '@reduxjs/toolkit';
 import { registerUser, userLogin } from './authActions';
 import { toast } from 'react-toastify';
 
+export const userInfoInit = {
+    refresh: '',
+    access: '',
+    id: '',
+    full_name: '',
+    first_name: '',
+    last_name: '',
+    email: '',
+    user_code: '',
+    is_active: false,
+    is_staff: false,
+    is_superuser: false,
+    profile_pic: ''
+};
+
 // initialize userToken from local storage
 const userToken = localStorage.getItem('userToken') ? localStorage.getItem('userToken') : null;
-const userInfo = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : null;
+const userInfo = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : userInfoInit;
 const profile_pic = localStorage.getItem('profile_pic') ? localStorage.getItem('profile_pic') : null;
 
 const initialState = {
@@ -36,6 +51,13 @@ const authSlice = createSlice({
         setProfilePic: (state, { payload }) => {
             state.profile_pic = payload.data;
             localStorage.setItem('profile_pic', payload.data);
+        },
+        setProfileData: (state, { payload }) => {
+            const { first_name, last_name } = payload.data;
+            state.userInfo.full_name = first_name + ' ' + last_name;
+            state.userInfo.first_name = first_name;
+            state.userInfo.last_name = last_name;
+            localStorage.setItem('userInfo', JSON.stringify(state.userInfo));
         },
         setCredentials: (state, { payload }) => {
             state.userInfo = payload.data;
@@ -78,6 +100,6 @@ const authSlice = createSlice({
     }
 });
 
-export const { logout, setCredentials, setProfilePic } = authSlice.actions;
+export const { logout, setCredentials, setProfilePic, setProfileData } = authSlice.actions;
 
 export default authSlice.reducer;

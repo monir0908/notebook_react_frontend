@@ -1,5 +1,5 @@
 // project imports
-
+import React, { useState, useEffect } from 'react';
 import { Grid, Link, IconButton, Typography, Divider, MuiTypography } from '@mui/material';
 import { useTheme, styled } from '@mui/material/styles';
 
@@ -16,8 +16,6 @@ import CardMedia from '@mui/material/CardMedia';
 import CardContent from '@mui/material/CardContent';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import Avatar from '@mui/material/Avatar';
-
-import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
@@ -31,21 +29,28 @@ import { gridSpacing } from 'store/constant';
 import EditIcon from '@mui/icons-material/Edit';
 import PhotoCamera from '@mui/icons-material/PhotoCamera';
 
-import { setProfilePic } from 'store/features/auth/authSlice';
+import { setProfilePic, setProfileData } from 'store/features/auth/authSlice';
 import API from 'helpers/jwt.interceptor';
 import { SET_LOADER } from 'store/actions';
 import UpdateProfileDialog from 'layout/components/updateProfileDialog';
 // ==============================|| TYPOGRAPHY ||============================== //
 
 const AccountSettings = () => {
-    const theme = useTheme();
     const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const theme = useTheme();
     const { userInfo, profile_pic } = useSelector((state) => state.auth);
 
     const tableCellStyle = {
         borderBottom: 'none',
         padding: '8px'
     };
+
+    useEffect(() => {
+        if (!userInfo) {
+            navigate('/login');
+        }
+    });
 
     const handlePicChange = async (e) => {
         const image = e.target.files[0];
@@ -77,19 +82,23 @@ const AccountSettings = () => {
     const handleDialogClose = () => {
         setOpenDialog(false);
     };
-    const handleDialogOk = (values) => {
-        console.log(values);
-        // dispatch(
-        //     collectionUpdate({
-        //         url: 'collection/update-collection/' + values.collecton_key,
-        //         data: { collection_title: values.collecton_name }
-        //     })
-        // );
+    const handleDialogOk = async (values) => {
+        const obj = {
+            first_name: values.first_name,
+            last_name: values.last_name
+        };
 
-        // setTimeout(() => {
-        //     const url = `collection/list?creator_id=${userInfo.id}&page=1&page_size=100`;
-        //     dispatch(collectionList({ url }));
-        // }, 500);
+        dispatch({ type: SET_LOADER, loader: true });
+        const res = await API.put('user/update-profile/' + userInfo.id, obj);
+        if (res.data.state == 'success') {
+            dispatch({ type: SET_LOADER, loader: false });
+            toast.success(res.data.message, { autoClose: 3000 });
+            dispatch(setProfileData({ data: { first_name: res.data.first_name, last_name: res.data.last_name } }));
+            // navigate('/document/' + doc.doc_key);
+        } else {
+            dispatch({ type: SET_LOADER, loader: false });
+            toast.warn(res.data.message, { autoClose: 3000 });
+        }
 
         setOpenDialog(false);
     };
