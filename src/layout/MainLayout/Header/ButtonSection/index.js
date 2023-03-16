@@ -188,13 +188,14 @@ const ButtonSection = () => {
                 dispatch(updateUnpublishButton({ isUnpublishShow: false }));
                 dispatch(updateDeleteButton({ isDeleteShow: true }));
                 dispatch(updateShareButton({ isShareShow: false }));
+                dispatch(updateUploadButton({ isUploadShow: true }));
             } else if (doc.doc_status == 2) {
                 dispatch(updatePublishButton({ isPublishShow: false }));
                 dispatch(updateUnpublishButton({ isUnpublishShow: true }));
                 dispatch(updateShareButton({ isShareShow: true }));
                 dispatch(updateDeleteButton({ isDeleteShow: true }));
+                dispatch(updateUploadButton({ isUploadShow: true }));
             }
-            dispatch(updateUploadButton({ isUploadShow: true }));
         } else {
             dispatch(updatePublishButton({ isPublishShow: false }));
             dispatch(updateShareButton({ isShareShow: false }));
@@ -241,7 +242,7 @@ const ButtonSection = () => {
             <Box sx={{ display: { xs: 'block', md: 'block' } }}>
                 <Stack direction="row" spacing={1} sx={{ mr: 4 }}>
                     {upload_show && (
-                        <Tooltip title="Upload Document">
+                        <Tooltip title="Upload File">
                             <IconButton color="primary" aria-label="upload document" component="label">
                                 <input onChange={handleFileChange} hidden accept=".pdf,.doc,.docx,.xls,.xlsx" multiple type="file" />
                                 <UploadFileIcon fontSize="inherit" />

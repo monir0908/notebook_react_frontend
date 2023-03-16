@@ -137,3 +137,23 @@ export const documentDelete = createAsyncThunk('document/delete', async ({ url, 
         }
     }
 });
+
+export const documentFileDelete = createAsyncThunk('document/file-delete', async ({ url }, { rejectWithValue }) => {
+    try {
+        const res = await API.delete(url);
+        if (res.data.success) {
+            toast.success(res.data.message, { autoClose: 3000 });
+        } else {
+            toast.warn(res.data.message, { autoClose: 3000 });
+        }
+        return res.data;
+    } catch (error) {
+        toast.error(error.response.data.message, { autoClose: 3000 });
+        // return custom error message from API if any
+        if (error.response && error.response.data.message) {
+            return rejectWithValue(error.response.data.message);
+        } else {
+            return rejectWithValue(error.message);
+        }
+    }
+});

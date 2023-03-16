@@ -5,6 +5,7 @@ import {
     documentUpdate,
     documentList,
     sharedDocumentList,
+    documentFileDelete,
     documentUpdateOnEditorLeave
 } from './documentActions';
 
@@ -94,6 +95,18 @@ const documentSlice = createSlice({
                 state.error = null;
             }),
             builder.addCase(sharedDocumentList.rejected, (state, { payload }) => {
+                state.loading = false;
+                state.error = payload;
+            }),
+            builder.addCase(documentFileDelete.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            }),
+            builder.addCase(documentFileDelete.fulfilled, (state, { payload }) => {
+                state.loading = false;
+                state.error = null;
+            }),
+            builder.addCase(documentFileDelete.rejected, (state, { payload }) => {
                 state.loading = false;
                 state.error = payload;
             }),

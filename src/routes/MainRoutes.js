@@ -23,6 +23,7 @@ const Trash = Loadable(lazy(() => import('views/trash')));
 const Document = Loadable(lazy(() => import('views/document')));
 const Collection = Loadable(lazy(() => import('views/collection')));
 const SharedWithMe = Loadable(lazy(() => import('views/shared-with-me')));
+const AccountSettings = Loadable(lazy(() => import('views/account-settings')));
 
 // ==============================|| MAIN ROUTING ||============================== //
 
@@ -112,6 +113,10 @@ const MainRoutes = {
         {
             path: 'shared-with-me',
             element: <SharedWithMe />
+        },
+        {
+            path: 'account-settings',
+            element: <AccountSettings />
         },
         {
             path: 'document/:documentKey',

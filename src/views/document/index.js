@@ -4,7 +4,7 @@ import { toast } from 'react-toastify';
 import LoadingBar from 'react-top-loading-bar';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { documentDetails } from 'store/features/document/documentActions';
+import { documentDetails, documentFileDelete } from 'store/features/document/documentActions';
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
 import API from 'helpers/jwt.interceptor';
@@ -51,6 +51,7 @@ import { styled, useTheme } from '@mui/material/styles';
 import * as Yup from 'yup';
 import { Formik } from 'formik';
 import { IconPlus, IconTrash } from '@tabler/icons';
+import DescriptionIcon from '@mui/icons-material/Description';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { updateDocumentName, updateDocumentTitle } from 'store/features/collection/collectionSlice';
 import ConfirmationDialog from 'layout/components/confirmationDialog';
@@ -67,6 +68,7 @@ import {
     resetStateHeader
 } from 'store/features/header/headerSlice';
 import { SET_LOADER } from 'store/actions';
+import ContextMenuDocumentFile from 'layout/components/contextMenuDocumentFile';
 // ==============================|| PAGE ||============================== //
 
 const Document = () => {
@@ -85,6 +87,7 @@ const Document = () => {
     const [docTitle, setDocTitle] = useState('');
     const [docBody, setDocBody] = useState('');
     const [progress, setProgress] = useState(0);
+    const [selectedFile, setSelectedFile] = useState(null);
     let bodyText = '';
 
     const getDocumentDetails = async () => {
@@ -320,7 +323,7 @@ const Document = () => {
     }, [docBody, docTitle]);
 
     useEffect(() => {
-        console.log(docData);
+        // console.log(docData);
     }, [docData]);
 
     const handleSubmit = async () => {
@@ -343,17 +346,63 @@ const Document = () => {
         right: 16
     };
 
-    //////////////////////////////// share dialog ///////////////////
-    const [openShareDialog, setOpenShareDialog] = useState(false);
+    // //////////////////////////////// share dialog ///////////////////
+    // const [openShareDialog, setOpenShareDialog] = useState(false);
 
-    const handleClickOpenShareDialog = () => {
-        const clientURL = process.env.REACT_APP_PUBLICSITE_BASEURL;
-        setOpenShareDialog(true);
-        setShareLnk(clientURL + 'document/' + docObj.doc_key);
+    // const handleClickOpenShareDialog = () => {
+    //     const clientURL = process.env.REACT_APP_PUBLICSITE_BASEURL;
+    //     setOpenShareDialog(true);
+    //     setShareLnk(clientURL + 'document/' + docObj.doc_key);
+    // };
+
+    // const handleCloseShareDialog = () => {
+    //     setOpenShareDialog(false);
+    // };
+
+    // const handleDocPublish = (status) => {
+    //     dispatch(
+    //         documentUpdate({
+    //             url: 'document/update-status/' + docObj.doc_key,
+    //             navigate,
+    //             dispatch,
+    //             data: {
+    //                 doc_status: status
+    //             },
+    //             extraData: {
+    //                 status: 'publish',
+    //                 doc_url: '/document/' + docObj.doc_key
+    //             }
+    //         })
+    //     );
+
+    //     // if (status == 1) {
+    //     //     setPublishShow(true);
+    //     //     setUnpublishShow(false);
+    //     // }
+    //     // if (status == 2) {
+    //     //     setPublishShow(false);
+    //     //     setUnpublishShow(true);
+    //     // }
+
+    //     setTimeout(() => {
+    //         const url = `collection/list?creator_id=${userInfo.id}&page=1&page_size=100`;
+    //         dispatch(collectionList({ url }));
+    //     }, 500);
+    // };
+
+    //////////////////////////// context menu //////////////////////////////
+    const [anchorEl, setAnchorEl] = useState(null);
+    const openContextMenu = Boolean(anchorEl);
+    const handleContextMenuClick = (event, item) => {
+        setAnchorEl(event.currentTarget);
+        setSelectedFile(item);
+    };
+    const handleContextMenuFileClose = () => {
+        setAnchorEl(null);
     };
 
-    const handleCloseShareDialog = () => {
-        setOpenShareDialog(false);
+    const handleOpenFileClick = (values) => {
+        window.open(values.file, '_blank', 'noreferrer');
     };
 
     //////////////////////////////// delete confirmation /////////
@@ -366,58 +415,16 @@ const Document = () => {
     const handleCloseConfirmation = () => {
         setOpenConfirmation(false);
     };
-    const handleConfirmationDialogOk = () => {
+    const handleConfirmationDialogOk = (values) => {
         dispatch(
-            documentUpdate({
-                url: 'document/update-status/' + docObj.doc_key,
-                navigate,
-                dispatch,
-                data: {
-                    doc_status: 3
-                },
-                extraData: {
-                    status: 'delete',
-                    doc_url: '/document/' + docObj.doc_key
-                }
+            documentFileDelete({
+                url: 'document/delete-attachment/' + values.id
             })
         );
-
         setTimeout(() => {
-            const url = `collection/list?creator_id=${userInfo.id}&page=1&page_size=100`;
-            dispatch(collectionList({ url }));
+            dispatch(documentDetails({ url: `document/${documentKey}` }));
         }, 500);
         setOpenConfirmation(false);
-    };
-
-    const handleDocPublish = (status) => {
-        dispatch(
-            documentUpdate({
-                url: 'document/update-status/' + docObj.doc_key,
-                navigate,
-                dispatch,
-                data: {
-                    doc_status: status
-                },
-                extraData: {
-                    status: 'publish',
-                    doc_url: '/document/' + docObj.doc_key
-                }
-            })
-        );
-
-        // if (status == 1) {
-        //     setPublishShow(true);
-        //     setUnpublishShow(false);
-        // }
-        // if (status == 2) {
-        //     setPublishShow(false);
-        //     setUnpublishShow(true);
-        // }
-
-        setTimeout(() => {
-            const url = `collection/list?creator_id=${userInfo.id}&page=1&page_size=100`;
-            dispatch(collectionList({ url }));
-        }, 500);
     };
 
     return (
@@ -457,6 +464,23 @@ const Document = () => {
                         )}
                     </Stack>
                 </Box> */}
+                {docData != null && (
+                    <Box sx={{ m: 1 }} style={{ float: 'right' }}>
+                        <Stack direction="row" spacing={1}>
+                            {docData.attachments.map((item, index) => (
+                                <IconButton
+                                    onClick={(event) => handleContextMenuClick(event, item)}
+                                    key={item.id}
+                                    color="primary"
+                                    aria-label="upload document"
+                                    component="label"
+                                >
+                                    <DescriptionIcon fontSize="inherit" />
+                                </IconButton>
+                            ))}
+                        </Stack>
+                    </Box>
+                )}
                 <form>
                     <TextField
                         inputProps={{ style: { fontSize: 40, fontWeight: 600 } }}
@@ -528,14 +552,24 @@ const Document = () => {
                 </form>
             </MainCard>
 
-            <ConfirmationDialog
-                title="Delete Decument"
-                description="If you delete this document,it will be moved to trash . Do you agree with that?"
-                open={openConfirmation}
-                handleClose={handleCloseConfirmation}
-                handleOk={handleConfirmationDialogOk}
+            <ContextMenuDocumentFile
+                anchorEl={anchorEl}
+                open={openContextMenu}
+                data={selectedFile}
+                handleClose={handleContextMenuFileClose}
+                handleOpenFileClick={(values) => handleOpenFileClick(values)}
+                handleDeleteClick={handleClickOpenConfirmation}
             />
-            <ShareDialog link={sharelink} open={openShareDialog} handleClose={handleCloseShareDialog} />
+
+            <ConfirmationDialog
+                title="Delete File"
+                description="File will be deleted. Do you agree with that?"
+                open={openConfirmation}
+                data={selectedFile}
+                handleClose={handleCloseConfirmation}
+                handleOk={(values) => handleConfirmationDialogOk(values)}
+            />
+            {/* <ShareDialog link={sharelink} open={openShareDialog} handleClose={handleCloseShareDialog} /> */}
             <LoadingBar color="#8800ff" progress={progress} onLoaderFinished={() => setProgress(0)} />
         </>
     );

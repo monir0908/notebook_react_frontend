@@ -45,7 +45,7 @@ import { logout } from 'store/features/auth/authSlice';
 const ProfileSection = () => {
     const theme = useTheme();
     const customization = useSelector((state) => state.customization);
-    const { userInfo } = useSelector((state) => state.auth);
+    const { userInfo, profile_pic } = useSelector((state) => state.auth);
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const [sdm, setSdm] = useState(true);
@@ -114,7 +114,7 @@ const ProfileSection = () => {
                 }}
                 icon={
                     <Avatar
-                        src={User1}
+                        src={profile_pic}
                         sx={{
                             ...theme.typography.mediumAvatar,
                             margin: '8px 0 8px 8px !important',
@@ -265,7 +265,7 @@ const ProfileSection = () => {
                                                 <ListItemButton
                                                     sx={{ borderRadius: `${customization.borderRadius}px` }}
                                                     selected={selectedIndex === 0}
-                                                    onClick={(event) => handleListItemClick(event, 0, '/user/account-profile')}
+                                                    onClick={(event) => handleListItemClick(event, 0, '/account-settings')}
                                                 >
                                                     <ListItemIcon>
                                                         <IconSettings stroke={1.5} size="1.3rem" />
