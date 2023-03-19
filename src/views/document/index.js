@@ -566,11 +566,13 @@ const Document = () => {
 
             <ConfirmationDialog
                 title="Delete File"
-                description="File will be deleted. Do you agree with that?"
+                description="Are you sure? File will be deleted."
                 open={openConfirmation}
                 data={selectedFile}
                 handleClose={handleCloseConfirmation}
                 handleOk={(values) => handleConfirmationDialogOk(values)}
+                okButtonText="Delete"
+                closeButtonText="Close"
             />
             {/* <ShareDialog link={sharelink} open={openShareDialog} handleClose={handleCloseShareDialog} /> */}
             <LoadingBar color="#8800ff" progress={progress} onLoaderFinished={() => setProgress(0)} />
