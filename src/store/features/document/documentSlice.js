@@ -10,11 +10,20 @@ import {
 } from './documentActions';
 
 export const resetState = createAction('Reset_all');
+
+export const initMetaData = {
+    count: null,
+    page_size: null,
+    next: null,
+    previous: null
+};
+
 const initialState = {
     data: null,
     error: null,
     loading: false,
-    documentList: []
+    documentList: [],
+    meta_data: initMetaData
 };
 
 const documentSlice = createSlice({
@@ -79,6 +88,7 @@ const documentSlice = createSlice({
             builder.addCase(documentList.fulfilled, (state, { payload }) => {
                 state.loading = false;
                 state.documentList = payload.data;
+                state.meta_data = payload.meta_data;
                 state.error = null;
             }),
             builder.addCase(documentList.rejected, (state, { payload }) => {

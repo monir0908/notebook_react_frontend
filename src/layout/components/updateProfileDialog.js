@@ -111,8 +111,12 @@ const UpdateProfileDialog = (props) => {
                                 </FormControl>
                             </DialogContent>
                             <DialogActions>
-                                <Button onClick={props.handleClose}>Cancel</Button>
-                                <Button type="submit">{props.saveButtonText ? props.saveButtonText : 'Save'}</Button>
+                                <Button variant="outlined" onClick={props.handleClose}>
+                                    Cancel
+                                </Button>
+                                <Button variant="outlined" type="submit">
+                                    {props.saveButtonText ? props.saveButtonText : 'Save'}
+                                </Button>
                             </DialogActions>
                         </form>
                     )}

@@ -12,7 +12,7 @@ export default function themeTypography(theme) {
             fontSize: '0.75rem'
         },
         h5: {
-            fontSize: '0.875rem',
+            fontSize: '0.938rem',
             color: theme.heading,
             fontWeight: 500
         },
@@ -37,7 +37,7 @@ export default function themeTypography(theme) {
             fontWeight: 700
         },
         subtitle1: {
-            fontSize: '0.875rem',
+            fontSize: '0.938rem',
             fontWeight: 500,
             color: theme.textDark
         },
@@ -52,7 +52,7 @@ export default function themeTypography(theme) {
             fontWeight: 400
         },
         body1: {
-            fontSize: '0.875rem',
+            fontSize: '0.938rem',
             fontWeight: 400,
             lineHeight: '1.334em'
         },
@@ -97,7 +97,7 @@ export default function themeTypography(theme) {
             borderRadius: `${theme?.customization?.borderRadius}px`
         },
         menuCaption: {
-            fontSize: '0.875rem',
+            fontSize: '0.938rem',
             fontWeight: 500,
             color: theme.heading,
             padding: '6px',

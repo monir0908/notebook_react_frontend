@@ -16,9 +16,9 @@ const ShareDialog = (props) => {
             <Dialog fullWidth={true} maxWidth="sm" open={props.open} onClose={props.handleClose}>
                 <DialogTitle>Share this document</DialogTitle>
                 <DialogContent>
-                    <DialogContentText>Only members with permission can view.</DialogContentText>
+                    {/* <DialogContentText>Only members with permission can view.</DialogContentText> */}
                     <Grid container spacing={3}>
-                        <Grid item xs={8} md={10}>
+                        <Grid item md={12}>
                             <TextField
                                 margin="dense"
                                 id="address"
@@ -29,16 +29,14 @@ const ShareDialog = (props) => {
                                 variant="standard"
                             />
                         </Grid>
-                        <Grid item xs={4} md={2} sx={{ mt: 2 }}>
-                            <Button size="small" onClick={() => copy(props.link)} variant="contained">
-                                Copy
-                            </Button>
-                        </Grid>
                     </Grid>
                 </DialogContent>
                 <DialogActions>
-                    <Button style={{ float: 'right' }} onClick={props.handleClose}>
+                    <Button variant="outlined" style={{ float: 'right' }} onClick={props.handleClose}>
                         Close
+                    </Button>
+                    <Button variant="contained" onClick={() => copy(props.link)}>
+                        Copy
                     </Button>
                 </DialogActions>
             </Dialog>

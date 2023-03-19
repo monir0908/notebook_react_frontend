@@ -198,7 +198,7 @@ const AccountSettings = () => {
                     </Grid>
 
                     <UpdateProfileDialog
-                        title="Update Profile Information"
+                        title="Update Profile"
                         description="You can edit your basic personal information (for example: first name, last name)"
                         open={openDialog}
                         data={userInfo}

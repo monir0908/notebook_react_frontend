@@ -22,6 +22,10 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 
+import ReactPaginate from 'react-paginate';
+import Pagination from '@mui/material/Pagination';
+import Stack from '@mui/material/Stack';
+
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -44,8 +48,32 @@ const Trash = () => {
     const navigate = useNavigate();
     const userInfo = useSelector((state) => state.auth.userInfo);
     const data = useSelector((state) => state.document.documentList);
-    const { error, loading } = useSelector((state) => state.document);
+    const { error, loading, meta_data } = useSelector((state) => state.document);
     const [selectedItem, setSelectedItem] = useState(null);
+
+    // const [page, setPage] = useState(1);
+    // const PER_PAGE = 10;
+
+    // const count = Math.ceil(data.length / PER_PAGE);
+    // const _DATA = usePagination(data, PER_PAGE);
+
+    // const handleChange = (e, p) => {
+    //     setPage(p);
+    //     _DATA.jump(p);
+    // };
+
+    // const [page, setPage] = React.useState(2);
+    // const [rowsPerPage, setRowsPerPage] = React.useState(10);
+
+    // const handleChangePage = (event, newPage) => {
+    //     setPage(newPage);
+    // };
+
+    // const handleChangeRowsPerPage = (event) => {
+    //     setRowsPerPage(parseInt(event.target.value, 10));
+    //     setPage(0);
+    // };
+
     //////////////////////////// context menu //////////////////////////////
     const [anchorEl, setAnchorEl] = useState(null);
     const openContextMenu = Boolean(anchorEl);
@@ -180,11 +208,13 @@ const Trash = () => {
                 handleDeleteClick={handleClickOpenConfirmation}
             />
             <ConfirmationDialog
-                title="Delete Decument Permanently"
-                description="If you delete this document,it will be deleted permanently. Do you agree with that?"
+                title="Delete Document Permanently"
+                description="Are you sure about that? Deleting the document will remove all of its history."
                 open={openConfirmation}
                 data={selectedItem}
                 handleClose={handleCloseConfirmation}
+                closeButtonText="Close"
+                okButtonText="I'm sure -- Delete "
                 handleOk={(values) => handleConfirmationDialogOk(values)}
             />
         </>

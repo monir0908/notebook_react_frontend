@@ -46,6 +46,7 @@ import {
     CssBaseline,
     Toolbar
 } from '@mui/material';
+import Tooltip from '@mui/material/Tooltip';
 import { styled, useTheme } from '@mui/material/styles';
 // third party
 import * as Yup from 'yup';
@@ -224,7 +225,7 @@ const Document = () => {
         // console.log('Executing useEffect...');
 
         const ydoc = new Y.Doc();
-        const provider = new WebsocketProvider('ws://localhost:1234', documentKey, ydoc);
+        const provider = new WebsocketProvider(process.env.REACT_APP_WEB_SOCKET_URL, documentKey, ydoc);
         const ytext = ydoc.getText('quill');
         // ytext.insert(0, 'my string');
         dispatch({ type: SET_LOADER, loader: true });
@@ -426,6 +427,8 @@ const Document = () => {
         }, 500);
         setOpenConfirmation(false);
     };
+
+    /////////////////// get file name/////////
 
     return (
         <>

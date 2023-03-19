@@ -277,11 +277,13 @@ const NavCollapse = ({ menu, level }) => {
             />
             <ConfirmationDialog
                 title="Delete Collection"
-                description="If you delete this collection, associate documents will be deleted. Do you agree with that?"
+                description="Are you sure? If you delete this collection, associate documents will be deleted."
                 open={openConfirmation}
                 data={selectedMenu}
                 handleClose={handleCloseConfirmation}
                 handleOk={(values) => handleConfirmationDialogOk(values)}
+                okButtonText="Delete"
+                closeButtonText="Close"
             />
         </>
     );

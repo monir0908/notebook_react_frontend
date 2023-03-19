@@ -13,6 +13,13 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import FileOpenIcon from '@mui/icons-material/FileOpen';
 const ContextMenuDocumentFile = (props) => {
+    const getFileName = () => {
+        if (props.data) {
+            const arr = props.data.file.split('/');
+            return arr[arr.length - 1];
+        }
+    };
+
     return (
         <>
             <Menu
@@ -56,6 +63,11 @@ const ContextMenuDocumentFile = (props) => {
                     horizontal: 'right'
                 }}
             >
+                <MenuItem>
+                    <Typography variant="body1" style={{ fontWeight: 'bold' }}>
+                        {props.data != null && props.data.file_name}
+                    </Typography>
+                </MenuItem>
                 <MenuItem onClick={() => props.handleOpenFileClick(props.data)}>
                     <ListItemIcon>
                         <FileOpenIcon fontSize="1rem" />

@@ -27,8 +27,13 @@ const ConfirmationDialog = (props) => {
                     <DialogContentText id="alert-dialog-slide-description">{props.description}</DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={props.handleClose}> {props.closeButtonText ? props.closeButtonText : 'Disagree'}</Button>
-                    <Button onClick={() => props.handleOk(props.data)}>{props.closeButtonText ? props.closeButtonText : 'Agree'}</Button>
+                    <Button variant="outlined" onClick={props.handleClose}>
+                        {' '}
+                        {props.closeButtonText ? props.closeButtonText : 'Disagree'}
+                    </Button>
+                    <Button variant="outlined" color="error" onClick={() => props.handleOk(props.data)}>
+                        {props.okButtonText ? props.okButtonText : 'Agree'}
+                    </Button>
                 </DialogActions>
             </Dialog>
         </div>

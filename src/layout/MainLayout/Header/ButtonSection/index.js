@@ -285,11 +285,13 @@ const ButtonSection = () => {
             </Box>
 
             <ConfirmationDialog
-                title="Delete Decument"
-                description="If you delete this document,it will be moved to trash . Do you agree with that?"
+                title="Delete Document"
+                description="Are you sure? If you delete this document, it will be moved to trash."
                 open={openConfirmation}
                 handleClose={handleCloseConfirmation}
                 handleOk={handleConfirmationDialogOk}
+                okButtonText="Delete"
+                closeButtonText="Close"
             />
             <ShareDialog link={sharelink} open={openShareDialog} handleClose={handleCloseShareDialog} />
         </>
