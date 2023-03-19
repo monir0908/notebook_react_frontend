@@ -24,7 +24,7 @@ import ListItemButton from '@mui/material/ListItemButton';
 // project imports
 import ReactTimeAgo from 'react-time-ago';
 import MainCard from 'ui-component/cards/MainCard';
-import { IconChevronRight, IconChevronDown, IconChevronUp, IconPlus, IconDots } from '@tabler/icons';
+import { IconChevronRight, IconChevronDown, IconDots } from '@tabler/icons';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { resetState } from 'store/features/document/documentSlice';
 import { documentList } from 'store/features/document/documentActions';
@@ -35,7 +35,7 @@ const Drafts = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const collection = useSelector((state) => state.collection.data);
-    const userInfo = useSelector((state) => state.auth.userInfo);
+    const { userInfo, userToken } = useSelector((state) => state.auth);
     const data = useSelector((state) => state.document.documentList);
     const { error, loading } = useSelector((state) => state.document);
     const [collectionSelected, setCollectionSelected] = useState('Any Collection');
@@ -84,14 +84,14 @@ const Drafts = () => {
     };
 
     useEffect(() => {
-        if (!userInfo) {
+        if (!userToken) {
             navigate('/login');
         }
         dispatch(resetState());
         setTimeout(() => {
             getList();
         }, 300);
-    }, [navigate, userInfo]);
+    }, [navigate, userToken]);
 
     useEffect(() => {
         getList();
@@ -115,10 +115,6 @@ const Drafts = () => {
                                 labelId="demo-simple-select-standard-label"
                                 id="demo-simple-select-standard"
                                 value={collectionSelected}
-                                // onChange={(event) => {
-                                //     setCollectionSelected(event.target.value);
-                                //     getList();
-                                // }}
                                 onChange={handleCollectionTitleChange}
                                 label=""
                             >

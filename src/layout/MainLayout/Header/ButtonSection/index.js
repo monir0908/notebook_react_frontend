@@ -54,7 +54,7 @@ import {
 const ButtonSection = () => {
     const theme = useTheme();
     const dispatch = useDispatch();
-    const userInfo = useSelector((state) => state.auth.userInfo);
+    const { userInfo, userToken } = useSelector((state) => state.auth);
     const { doc_id, doc, upload_show, share_show, publish_show, unpublish_show, delete_show } = useSelector((state) => state.header);
     const navigate = useNavigate();
     const [value, setValue] = useState('');
@@ -208,7 +208,7 @@ const ButtonSection = () => {
             //dispatch(resetStateHeader());
         };
         // }, [doc, publish_show, unpublish_show, delete_show]);
-    }, [doc, navigate]);
+    }, [doc, navigate, userToken]);
 
     const handleFileChange = async (e) => {
         const documents = e.target.files;

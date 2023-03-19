@@ -50,7 +50,7 @@ const HeaderAvatarStyle = styled(Avatar, { shouldForwardProp })(({ theme }) => (
 }));
 
 const Search = () => {
-    const userInfo = useSelector((state) => state.auth.userInfo);
+    const { userInfo, userToken } = useSelector((state) => state.auth);
     const data = useSelector((state) => state.document.documentList);
     const { error, loading } = useSelector((state) => state.document);
     const theme = useTheme();
@@ -59,11 +59,11 @@ const Search = () => {
     const [value, setValue] = useState('');
     const [initPage, setInitPage] = useState(false);
     useEffect(() => {
-        if (!userInfo) {
+        if (!userToken) {
             navigate('/login');
         }
         dispatch(resetState());
-    }, [navigate, userInfo]);
+    }, [navigate, userToken]);
     useEffect(() => {}, [value]);
 
     const itemClicked = (item) => {
@@ -161,11 +161,6 @@ const Search = () => {
                                 </Grid>
                             )}
                         </List>
-                        {/* {data.length == 0 && (
-                            <Typography sx={{ m: 3 }} variant="h4">
-                                No documents found for your search filters.
-                            </Typography>
-                        )} */}
                     </Grid>
                 </Grid>
             </MainCard>

@@ -59,11 +59,11 @@ const collectionSlice = createSlice({
                 state.loading = false;
                 state.error = payload;
                 state.success = false;
-            });
-        builder.addCase(collectionCreate.pending, (state) => {
-            state.loading = true;
-            state.error = null;
-        }),
+            }),
+            builder.addCase(collectionCreate.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            }),
             builder.addCase(collectionCreate.fulfilled, (state, action) => {
                 state.loading = false;
                 state.error = null;

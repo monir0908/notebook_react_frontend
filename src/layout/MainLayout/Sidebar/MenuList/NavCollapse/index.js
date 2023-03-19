@@ -13,7 +13,7 @@ import NavItem from '../NavItem';
 // assets
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
 import IconButton from '@mui/material/IconButton';
-import { IconChevronRight, IconChevronDown, IconChevronUp, IconPlus, IconDots } from '@tabler/icons';
+import { IconChevronRight, IconChevronDown, IconPlus, IconDots } from '@tabler/icons';
 import Tooltip from '@mui/material/Tooltip';
 import ContextMenuCollection from 'layout/components/contextMenuCollection';
 import { documentCreate } from 'store/features/document/documentActions';
@@ -60,12 +60,12 @@ const NavCollapse = ({ menu, level }) => {
                 data: { collection_title: values.collecton_name }
             })
         );
-
-        setTimeout(() => {
-            const url = `collection/list?creator_id=${userInfo.id}&page=1&page_size=100`;
-            dispatch(collectionList({ url }));
-        }, 500);
-
+        if (userInfo) {
+            setTimeout(() => {
+                const url = `collection/list?creator_id=${userInfo.id}&page=1&page_size=100`;
+                dispatch(collectionList({ url }));
+            }, 500);
+        }
         setOpenCCDialog(false);
     };
 

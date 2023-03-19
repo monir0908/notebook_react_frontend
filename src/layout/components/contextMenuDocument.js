@@ -36,7 +36,7 @@ const ContextMenuDocument = (props) => {
     const padding = 80;
     const margin = 100;
     const dispatch = useDispatch();
-    const userInfo = useSelector((state) => state.auth.userInfo);
+    const { userInfo, userToken } = useSelector((state) => state.auth);
     const { doc_id, doc, share_show, publish_show, unpublish_show, delete_show } = useSelector((state) => state.header);
 
     // // active menu item on page load

@@ -17,19 +17,18 @@ import { SET_LOADER } from 'store/actions';
 
 const SharedWithMe = () => {
     const theme = useTheme();
-    const userInfo = useSelector((state) => state.auth.userInfo);
+    const { userInfo, userToken } = useSelector((state) => state.auth);
     const data = useSelector((state) => state.document.documentList);
     const { error, loading } = useSelector((state) => state.document);
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (!userInfo) {
+        if (!userToken) {
             navigate('/login');
         } else {
             dispatch({ type: SET_LOADER, loader: true });
             setTimeout(() => {
-                //const url = `document/list?creator_id=${userInfo.id}&date_range_str=week`;
                 const url = `document/list-shared-with-me`;
                 dispatch(resetState());
                 dispatch(sharedDocumentList({ url }));
@@ -38,7 +37,7 @@ const SharedWithMe = () => {
                 }
             }, 300);
         }
-    }, [navigate, userInfo]);
+    }, [navigate, userToken]);
 
     const itemClicked = (item) => {
         navigate('/document/' + item.doc_key);
@@ -46,13 +45,6 @@ const SharedWithMe = () => {
     return (
         <>
             <MainCard title="">
-                {/* <Grid container direction="row" justifyContent="end" alignItems="center">
-                    <Grid item>
-                        <Button onClick={handleContextMenuNewDocClick} variant="contained" color="info" startIcon={<IconPlus />}>
-                            <Typography stroke={2.5}>New Doc..</Typography>
-                        </Button>
-                    </Grid>
-                </Grid> */}
                 <Typography sx={{ p: 2 }} variant="h1">
                     Shared With Me
                 </Typography>

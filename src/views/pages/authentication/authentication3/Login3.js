@@ -19,14 +19,14 @@ import AuthFooter from 'ui-component/cards/AuthFooter';
 // ================================|| AUTH3 - LOGIN ||================================ //
 
 const Login = () => {
-    const { loading, userInfo, error } = useSelector((state) => state.auth);
+    const { loading, userInfo, error, userToken } = useSelector((state) => state.auth);
     const navigate = useNavigate();
     // redirect authenticated user to / page
     useEffect(() => {
-        if (userInfo) {
+        if (userToken) {
             navigate('/home');
         }
-    }, [navigate, userInfo]);
+    }, [navigate, userToken]);
 
     const theme = useTheme();
     const matchDownSM = useMediaQuery(theme.breakpoints.down('md'));

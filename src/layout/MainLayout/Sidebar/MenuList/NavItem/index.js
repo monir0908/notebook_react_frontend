@@ -13,7 +13,7 @@ import { MENU_OPEN, SET_MENU } from 'store/actions';
 // assets
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
 import IconButton from '@mui/material/IconButton';
-import { IconChevronDown, IconChevronUp, IconPlus, IconDots } from '@tabler/icons';
+import { IconChevronDown, IconDots } from '@tabler/icons';
 import Tooltip from '@mui/material/Tooltip';
 import ContextMenuDocument from 'layout/components/contextMenuDocument';
 import { documentUpdate } from 'store/features/document/documentActions';
@@ -163,11 +163,12 @@ const NavItem = ({ item, level }) => {
                 }
             })
         );
-
-        setTimeout(() => {
-            const url = `collection/list?creator_id=${userInfo.id}&page=1&page_size=100`;
-            dispatch(collectionList({ url }));
-        }, 500);
+        if (userInfo) {
+            setTimeout(() => {
+                const url = `collection/list?creator_id=${userInfo.id}&page=1&page_size=100`;
+                dispatch(collectionList({ url }));
+            }, 500);
+        }
         setOpenConfirmation(false);
     };
 
@@ -187,11 +188,12 @@ const NavItem = ({ item, level }) => {
                 extraData: {}
             })
         );
-
-        setTimeout(() => {
-            const url = `collection/list?creator_id=${userInfo.id}&page=1&page_size=100`;
-            dispatch(collectionList({ url }));
-        }, 500);
+        if (userInfo) {
+            setTimeout(() => {
+                const url = `collection/list?creator_id=${userInfo.id}&page=1&page_size=100`;
+                dispatch(collectionList({ url }));
+            }, 500);
+        }
     };
 
     const handleDocUnpublish = (values) => {
@@ -210,11 +212,12 @@ const NavItem = ({ item, level }) => {
                 extraData: {}
             })
         );
-
-        setTimeout(() => {
-            const url = `collection/list?creator_id=${userInfo.id}&page=1&page_size=100`;
-            dispatch(collectionList({ url }));
-        }, 500);
+        if (userInfo) {
+            setTimeout(() => {
+                const url = `collection/list?creator_id=${userInfo.id}&page=1&page_size=100`;
+                dispatch(collectionList({ url }));
+            }, 500);
+        }
     };
 
     return (

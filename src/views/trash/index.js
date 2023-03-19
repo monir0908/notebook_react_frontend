@@ -36,7 +36,7 @@ import { collectionList } from 'store/features/collection/collectionActions';
 import MainCard from 'ui-component/cards/MainCard';
 import ReactTimeAgo from 'react-time-ago';
 import IconButton from '@mui/material/IconButton';
-import { IconChevronRight, IconChevronDown, IconChevronUp, IconPlus, IconDots } from '@tabler/icons';
+import { IconChevronRight, IconChevronDown, IconDots } from '@tabler/icons';
 import ContextMenuTrash from 'layout/components/contextMenuTrash';
 import ConfirmationDialog from 'layout/components/confirmationDialog';
 import { documentDelete } from 'store/features/document/documentActions';
@@ -46,33 +46,10 @@ import { SET_LOADER } from 'store/actions';
 const Trash = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const userInfo = useSelector((state) => state.auth.userInfo);
+    const { userInfo, userToken } = useSelector((state) => state.auth);
     const data = useSelector((state) => state.document.documentList);
     const { error, loading, meta_data } = useSelector((state) => state.document);
     const [selectedItem, setSelectedItem] = useState(null);
-
-    // const [page, setPage] = useState(1);
-    // const PER_PAGE = 10;
-
-    // const count = Math.ceil(data.length / PER_PAGE);
-    // const _DATA = usePagination(data, PER_PAGE);
-
-    // const handleChange = (e, p) => {
-    //     setPage(p);
-    //     _DATA.jump(p);
-    // };
-
-    // const [page, setPage] = React.useState(2);
-    // const [rowsPerPage, setRowsPerPage] = React.useState(10);
-
-    // const handleChangePage = (event, newPage) => {
-    //     setPage(newPage);
-    // };
-
-    // const handleChangeRowsPerPage = (event) => {
-    //     setRowsPerPage(parseInt(event.target.value, 10));
-    //     setPage(0);
-    // };
 
     //////////////////////////// context menu //////////////////////////////
     const [anchorEl, setAnchorEl] = useState(null);
@@ -86,7 +63,7 @@ const Trash = () => {
     };
 
     useEffect(() => {
-        if (!userInfo) {
+        if (!userToken) {
             navigate('/login');
         }
         // setTimeout(() => {
@@ -100,7 +77,7 @@ const Trash = () => {
         }, 100);
 
         // }, 300);
-    }, [navigate, userInfo]);
+    }, [navigate, userToken]);
 
     //////////////////////////////// delete confirmation /////////
     const [openConfirmation, setOpenConfirmation] = useState(false);
@@ -148,11 +125,6 @@ const Trash = () => {
                 }
             })
         );
-
-        // setTimeout(() => {
-        //     const url = `document/list?doc_status=3&creator_id=${userInfo.id}`;
-        //     dispatch(documentList({ url }));
-        // }, 500);
     };
 
     return (

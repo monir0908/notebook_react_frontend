@@ -24,7 +24,7 @@ import { documentList, documentCreate } from 'store/features/document/documentAc
 import { resetState } from 'store/features/document/documentSlice';
 import { collectionDetails } from 'store/features/collection/collectionActions';
 import { SET_LOADER } from 'store/actions';
-// ==============================|| SAMPLE PAGE ||============================== //
+// ==============================|| Collection PAGE ||============================== //
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -41,10 +41,8 @@ function TabPanel(props) {
 }
 
 const Collection = () => {
-    const theme = useTheme();
     const { collectionKey } = useParams();
-    const userInfo = useSelector((state) => state.auth.userInfo);
-    const data = useSelector((state) => state.document.documentList);
+    const { userToken, userInfo } = useSelector((state) => state.auth);
     const collectionData = useSelector((state) => state.collection.collection);
     const collection_id = collectionData ? collectionData.data.id : null;
     const [tabValue, setTabValue] = useState(0);
@@ -61,12 +59,12 @@ const Collection = () => {
     };
 
     useEffect(() => {
-        if (!userInfo) {
+        if (!userToken) {
             navigate('/login');
         }
         // dispatch(resetState());
         getCollectionDetails();
-    }, [navigate, userInfo, collectionKey]);
+    }, [navigate, userToken, collectionKey]);
 
     useEffect(() => {
         if (collectionData) {
@@ -93,12 +91,6 @@ const Collection = () => {
         let p = new URLSearchParams();
         p.append('creator_id', userInfo.id);
         p.append('collection_id', collection_id);
-        // let paramJson = {
-        //     creator_id: userInfo.id,
-        //     collection_id: collection_id,
-        //     order_by: null,
-        //     doc_status: []
-        // };
 
         switch (type) {
             case 0:
@@ -124,7 +116,6 @@ const Collection = () => {
 
         const objString = 'document/list?' + p.toString();
         const res = await API.get(objString);
-        // console.log(res.data);
         setTimeout(() => {
             if (res) {
                 dispatch({ type: SET_LOADER, loader: false });
@@ -152,8 +143,6 @@ const Collection = () => {
                 }
                 break;
         }
-        // console.log(res.data.success);
-        // dispatch(documentList({ url: objString }));
     };
 
     const handleAddNewDocClick = () => {

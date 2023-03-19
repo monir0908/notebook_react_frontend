@@ -3,6 +3,12 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { toast } from 'react-toastify';
 import { resetStateHeader } from '../header/headerSlice';
 
+const handleApiError = (error) => {
+    const errorMessage = error.response && error.response.data.message ? error.response.data.message : error.message;
+    toast.error(errorMessage, { autoClose: 3000 });
+    return errorMessage;
+};
+
 export const documentDetails = createAsyncThunk('document/details', async ({ url }, { rejectWithValue }) => {
     try {
         const res = await API.get(url);
@@ -52,13 +58,7 @@ export const documentUpdateOnEditorLeave = createAsyncThunk(
             const res = await API.patch(url, data);
             return res.data;
         } catch (error) {
-            toast.error(error.response.data.message, { autoClose: 3000 });
-            // return custom error message from API if any
-            if (error.response && error.response.data.message) {
-                return rejectWithValue(error.response.data.message);
-            } else {
-                return rejectWithValue(error.message);
-            }
+            return rejectWithValue(handleApiError(error));
         }
     }
 );
@@ -86,13 +86,7 @@ export const documentUpdate = createAsyncThunk(
             }
             return res.data;
         } catch (error) {
-            toast.error(error.response.data.message, { autoClose: 3000 });
-            // return custom error message from API if any
-            if (error.response && error.response.data.message) {
-                return rejectWithValue(error.response.data.message);
-            } else {
-                return rejectWithValue(error.message);
-            }
+            return rejectWithValue(handleApiError(error));
         }
     }
 );
@@ -108,12 +102,7 @@ export const documentCreate = createAsyncThunk('document/create', async ({ url, 
         }
         return res.data;
     } catch (error) {
-        toast.error(error.response.data.message, { autoClose: 3000 });
-        if (error.response && error.response.data.message) {
-            return rejectWithValue(error.response.data.message);
-        } else {
-            return rejectWithValue(error.message);
-        }
+        return rejectWithValue(handleApiError(error));
     }
 });
 
@@ -128,32 +117,15 @@ export const documentDelete = createAsyncThunk('document/delete', async ({ url, 
         }
         return res.data;
     } catch (error) {
-        toast.error(error.response.data.message, { autoClose: 3000 });
-        // return custom error message from API if any
-        if (error.response && error.response.data.message) {
-            return rejectWithValue(error.response.data.message);
-        } else {
-            return rejectWithValue(error.message);
-        }
+        return rejectWithValue(handleApiError(error));
     }
 });
 
 export const documentFileDelete = createAsyncThunk('document/file-delete', async ({ url }, { rejectWithValue }) => {
     try {
         const res = await API.delete(url);
-        if (res.data.success) {
-            toast.success(res.data.message, { autoClose: 3000 });
-        } else {
-            toast.warn(res.data.message, { autoClose: 3000 });
-        }
         return res.data;
     } catch (error) {
-        toast.error(error.response.data.message, { autoClose: 3000 });
-        // return custom error message from API if any
-        if (error.response && error.response.data.message) {
-            return rejectWithValue(error.response.data.message);
-        } else {
-            return rejectWithValue(error.message);
-        }
+        return rejectWithValue(handleApiError(error));
     }
 });

@@ -21,12 +21,6 @@ import HomeIcon from '@mui/icons-material/Home';
 const Error403 = () => {
     const { loading, userInfo, error } = useSelector((state) => state.auth);
     const navigate = useNavigate();
-    // redirect authenticated user to / page
-    // useEffect(() => {
-    //     if (userInfo) {
-    //         navigate('/home');
-    //     }
-    // }, [navigate, userInfo]);
     const homeClicked = () => {
         navigate('/home');
     };

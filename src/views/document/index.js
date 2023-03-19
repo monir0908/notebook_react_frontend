@@ -15,8 +15,6 @@ import { QuillBinding } from 'y-quill';
 import { Quill } from 'react-quill';
 import * as Y from 'yjs';
 import ReactQuill from 'react-quill';
-import QuillBetterTable from 'quill-better-table';
-import * as QuillTableUI from 'quill-table-ui';
 import EditorToolbar, { modules, formats } from './EditorToolbar';
 import 'react-quill/dist/quill.snow.css';
 import 'react-quill/dist/quill.bubble.css';
@@ -51,14 +49,13 @@ import { styled, useTheme } from '@mui/material/styles';
 // third party
 import * as Yup from 'yup';
 import { Formik } from 'formik';
-import { IconPlus, IconTrash } from '@tabler/icons';
+import { IconTrash } from '@tabler/icons';
 import DescriptionIcon from '@mui/icons-material/Description';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { updateDocumentName, updateDocumentTitle } from 'store/features/collection/collectionSlice';
 import ConfirmationDialog from 'layout/components/confirmationDialog';
 import { documentUpdate, documentUpdateOnEditorLeave } from 'store/features/document/documentActions';
 import { collectionList } from 'store/features/collection/collectionActions';
-import ShareDialog from 'layout/components/shareDialog';
 import {
     updateDoc,
     updateDocId,
@@ -75,16 +72,11 @@ import ContextMenuDocumentFile from 'layout/components/contextMenuDocumentFile';
 const Document = () => {
     const theme = useTheme();
     const dispatch = useDispatch();
-    const { loading, userInfo, error } = useSelector((state) => state.auth);
+    const { loading, userInfo, error, userToken } = useSelector((state) => state.auth);
     const docData = useSelector((state) => state.document.data);
     const navigate = useNavigate();
     const { documentKey } = useParams();
     const [docObj, setDocObj] = useState(null);
-    const [publishShow, setPublishShow] = useState(false);
-    const [unpublishShow, setUnpublishShow] = useState(false);
-    const [sharelink, setShareLnk] = useState('');
-    const [deleteShow, setDeleteShow] = useState(true);
-    // const [isQuillText, setIsQuillText] = useState(false);
     const [docTitle, setDocTitle] = useState('');
     const [docBody, setDocBody] = useState('');
     const [progress, setProgress] = useState(0);
@@ -98,19 +90,6 @@ const Document = () => {
             setDocObj(doc);
             dispatch(updateDocId({ doc_id: doc.doc_key }));
             dispatch(updateDoc({ doc: doc }));
-
-            // switch (doc.doc_status) {
-            //     case 1:
-            //         dispatch(updatePublishButton({ isPublishShow: true }));
-            //         dispatch(updateUnpublishButton({ isUnpublishShow: false }));
-            //         dispatch(updateShareButton({ isShareShow: false }));
-            //         break;
-            //     case 2:
-            //         dispatch(updatePublishButton({ isPublishShow: false }));
-            //         dispatch(updateUnpublishButton({ isUnpublishShow: true }));
-            //         dispatch(updateShareButton({ isShareShow: true }));
-            //         break;
-            // }
 
             setDocTitle(doc.doc_title);
             setDocBody(doc.doc_body);
@@ -134,24 +113,7 @@ const Document = () => {
                 extraData: {}
             })
         );
-
-        // setDocTitle(e.target.value);
-        //  dispatch(updateDocumentTitle({ document_key: documentKey, doc_title: e.target.value }));
     };
-
-    // const onBodyBlur = (value) => {
-    //     console.log(value);
-    //     dispatch(
-    //         documentUpdate({
-    //             url: 'document/update-doc/' + docObj.doc_key,
-    //             navigate,
-    //             data: {
-    //                 doc_body: value
-    //             },
-    //             extraData: {}
-    //         })
-    //     );
-    // };
 
     const onBodyChange = (value) => {
         setDocBody(value);
@@ -189,11 +151,6 @@ const Document = () => {
         input.dataset.link = 'https://yourdomain.com';
     };
 
-    const [MousePosition, setMousePosition] = useState({
-        left: 0,
-        top: 0
-    });
-
     const handleMouseLeave = (ev) => {
         if (ev) {
             dispatch(
@@ -210,7 +167,7 @@ const Document = () => {
     };
 
     useEffect(() => {
-        if (!userInfo) {
+        if (!userToken) {
             navigate('/login');
         }
 
@@ -221,26 +178,12 @@ const Document = () => {
         const url = `collection/list?creator_id=${userInfo.id}&page=1&page_size=100`;
         dispatch(collectionList({ url }));
 
-        // console.log(userInfo.first_name + ' document key is : ' + documentKey);
-        // console.log('Executing useEffect...');
-
         const ydoc = new Y.Doc();
         const provider = new WebsocketProvider(process.env.REACT_APP_WEB_SOCKET_URL, documentKey, ydoc);
         const ytext = ydoc.getText('quill');
-        // ytext.insert(0, 'my string');
+
         dispatch({ type: SET_LOADER, loader: true });
         setTimeout(() => {
-            // console.log(ytext);
-            // console.log(ytext.toString());
-
-            // let quillObj = JSON.stringify(ydoc);
-            // console.log(quillObj);
-            // if (JSON.parse(quillObj).quill) {
-            //     quillText = JSON.parse(quillObj).quill;
-            // }
-            // console.log(JSON.parse(quillObj).quill);
-            // console.log(ytext.toJSON().length);
-
             if (ytext.toJSON().length > 0) {
                 isQuillText = true;
             } else {
@@ -248,44 +191,15 @@ const Document = () => {
             }
             new QuillBinding(ytext, quillRef, provider.awareness);
 
-            // if (provider.wsconnected) {
-            //     if (ytext.toJSON().length > 0) {
-            //         setIsQuillText(true);
-            //         new QuillBinding(ytext, quillRef, provider.awareness);
-            //     } else {
-            //         if (bodyText) {
-            //             ytext.insert(0, bodyText);
-            //             const state = Y.encodeStateAsUpdateV2(ytext.ydoc);
-            //             Y.applyUpdate(ydoc, state);
-            //         }
-
-            //         new QuillBinding(ytext, quillRef, provider.awareness);
-            //         setIsQuillText(false);
-            //     }
-            // } else {
-            //     setIsQuillText(false);
-            // }
-
-            //new QuillBinding(ytext, quillRef, provider.awareness);
             dispatch({ type: SET_LOADER, loader: false });
         }, 1000);
 
         provider.awareness.on('change', ({ added, removed, updated }) => {
-            // console.log('state updated:', updated);
-            // console.log('awareness object', provider.awareness);
-            // console.log('awareness object getStates()', provider.awareness.getStates());
-
-            // const memberCount = provider.awareness.getStates().size;
-            // console.log('Number of members:', memberCount);
-            // console.log('connected users:', added);
-            // console.log('disconnected users:', removed);
-            // console.log('====================');
             const users = [];
             for (const [clientId, state] of provider.awareness.getStates()) {
                 const user = state.user;
                 users.push(user);
             }
-            // console.log('Connected users:', users);
         });
 
         provider.awareness.setLocalStateField('user', {
@@ -296,26 +210,12 @@ const Document = () => {
         return () => {
             // Clean up Yjs document
             provider.disconnect();
-            //binding.destroy();
             ydoc.destroy();
         };
-    }, [navigate, userInfo, documentKey]);
+    }, [navigate, userToken, documentKey]);
 
     useEffect(() => {
         const interval = setInterval(() => {
-            // if (typeof reactQuillRef.getEditor !== 'function') return;
-            // quillRef = reactQuillRef.getEditor();
-            // quillRef.getModule();
-            // quillRef.on('editor-change', function (eventName) {
-            //     if (eventName === 'text-change') {
-            //         console.log(docBody);
-            //         console.log(docTitle);
-            //         if (docBody || docTitle) handleSubmit();
-            //         console.log('changed data');
-            //     } else if (eventName === 'selection-change') {
-            //         // args[0] will be old range
-            //     }
-            // });
             if (docBody || docTitle) handleSubmit();
         }, 60 * 1000);
         return () => {
@@ -323,9 +223,7 @@ const Document = () => {
         };
     }, [docBody, docTitle]);
 
-    useEffect(() => {
-        // console.log(docData);
-    }, [docData]);
+    useEffect(() => {}, [docData]);
 
     const handleSubmit = async () => {
         try {
@@ -347,50 +245,6 @@ const Document = () => {
         right: 16
     };
 
-    // //////////////////////////////// share dialog ///////////////////
-    // const [openShareDialog, setOpenShareDialog] = useState(false);
-
-    // const handleClickOpenShareDialog = () => {
-    //     const clientURL = process.env.REACT_APP_PUBLICSITE_BASEURL;
-    //     setOpenShareDialog(true);
-    //     setShareLnk(clientURL + 'document/' + docObj.doc_key);
-    // };
-
-    // const handleCloseShareDialog = () => {
-    //     setOpenShareDialog(false);
-    // };
-
-    // const handleDocPublish = (status) => {
-    //     dispatch(
-    //         documentUpdate({
-    //             url: 'document/update-status/' + docObj.doc_key,
-    //             navigate,
-    //             dispatch,
-    //             data: {
-    //                 doc_status: status
-    //             },
-    //             extraData: {
-    //                 status: 'publish',
-    //                 doc_url: '/document/' + docObj.doc_key
-    //             }
-    //         })
-    //     );
-
-    //     // if (status == 1) {
-    //     //     setPublishShow(true);
-    //     //     setUnpublishShow(false);
-    //     // }
-    //     // if (status == 2) {
-    //     //     setPublishShow(false);
-    //     //     setUnpublishShow(true);
-    //     // }
-
-    //     setTimeout(() => {
-    //         const url = `collection/list?creator_id=${userInfo.id}&page=1&page_size=100`;
-    //         dispatch(collectionList({ url }));
-    //     }, 500);
-    // };
-
     //////////////////////////// context menu //////////////////////////////
     const [anchorEl, setAnchorEl] = useState(null);
     const openContextMenu = Boolean(anchorEl);
@@ -406,7 +260,7 @@ const Document = () => {
         window.open(values.file, '_blank', 'noreferrer');
     };
 
-    //////////////////////////////// delete confirmation /////////
+    //////////////////////////////// file delete confirmation /////////
     const [openConfirmation, setOpenConfirmation] = useState(false);
 
     const handleClickOpenConfirmation = () => {
@@ -428,59 +282,25 @@ const Document = () => {
         setOpenConfirmation(false);
     };
 
-    /////////////////// get file name/////////
-
     return (
         <>
             <MainCard title="" onMouseLeave={(ev) => handleMouseLeave(ev)}>
-                {/* <Box sx={{ m: 1 }} style={{ float: 'right' }}>
-                    <Stack direction="row" spacing={1}>
-                        {deleteShow && (
-                            <Button onClick={handleClickOpenShareDialog} variant="outlined" size="small">
-                                Share
-                            </Button>
-                        )}
-                        {docObj != null && (
-                            <>
-                                {publishShow && (
-                                    <Button onClick={() => handleDocPublish(2)} variant="outlined" size="small">
-                                        Publish
-                                    </Button>
-                                )}
-                                {unpublishShow && (
-                                    <Button onClick={() => handleDocPublish(1)} variant="outlined" size="small">
-                                        Unpublish
-                                    </Button>
-                                )}
-                                {deleteShow && (
-                                    <Button
-                                        onClick={handleClickOpenConfirmation}
-                                        variant="outlined"
-                                        size="small"
-                                        color="error"
-                                        startIcon={<DeleteIcon />}
-                                    >
-                                        Delete
-                                    </Button>
-                                )}
-                            </>
-                        )}
-                    </Stack>
-                </Box> */}
                 {docData != null && (
                     <Box sx={{ m: 1 }} style={{ float: 'right' }}>
                         <Stack direction="row" spacing={1}>
-                            {docData.attachments.map((item, index) => (
-                                <IconButton
-                                    onClick={(event) => handleContextMenuClick(event, item)}
-                                    key={item.id}
-                                    color="primary"
-                                    aria-label="upload document"
-                                    component="label"
-                                >
-                                    <DescriptionIcon fontSize="inherit" />
-                                </IconButton>
-                            ))}
+                            {docData.attachments != null &&
+                                docData.attachments.length > 0 &&
+                                docData.attachments.map((item, index) => (
+                                    <IconButton
+                                        onClick={(event) => handleContextMenuClick(event, item)}
+                                        key={item.id}
+                                        color="primary"
+                                        aria-label="upload document"
+                                        component="label"
+                                    >
+                                        <DescriptionIcon fontSize="inherit" />
+                                    </IconButton>
+                                ))}
                         </Stack>
                     </Box>
                 )}
@@ -500,19 +320,6 @@ const Document = () => {
 
                     <div className="editor-container">
                         <EditorToolbar toolbarId={'t1'} />
-                        {/* <ReactQuill
-                            ref={(el) => {
-                                reactQuillRef = el;
-                            }}
-                            bounds=".editor-container"
-                            theme="bubble"
-                            value={docBody}
-                            onChange={onBodyChange}
-                            placeholder={'Write something here...'}
-                            formats={formats}
-                            modules={modules('t1')}
-                            preserveWhitespace
-                        /> */}
 
                         {isQuillText == true ? (
                             <ReactQuill
@@ -522,9 +329,6 @@ const Document = () => {
                                 bounds=".editor-container"
                                 theme="bubble"
                                 onChange={onBodyChange}
-                                // onBlur={(range, source, quill) => {
-                                //     onBodyBlur(quill.getHTML());
-                                // }}
                                 placeholder={'Write something here...'}
                                 formats={formats}
                                 modules={modules('t1')}
@@ -539,9 +343,6 @@ const Document = () => {
                                 theme="bubble"
                                 value={docBody}
                                 onChange={onBodyChange}
-                                // onBlur={(range, source, quill) => {
-                                //     onBodyBlur(quill.getHTML());
-                                // }}
                                 placeholder={'Write something here...'}
                                 formats={formats}
                                 modules={modules('t1')}
@@ -574,7 +375,7 @@ const Document = () => {
                 okButtonText="Delete"
                 closeButtonText="Close"
             />
-            {/* <ShareDialog link={sharelink} open={openShareDialog} handleClose={handleCloseShareDialog} /> */}
+
             <LoadingBar color="#8800ff" progress={progress} onLoaderFinished={() => setProgress(0)} />
         </>
     );

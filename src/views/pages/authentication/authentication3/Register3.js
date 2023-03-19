@@ -26,7 +26,7 @@ const Register = () => {
         if (userInfo) navigate('/home');
         // redirect user to login page if registration was successful
         if (success) navigate('/login');
-    }, [navigate, userInfo, success]);
+    }, [navigate, userToken, success]);
 
     const theme = useTheme();
     const matchDownSM = useMediaQuery(theme.breakpoints.down('md'));

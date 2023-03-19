@@ -26,7 +26,7 @@ import { SET_LOADER } from 'store/actions';
 const Home = () => {
     const theme = useTheme();
     const [loader, setLoader] = useState(false);
-    const userInfo = useSelector((state) => state.auth.userInfo);
+    const { userInfo, userToken } = useSelector((state) => state.auth);
     const collection = useSelector((state) => state.collection.data);
     const { error, loading } = useSelector((state) => state.document);
     const data = useSelector((state) => state.document.documentList);
@@ -34,7 +34,7 @@ const Home = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (!userInfo) {
+        if (!userToken) {
             navigate('/login');
         } else {
             dispatch({ type: SET_LOADER, loader: true });
@@ -45,13 +45,9 @@ const Home = () => {
                 if (!loading) {
                     dispatch({ type: SET_LOADER, loader: false });
                 }
-            }, 100);
-            // if (!loading) {
-            //     dispatch({ type: SET_LOADER, loader: false });
-            // }
-            //const url = `document/list?creator_id=${userInfo.id}&date_range_str=week`;
+            }, 200);
         }
-    }, [navigate, userInfo]);
+    }, [navigate, userToken]);
 
     //////////////////////////// context menu //////////////////////////////
     const [anchorEl, setAnchorEl] = useState(null);

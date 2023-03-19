@@ -7,7 +7,6 @@ import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 
 import Card from '@mui/material/Card';
@@ -17,14 +16,10 @@ import CardContent from '@mui/material/CardContent';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import Avatar from '@mui/material/Avatar';
 import { toast } from 'react-toastify';
-import List from '@mui/material/List';
-import ListItemButton from '@mui/material/ListItemButton';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
-import SubCard from 'ui-component/cards/SubCard';
 import MainCard from 'ui-component/cards/MainCard';
-import SecondaryAction from 'ui-component/cards/CardSecondaryAction';
 import { gridSpacing } from 'store/constant';
 import EditIcon from '@mui/icons-material/Edit';
 import PhotoCamera from '@mui/icons-material/PhotoCamera';
@@ -33,13 +28,13 @@ import { setProfilePic, setProfileData } from 'store/features/auth/authSlice';
 import API from 'helpers/jwt.interceptor';
 import { SET_LOADER } from 'store/actions';
 import UpdateProfileDialog from 'layout/components/updateProfileDialog';
-// ==============================|| TYPOGRAPHY ||============================== //
+// ==============================|| Account Settings ||============================== //
 
 const AccountSettings = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const theme = useTheme();
-    const { userInfo, profile_pic } = useSelector((state) => state.auth);
+    const { userInfo, profile_pic, userToken } = useSelector((state) => state.auth);
 
     const tableCellStyle = {
         borderBottom: 'none',
@@ -47,7 +42,7 @@ const AccountSettings = () => {
     };
 
     useEffect(() => {
-        if (!userInfo) {
+        if (!userToken) {
             navigate('/login');
         }
     });
@@ -65,7 +60,6 @@ const AccountSettings = () => {
                 dispatch({ type: SET_LOADER, loader: false });
                 toast.success(res.data.message, { autoClose: 3000 });
                 dispatch(setProfilePic({ data: res.data.profile_pic }));
-                // navigate('/document/' + doc.doc_key);
             } else {
                 dispatch({ type: SET_LOADER, loader: false });
                 toast.warn(res.data.message, { autoClose: 3000 });
@@ -94,7 +88,6 @@ const AccountSettings = () => {
             dispatch({ type: SET_LOADER, loader: false });
             toast.success(res.data.message, { autoClose: 3000 });
             dispatch(setProfileData({ data: { first_name: res.data.first_name, last_name: res.data.last_name } }));
-            // navigate('/document/' + doc.doc_key);
         } else {
             dispatch({ type: SET_LOADER, loader: false });
             toast.warn(res.data.message, { autoClose: 3000 });
@@ -146,15 +139,6 @@ const AccountSettings = () => {
                                 <CardContent>
                                     <TableContainer>
                                         <Table aria-label="simple table">
-                                            {/* <TableHead>
-                                                <TableRow>
-                                                    <TableCell>Dessert (100g serving)</TableCell>
-                                                    <TableCell align="right">Calories</TableCell>
-                                                    <TableCell align="right">Fat&nbsp;(g)</TableCell>
-                                                    <TableCell align="right">Carbs&nbsp;(g)</TableCell>
-                                                    <TableCell align="right">Protein&nbsp;(g)</TableCell>
-                                                </TableRow>
-                                            </TableHead> */}
                                             <TableBody>
                                                 <TableRow>
                                                     <TableCell style={{ width: '20%' }} sx={tableCellStyle} component="th" scope="row">

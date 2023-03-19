@@ -26,12 +26,6 @@ import LoginIcon from '@mui/icons-material/Login';
 const Error404 = () => {
     const { loading, userInfo, error } = useSelector((state) => state.auth);
     const navigate = useNavigate();
-    // redirect authenticated user to / page
-    // useEffect(() => {
-    //     if (userInfo) {
-    //         navigate('/home');
-    //     }
-    // }, [navigate, userInfo]);
     const loginClicked = () => {
         navigate('/login');
     };
