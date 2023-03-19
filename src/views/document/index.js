@@ -1,6 +1,5 @@
 // material-ui
-import React, { useState, useEffect } from 'react';
-import { toast } from 'react-toastify';
+import { useState, useEffect } from 'react';
 import LoadingBar from 'react-top-loading-bar';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -12,7 +11,6 @@ import API from 'helpers/jwt.interceptor';
 //import { WebrtcProvider } from 'y-webrtc';
 import { WebsocketProvider } from 'y-websocket';
 import { QuillBinding } from 'y-quill';
-import { Quill } from 'react-quill';
 import * as Y from 'yjs';
 import ReactQuill from 'react-quill';
 import EditorToolbar, { modules, formats } from './EditorToolbar';
@@ -23,56 +21,22 @@ import Fab from '@mui/material/Fab';
 // assets
 import { IconDeviceFloppy } from '@tabler/icons';
 
-import {
-    TextField,
-    Box,
-    Button,
-    Checkbox,
-    Divider,
-    FormControl,
-    FormControlLabel,
-    FormHelperText,
-    Grid,
-    IconButton,
-    InputAdornment,
-    InputLabel,
-    OutlinedInput,
-    Stack,
-    Typography,
-    useMediaQuery,
-    AppBar,
-    CssBaseline,
-    Toolbar
-} from '@mui/material';
+import { TextField, Box, IconButton, Stack, useMediaQuery } from '@mui/material';
 import Tooltip from '@mui/material/Tooltip';
-import { styled, useTheme } from '@mui/material/styles';
+import { useTheme } from '@mui/material/styles';
 // third party
-import * as Yup from 'yup';
-import { Formik } from 'formik';
-import { IconTrash } from '@tabler/icons';
 import DescriptionIcon from '@mui/icons-material/Description';
-import DeleteIcon from '@mui/icons-material/Delete';
-import { updateDocumentName, updateDocumentTitle } from 'store/features/collection/collectionSlice';
+import { updateDocumentTitle } from 'store/features/collection/collectionSlice';
 import ConfirmationDialog from 'layout/components/confirmationDialog';
 import { documentUpdate, documentUpdateOnEditorLeave } from 'store/features/document/documentActions';
 import { collectionList } from 'store/features/collection/collectionActions';
-import {
-    updateDoc,
-    updateDocId,
-    updateShareButton,
-    updatePublishButton,
-    updateUnpublishButton,
-    updateDeleteButton,
-    resetStateHeader
-} from 'store/features/header/headerSlice';
+import { updateDoc, updateDocId } from 'store/features/header/headerSlice';
 import { SET_LOADER } from 'store/actions';
 import ContextMenuDocumentFile from 'layout/components/contextMenuDocumentFile';
-// ==============================|| PAGE ||============================== //
 
 const Document = () => {
-    const theme = useTheme();
     const dispatch = useDispatch();
-    const { loading, userInfo, error, userToken } = useSelector((state) => state.auth);
+    const { userInfo, userToken } = useSelector((state) => state.auth);
     const docData = useSelector((state) => state.document.data);
     const navigate = useNavigate();
     const { documentKey } = useParams();

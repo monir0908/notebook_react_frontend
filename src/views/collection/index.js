@@ -1,9 +1,8 @@
 // material-ui
-import { useTheme, styled } from '@mui/material/styles';
-import { Avatar, Box, Button, ButtonBase, Card, Grid, InputAdornment, OutlinedInput, Popper, Typography, Divider } from '@mui/material';
 
-import React, { useState, useEffect } from 'react';
-import { toast } from 'react-toastify';
+import { Box, Button, Grid, Typography, Divider } from '@mui/material';
+
+import { useState, useEffect } from 'react';
 import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -14,17 +13,12 @@ import API from 'helpers/jwt.interceptor';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import MainCard from 'ui-component/cards/MainCard';
-import { IconAdjustmentsHorizontal, IconSearch, IconX } from '@tabler/icons';
 
 import { IconPlus } from '@tabler/icons';
 import ReactTimeAgo from 'react-time-ago';
-import IconButton from '@mui/material/IconButton';
-import { IconDots } from '@tabler/icons';
-import { documentList, documentCreate } from 'store/features/document/documentActions';
-import { resetState } from 'store/features/document/documentSlice';
+import { documentCreate } from 'store/features/document/documentActions';
 import { collectionDetails } from 'store/features/collection/collectionActions';
 import { SET_LOADER } from 'store/actions';
-// ==============================|| Collection PAGE ||============================== //
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -33,7 +27,7 @@ function TabPanel(props) {
         <div role="tabpanel" hidden={value !== index} id={`simple-tabpanel-${index}`} aria-labelledby={`simple-tab-${index}`} {...other}>
             {value === index && (
                 <Box sx={{ p: 3 }}>
-                    <Typography>{children}</Typography>
+                    <div>{children}</div>
                 </Box>
             )}
         </div>
@@ -173,7 +167,7 @@ const Collection = () => {
                         <TabPanel value={tabValue} index={0}>
                             <List sx={{ width: '100%', bgcolor: 'background.paper' }} component="data">
                                 {documentTabData.data.length > 0 &&
-                                    documentTabData.data.map((item, index) => (
+                                    documentTabData.data.map((item) => (
                                         <div key={item.id}>
                                             <ListItemButton onClick={() => itemClicked(item)} component="a">
                                                 <Grid container direction="row" alignItems="center" sx={{ px: 2 }}>
@@ -197,7 +191,7 @@ const Collection = () => {
                         <TabPanel value={tabValue} index={1}>
                             <List sx={{ width: '100%', bgcolor: 'background.paper' }} component="data">
                                 {recentlyUpdatedTabData.data.length > 0 &&
-                                    recentlyUpdatedTabData.data.map((item, index) => (
+                                    recentlyUpdatedTabData.data.map((item) => (
                                         <div key={item.id}>
                                             <ListItemButton onClick={() => itemClicked(item)} component="a">
                                                 <Grid container direction="row" alignItems="center" sx={{ px: 2 }}>
@@ -221,7 +215,7 @@ const Collection = () => {
                         <TabPanel value={tabValue} index={2}>
                             <List sx={{ width: '100%', bgcolor: 'background.paper' }} component="data">
                                 {recentlyPublishedTabData.data.length > 0 &&
-                                    recentlyPublishedTabData.data.map((item, index) => (
+                                    recentlyPublishedTabData.data.map((item) => (
                                         <div key={item.id}>
                                             <ListItemButton onClick={() => itemClicked(item)} component="a">
                                                 <Grid container direction="row" alignItems="center" sx={{ px: 2 }}>
@@ -245,7 +239,7 @@ const Collection = () => {
                         <TabPanel value={tabValue} index={3}>
                             <List sx={{ width: '100%', bgcolor: 'background.paper' }} component="data">
                                 {atozTabData.data.length > 0 &&
-                                    atozTabData.data.map((item, index) => (
+                                    atozTabData.data.map((item) => (
                                         <div key={item.id}>
                                             <ListItemButton onClick={() => itemClicked(item)} component="a">
                                                 <Grid container direction="row" alignItems="center" sx={{ px: 2 }}>

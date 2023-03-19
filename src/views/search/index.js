@@ -1,10 +1,9 @@
 // material-ui
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useTheme, styled } from '@mui/material/styles';
-import { Avatar, Box, Button, ButtonBase, Card, Grid, InputAdornment, OutlinedInput, Popper, Typography, Divider } from '@mui/material';
+import { Avatar, Box, ButtonBase, Grid, InputAdornment, OutlinedInput, Typography, Divider } from '@mui/material';
 
-import { toast } from 'react-toastify';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
@@ -12,11 +11,10 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ReactTimeAgo from 'react-time-ago';
 import { shouldForwardProp } from '@mui/system';
 import MainCard from 'ui-component/cards/MainCard';
-import { IconAdjustmentsHorizontal, IconSearch, IconX } from '@tabler/icons';
+import { IconSearch } from '@tabler/icons';
 import { documentList } from 'store/features/document/documentActions';
 import { resetState } from 'store/features/document/documentSlice';
 import { SET_LOADER } from 'store/actions';
-// ==============================|| SAMPLE PAGE ||============================== //
 
 const OutlineInputStyle = styled(OutlinedInput, { shouldForwardProp })(({ theme }) => ({
     width: 800,
@@ -52,7 +50,7 @@ const HeaderAvatarStyle = styled(Avatar, { shouldForwardProp })(({ theme }) => (
 const Search = () => {
     const { userInfo, userToken } = useSelector((state) => state.auth);
     const data = useSelector((state) => state.document.documentList);
-    const { error, loading } = useSelector((state) => state.document);
+    const { loading } = useSelector((state) => state.document);
     const theme = useTheme();
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -134,7 +132,7 @@ const Search = () => {
                     <Grid item md={12}>
                         <List sx={{ width: '100%', bgcolor: 'background.paper' }} component="data">
                             {data.length > 0 ? (
-                                data.map((item, index) => (
+                                data.map((item) => (
                                     <div key={item.id}>
                                         <ListItemButton onClick={() => itemClicked(item)} component="a">
                                             <Grid container direction="row" alignItems="center" sx={{ px: 2 }}>

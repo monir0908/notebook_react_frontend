@@ -1,25 +1,22 @@
 // material-ui
-import { useTheme, styled } from '@mui/material/styles';
-import { Avatar, Box, Button, ButtonBase, Card, Grid, InputAdornment, OutlinedInput, Popper, Typography, Divider } from '@mui/material';
 
-import React, { useState, useEffect } from 'react';
-import { toast } from 'react-toastify';
+import { Grid, Typography, Divider } from '@mui/material';
+
+import { useState, useEffect } from 'react';
 import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import MainCard from 'ui-component/cards/MainCard';
-import { sharedDocumentList, documentCreate } from 'store/features/document/documentActions';
+import { sharedDocumentList } from 'store/features/document/documentActions';
 import { resetState } from 'store/features/document/documentSlice';
 import ReactTimeAgo from 'react-time-ago';
 import { SET_LOADER } from 'store/actions';
-// ==============================|| SAMPLE PAGE ||============================== //
 
 const SharedWithMe = () => {
-    const theme = useTheme();
     const { userInfo, userToken } = useSelector((state) => state.auth);
     const data = useSelector((state) => state.document.documentList);
-    const { error, loading } = useSelector((state) => state.document);
+    const { loading } = useSelector((state) => state.document);
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
@@ -58,7 +55,7 @@ const SharedWithMe = () => {
                 <Divider />
                 <List sx={{ width: '100%', bgcolor: 'background.paper' }} component="data">
                     {data.length > 0 &&
-                        data.map((item, index) => (
+                        data.map((item) => (
                             <div key={item.id}>
                                 <ListItemButton onClick={() => itemClicked(item)} component="a">
                                     <Grid container direction="row" alignItems="center" sx={{ px: 2 }}>

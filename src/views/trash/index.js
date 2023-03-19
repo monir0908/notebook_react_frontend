@@ -1,54 +1,27 @@
 // material-ui
-import {
-    Avatar,
-    Box,
-    Button,
-    ButtonBase,
-    Card,
-    Grid,
-    InputAdornment,
-    OutlinedInput,
-    Popper,
-    Typography,
-    Divider,
-    InputLabel,
-    MenuItem,
-    FormControl
-} from '@mui/material';
-import { v4 } from 'uuid';
+import { Grid, Typography, Divider } from '@mui/material';
 import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
 
-import ReactPaginate from 'react-paginate';
-import Pagination from '@mui/material/Pagination';
-import Stack from '@mui/material/Stack';
-
-import React, { useState, useEffect } from 'react';
-import { toast } from 'react-toastify';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { documentList, documentUpdate } from 'store/features/document/documentActions';
-import { collectionList } from 'store/features/collection/collectionActions';
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
 import ReactTimeAgo from 'react-time-ago';
 import IconButton from '@mui/material/IconButton';
-import { IconChevronRight, IconChevronDown, IconDots } from '@tabler/icons';
+import { IconDots } from '@tabler/icons';
 import ContextMenuTrash from 'layout/components/contextMenuTrash';
 import ConfirmationDialog from 'layout/components/confirmationDialog';
 import { documentDelete } from 'store/features/document/documentActions';
 import { SET_LOADER } from 'store/actions';
-// ==============================|| SAMPLE PAGE ||============================== //
 
 const Trash = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const { userInfo, userToken } = useSelector((state) => state.auth);
     const data = useSelector((state) => state.document.documentList);
-    const { error, loading, meta_data } = useSelector((state) => state.document);
+    const { loading } = useSelector((state) => state.document);
     const [selectedItem, setSelectedItem] = useState(null);
 
     //////////////////////////// context menu //////////////////////////////

@@ -1,7 +1,7 @@
 // project imports
-import React, { useState, useEffect } from 'react';
-import { Grid, Link, IconButton, Typography, Divider, MuiTypography } from '@mui/material';
-import { useTheme, styled } from '@mui/material/styles';
+import { useState, useEffect } from 'react';
+import { Grid, IconButton, Divider } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -11,12 +11,10 @@ import TableRow from '@mui/material/TableRow';
 
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
-import CardMedia from '@mui/material/CardMedia';
 import CardContent from '@mui/material/CardContent';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
 import Avatar from '@mui/material/Avatar';
 import { toast } from 'react-toastify';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
 import MainCard from 'ui-component/cards/MainCard';
@@ -28,7 +26,6 @@ import { setProfilePic, setProfileData } from 'store/features/auth/authSlice';
 import API from 'helpers/jwt.interceptor';
 import { SET_LOADER } from 'store/actions';
 import UpdateProfileDialog from 'layout/components/updateProfileDialog';
-// ==============================|| Account Settings ||============================== //
 
 const AccountSettings = () => {
     const dispatch = useDispatch();

@@ -1,27 +1,21 @@
-import { Link } from 'react-router-dom';
-import { useState, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router';
 
-import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
+
 import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
-import { Divider, Grid, Stack, Typography, useMediaQuery } from '@mui/material';
+import { Grid } from '@mui/material';
 
 import img1 from '../../../assets/images/pages/img-maintenance-bg.svg';
 import img2 from '../../../assets/images/pages/img-error-text.svg';
-import img3 from '../../../assets/images/pages/img-error-primary-widget.svg';
 import img4 from '../../../assets/images/pages/img-error-secondary-widget.svg';
-import HomeIcon from '@mui/icons-material/Home';
+
 import LoginIcon from '@mui/icons-material/Login';
 // assets
-
-// ================================|| AUTH3 - LOGIN ||================================ //
 
 const Error404 = () => {
     const { loading, userInfo, error } = useSelector((state) => state.auth);

@@ -1,35 +1,17 @@
 // material-ui
-import {
-    Avatar,
-    Box,
-    Button,
-    ButtonBase,
-    Card,
-    Grid,
-    InputAdornment,
-    OutlinedInput,
-    Popper,
-    Typography,
-    Divider,
-    InputLabel,
-    MenuItem,
-    FormControl
-} from '@mui/material';
-import React, { useState, useEffect } from 'react';
-import { toast } from 'react-toastify';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Grid, Typography, Divider, MenuItem, FormControl } from '@mui/material';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
 // project imports
 import ReactTimeAgo from 'react-time-ago';
 import MainCard from 'ui-component/cards/MainCard';
-import { IconChevronRight, IconChevronDown, IconDots } from '@tabler/icons';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
+import Select from '@mui/material/Select';
 import { resetState } from 'store/features/document/documentSlice';
 import { documentList } from 'store/features/document/documentActions';
 import { SET_LOADER } from 'store/actions';
-// ==============================|| SAMPLE PAGE ||============================== //
 
 const Drafts = () => {
     const dispatch = useDispatch();
@@ -37,7 +19,7 @@ const Drafts = () => {
     const collection = useSelector((state) => state.collection.data);
     const { userInfo, userToken } = useSelector((state) => state.auth);
     const data = useSelector((state) => state.document.documentList);
-    const { error, loading } = useSelector((state) => state.document);
+    const { loading } = useSelector((state) => state.document);
     const [collectionSelected, setCollectionSelected] = useState('Any Collection');
     const [time, setTime] = useState('Any Time');
 
@@ -147,7 +129,7 @@ const Drafts = () => {
                 <Divider />
                 <List sx={{ width: '100%', bgcolor: 'background.paper' }} component="data">
                     {data.length > 0 &&
-                        data.map((item, index) => (
+                        data.map((item) => (
                             <div key={item.id}>
                                 <ListItemButton onClick={() => itemClicked(item)} component="a">
                                     <Grid container direction="row" alignItems="center" sx={{ px: 2 }}>
