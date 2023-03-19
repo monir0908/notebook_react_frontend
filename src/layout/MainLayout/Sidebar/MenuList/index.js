@@ -96,7 +96,7 @@ const MenuList = () => {
         element.documents.forEach((child) => {
             // if (child.doc_status == 1 || child.doc_status == 2) {
             itemChildren.push({
-                id: child.doc_key,
+                id: child.id,
                 doc_key: child.doc_key,
                 doc_creator_id: child.doc_creator_id,
                 col_key: element.collection_key,

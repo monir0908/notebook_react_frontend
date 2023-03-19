@@ -57,35 +57,7 @@ const ButtonSection = () => {
     const { userInfo, userToken } = useSelector((state) => state.auth);
     const { doc_id, doc, upload_show, share_show, publish_show, unpublish_show, delete_show } = useSelector((state) => state.header);
     const navigate = useNavigate();
-    const [value, setValue] = useState('');
-
-    const [publishShow, setPublishShow] = useState(false);
-    const [unpublishShow, setUnpublishShow] = useState(false);
     const [sharelink, setShareLnk] = useState('');
-    const [deleteShow, setDeleteShow] = useState(true);
-
-    // const getDocumentDetails = async () => {
-    //     const res = await API.get(`document/${doc_id}`);
-
-    //     let doc = res.data.data;
-    //     dispatch(doc);
-
-    //     // if (doc.doc_status == 1) {
-    //     //     setPublishShow(true);
-    //     //     setUnpublishShow(false);
-    //     // }
-    //     // if (doc.doc_status == 2) {
-    //     //     setPublishShow(false);
-    //     //     setUnpublishShow(true);
-    //     // }
-    //     // if (doc.doc_status == 3 || doc.doc_status == 4) {
-    //     //     setDeleteShow(false);
-    //     //     setPublishShow(false);
-    //     //     setUnpublishShow(false);
-    //     // } else {
-    //     //     setDeleteShow(true);
-    //     // }
-    // };
 
     //////////////////////////////// share dialog ///////////////////
     const [openShareDialog, setOpenShareDialog] = useState(false);
@@ -169,18 +141,6 @@ const ButtonSection = () => {
 
     useEffect(() => {
         // getDocumentDetails();
-
-        // if (doc.doc_status == 1) {
-        //     dispatch(updatePublishButton({ isPublishShow: true }));
-        //     dispatch(updateUnpublishButton({ isUnpublishShow: false }));
-        //     dispatch(updateDeleteButton({ isDeleteShow: true }));
-        //     dispatch(updateShareButton({ isShareShow: false }));
-        // } else if (doc.doc_status == 2) {
-        //     dispatch(updatePublishButton({ isPublishShow: false }));
-        //     dispatch(updateUnpublishButton({ isUnpublishShow: true }));
-        //     dispatch(updateShareButton({ isShareShow: true }));
-        //     dispatch(updateDeleteButton({ isDeleteShow: true }));
-        // }
 
         if (userInfo.id == doc.doc_creator_id) {
             if (doc.doc_status == 1) {
