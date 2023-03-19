@@ -18,7 +18,7 @@ import ReactQuill from 'react-quill';
 import EditorToolbar, { modules, formats } from './EditorToolbar';
 import 'react-quill/dist/quill.snow.css';
 import 'react-quill/dist/quill.bubble.css';
-
+import { colors } from 'ui-component/colors';
 import Fab from '@mui/material/Fab';
 // assets
 import { IconDeviceFloppy } from '@tabler/icons';
@@ -123,20 +123,6 @@ const Document = () => {
     let quillRef = null;
     let reactQuillRef = null;
     let isQuillText = false;
-
-    const colors = [
-        '#F47F66',
-        '#99A85A',
-        '#5AA886',
-        '#4BADAA',
-        '#C9D5A5',
-        '#656B9C',
-        '#9068A7',
-        '#C682B6',
-        '#A24C6F',
-        '#D09C8F',
-        '#7AB5C8'
-    ];
 
     const getRamndomColors = () => {
         return colors[Math.floor(Math.random() * colors.length)];
