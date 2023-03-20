@@ -86,7 +86,7 @@ const Document = () => {
 
     let quillRef = null;
     let reactQuillRef = null;
-    let isQuillText = false;
+    let isQuillText = true;
 
     const getRamndomColors = () => {
         return colors[Math.floor(Math.random() * colors.length)];
@@ -120,9 +120,8 @@ const Document = () => {
         if (!userToken) {
             navigate('/login');
         }
-
-        attachQuillRefs();
         getDocumentDetails();
+        attachQuillRefs();
 
         dispatch(documentDetails({ url: `document/${documentKey}` }));
         const url = `collection/list?creator_id=${userInfo.id}&page=1&page_size=100`;
