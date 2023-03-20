@@ -18,12 +18,12 @@ import AuthFooter from 'ui-component/cards/AuthFooter';
 // ===============================|| AUTH3 - REGISTER ||=============================== //
 
 const Register = () => {
-    const { loading, userInfo, error, success } = useSelector((state) => state.auth);
+    const { loading, userInfo, error, userToken, success } = useSelector((state) => state.auth);
     const navigate = useNavigate();
 
     useEffect(() => {
         // redirect authenticated user to / page
-        if (userInfo) navigate('/home');
+        if (userToken) navigate('/home');
         // redirect user to login page if registration was successful
         if (success) navigate('/login');
     }, [navigate, userToken, success]);
