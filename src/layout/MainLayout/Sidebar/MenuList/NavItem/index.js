@@ -106,7 +106,7 @@ const NavItem = ({ item, level }) => {
         if (matchesSM) dispatch({ type: SET_MENU, opened: false });
         if (item.dynamic) {
             dispatch(updateDoc({ doc: item }));
-            dispatch(updateDocId({ doc_id: item.id }));
+            dispatch(updateDocId({ doc_id: item.doc_key }));
         } else {
             dispatch(resetStateHeader());
         }
