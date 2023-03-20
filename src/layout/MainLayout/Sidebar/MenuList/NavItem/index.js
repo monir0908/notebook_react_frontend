@@ -130,7 +130,7 @@ const NavItem = ({ item, level }) => {
     const handleClickOpenShareDialog = () => {
         const clientURL = process.env.REACT_APP_PUBLICSITE_BASEURL;
         setOpenShareDialog(true);
-        setShareLnk(clientURL + 'document/' + item.id);
+        setShareLnk(clientURL + 'document/' + item.doc_key);
     };
 
     const handleCloseShareDialog = () => {

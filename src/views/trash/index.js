@@ -72,11 +72,6 @@ const Trash = () => {
         setTimeout(() => {
             const url = `document/list?doc_status=3&creator_id=${userInfo.id}&order_by=-updated_at`;
             dispatch(documentList({ url }));
-            if (data) {
-                setList(data.data);
-            } else {
-                setList([]);
-            }
         }, 300);
 
         setOpenConfirmation(false);
@@ -117,7 +112,7 @@ const Trash = () => {
 
                 <List sx={{ width: '100%', bgcolor: 'background.paper' }} component="data">
                     {data.length > 0 &&
-                        data.map((item, index) => (
+                        data.map((item) => (
                             <div key={item.id}>
                                 <Grid container direction="row" alignItems="center" sx={{ px: 2 }}>
                                     <Grid item md={8}>
