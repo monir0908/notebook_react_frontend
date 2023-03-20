@@ -21,7 +21,7 @@ import Fab from '@mui/material/Fab';
 // assets
 import { IconDeviceFloppy } from '@tabler/icons';
 
-import { TextField, Box, IconButton, Stack, useMediaQuery } from '@mui/material';
+import { TextField, Typography, Box, IconButton, Stack, useMediaQuery } from '@mui/material';
 import Tooltip from '@mui/material/Tooltip';
 import { useTheme } from '@mui/material/styles';
 // third party
@@ -33,6 +33,7 @@ import { collectionList } from 'store/features/collection/collectionActions';
 import { updateDoc, updateDocId } from 'store/features/header/headerSlice';
 import { SET_LOADER } from 'store/actions';
 import ContextMenuDocumentFile from 'layout/components/contextMenuDocumentFile';
+import ReactTimeAgo from 'react-time-ago';
 
 const Document = () => {
     const dispatch = useDispatch();
@@ -267,6 +268,11 @@ const Document = () => {
                         label=""
                         variant="standard"
                     />
+                    {docData != null && (
+                        <Typography sx={{ pt: 1 }} variant="body2" style={{ color: 'rgb(155, 166, 178)' }}>
+                            Updated {docData && <ReactTimeAgo date={Date.parse(docData.updated_at)} locale="en-US" />}
+                        </Typography>
+                    )}
 
                     <div className="editor-container">
                         <EditorToolbar toolbarId={'t1'} />

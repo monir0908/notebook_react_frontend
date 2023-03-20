@@ -46,7 +46,7 @@ const AccountSettings = () => {
 
     const handlePicChange = async (e) => {
         const image = e.target.files[0];
-
+        console.log(image);
         if (image) {
             const formData = new FormData();
             formData.append('profile_pic', image);

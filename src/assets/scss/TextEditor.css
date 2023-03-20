@@ -131,3 +131,9 @@
 .ql-cursor .ql-cursor-flag .ql-cursor-name {
   margin-left: -10px !important;
 }
+
+
+
+.ql-editor.ql-blank::before {
+  left: 3px !important;
+}
