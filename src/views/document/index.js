@@ -44,6 +44,7 @@ const Document = () => {
     const [docTitle, setDocTitle] = useState('');
     const [docBody, setDocBody] = useState('');
     const [progress, setProgress] = useState(0);
+    const [isQuillText, setIsQuillText] = useState(true);
     const [selectedFile, setSelectedFile] = useState(null);
     let bodyText = '';
 
@@ -86,7 +87,7 @@ const Document = () => {
 
     let quillRef = null;
     let reactQuillRef = null;
-    let isQuillText = true;
+    //let isQuillText = true;
 
     const getRamndomColors = () => {
         return colors[Math.floor(Math.random() * colors.length)];
@@ -134,9 +135,9 @@ const Document = () => {
         dispatch({ type: SET_LOADER, loader: true });
         setTimeout(() => {
             if (ytext.toJSON().length > 0) {
-                isQuillText = true;
+                setIsQuillText(true);
             } else {
-                isQuillText = false;
+                setIsQuillText(false);
             }
             new QuillBinding(ytext, quillRef, provider.awareness);
 
