@@ -48,7 +48,21 @@ export const modules = (props) => ({
         },
         modules: ['Resize', 'DisplaySize', 'Toolbar']
     },
-
+    keyboard: {
+        bindings: {
+            // custom: {
+            //     key: '1',
+            //     ctrlKey: false,
+            //     shiftKey: false,
+            //     handler: function (range, context) {
+            //         console.log('1');
+            //         return true;
+            //         // const format = Quill.getFormat(range);
+            //         // Quill.format('strike', !format.strike);
+            //     }
+            // }
+        }
+    },
     toolbar: {
         container: '#' + props
     },

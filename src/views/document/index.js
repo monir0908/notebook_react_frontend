@@ -7,7 +7,7 @@ import { documentDetails, documentFileDelete } from 'store/features/document/doc
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
 import API from 'helpers/jwt.interceptor';
-
+import { Quill } from 'react-quill';
 //import { WebrtcProvider } from 'y-webrtc';
 import { WebsocketProvider } from 'y-websocket';
 import { QuillBinding } from 'y-quill';
@@ -34,6 +34,7 @@ import { updateDoc, updateDocId } from 'store/features/header/headerSlice';
 import { SET_LOADER } from 'store/actions';
 import ContextMenuDocumentFile from 'layout/components/contextMenuDocumentFile';
 import ReactTimeAgo from 'react-time-ago';
+import ContextMenuEditor from 'layout/components/contextMenuEditor';
 
 const Document = () => {
     const dispatch = useDispatch();
@@ -48,6 +49,9 @@ const Document = () => {
     const [isQuillText, setIsQuillText] = useState(true);
     const [selectedFile, setSelectedFile] = useState(null);
     let bodyText = '';
+    const side = 300;
+    const padding = 80;
+    const margin = 100;
 
     const getDocumentDetails = async () => {
         const res = await API.get(`document/${documentKey}`);
@@ -101,6 +105,24 @@ const Document = () => {
         let tooltip = quillRef.theme.tooltip;
         let input = tooltip.root.querySelector('input[data-link]');
         input.dataset.link = 'https://yourdomain.com';
+
+        quillRef.keyboard.addBinding(
+            {
+                key: 191,
+                altKey: true,
+                offset: 0
+            },
+            function (ranges, contexts) {
+                setRange(ranges);
+                setContext(contexts);
+                setMenuPosition({
+                    top: ranges.index == 0 ? 300 : ranges.index + 300,
+                    left: 300
+                });
+                handleEditorContextMenuPress();
+                //this.quill.formatText(range, 'bold', true);
+            }
+        );
     };
 
     const handleMouseLeave = (ev) => {
@@ -196,7 +218,43 @@ const Document = () => {
         right: 16
     };
 
-    //////////////////////////// context menu //////////////////////////////
+    //////////////////////////// editor context menu //////////////////////////////
+
+    const [menuPosition, setMenuPosition] = useState(null);
+    const [range, setRange] = useState(null);
+    const [context, setContext] = useState(null);
+    const [editorAnchorEl, setEditorAnchorEl] = useState(false);
+    const openEditorContextMenu = Boolean(editorAnchorEl);
+    const handleEditorContextMenuPress = () => {
+        setEditorAnchorEl(true);
+    };
+    const handleEditorContextMenuClose = () => {
+        setEditorAnchorEl(false);
+        setRange(null);
+        setContext(null);
+    };
+
+    const handleEditorOnEnter = (values) => {
+        if (typeof reactQuillRef.getEditor !== 'function') return;
+        quillRef = reactQuillRef.getEditor();
+        switch (values) {
+            case 'h1':
+                quillRef.formatLine(range.index, 1, 'header', '1');
+                break;
+
+            case 'h2':
+                quillRef.formatLine(range.index, 1, 'header', '2');
+                break;
+        }
+
+        //   // apply bullet formatting to the line
+        //   this.quill.formatLine(range.index, 1, 'list', 'bullet');
+
+        handleEditorContextMenuClose();
+    };
+
+    //////////////////////////// file context menu //////////////////////////////
+
     const [anchorEl, setAnchorEl] = useState(null);
     const openContextMenu = Boolean(anchorEl);
     const handleContextMenuClick = (event, item) => {
@@ -311,6 +369,13 @@ const Document = () => {
                     </div>
                 </form>
             </MainCard>
+
+            <ContextMenuEditor
+                anchorPosition={menuPosition}
+                open={editorAnchorEl}
+                handleClose={handleEditorContextMenuClose}
+                handleEditorOnEnter={(values) => handleEditorOnEnter(values)}
+            />
 
             <ContextMenuDocumentFile
                 anchorEl={anchorEl}
