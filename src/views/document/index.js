@@ -35,6 +35,10 @@ import { SET_LOADER } from 'store/actions';
 import ContextMenuDocumentFile from 'layout/components/contextMenuDocumentFile';
 import ReactTimeAgo from 'react-time-ago';
 import ContextMenuEditor from 'layout/components/contextMenuEditor';
+import IconPdf from 'ui-component/custom-icon/IconPdf';
+import IconXls from 'ui-component/custom-icon/IconXls';
+import IconDocx from 'ui-component/custom-icon/IconDocx';
+import IconImg from 'ui-component/custom-icon/IconImg';
 
 const Document = () => {
     const dispatch = useDispatch();
@@ -307,7 +311,20 @@ const Document = () => {
                                         aria-label="upload document"
                                         component="label"
                                     >
-                                        <DescriptionIcon fontSize="inherit" />
+                                        {(() => {
+                                            switch (item.file_extension) {
+                                                case '.pdf':
+                                                    return <IconPdf fontSize="inherit" />;
+                                                case '.xls':
+                                                    return <IconXls fontSize="inherit" />;
+                                                case '.doc':
+                                                    return <IconDocx fontSize="inherit" />;
+                                                case '.docx':
+                                                    return <IconDocx fontSize="inherit" />;
+                                                default:
+                                                    return <DescriptionIcon fontSize="inherit" />;
+                                            }
+                                        })()}
                                     </IconButton>
                                 ))}
                         </Stack>

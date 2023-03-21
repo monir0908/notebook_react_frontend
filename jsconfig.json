@@ -4,6 +4,6 @@
         "module": "commonjs",
         "baseUrl": "src"
     },
-    "include": ["src/**/*", "socket-server/callback.js"],
+    "include": ["src/**/*"],
     "exclude": ["node_modules"]
 }
