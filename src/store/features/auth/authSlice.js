@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { registerUser, userLogin } from './authActions';
+import { registerUser, userLogin, changePassword } from './authActions';
 import { toast } from 'react-toastify';
 
 export const userInfoInit = {
@@ -92,12 +92,25 @@ const authSlice = createSlice({
                 state.loading = false;
                 state.success = true;
                 state.state = payload.state; // registration successful
-                toast.success(payload.message, { autoClose: true });
+                toast.success(payload.message, { autoClose: 4000 });
             }),
             builder.addCase(registerUser.rejected, (state, { payload }) => {
                 state.loading = false;
                 state.error = payload ? (payload.email[0] ? payload.email[0] : payload) : null;
                 toast.warn(state.error, { autoClose: true });
+            }),
+            builder.addCase(changePassword.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            }),
+            builder.addCase(changePassword.fulfilled, (state, action) => {
+                state.loading = false;
+                state.success = true;
+            }),
+            builder.addCase(changePassword.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.error;
+                //console.log(action.error);
             });
     }
 });

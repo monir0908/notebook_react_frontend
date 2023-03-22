@@ -1,6 +1,8 @@
 import axios from 'axios';
+import API from 'helpers/jwt.interceptor';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 const baseURL = process.env.REACT_APP_API_BASEURL;
+import { toast } from 'react-toastify';
 
 export const userLogin = createAsyncThunk('user/login', async ({ email, password }, { rejectWithValue }) => {
     try {
@@ -40,7 +42,6 @@ export const registerUser = createAsyncThunk(
                 }
             };
             const { data } = await axios.post(`${baseURL}user/signup`, { first_name, last_name, email, password }, config);
-            console.log(data);
             // if (data.success && data.status == 'success') {
             //     navigate('/login');
             // }
@@ -57,3 +58,26 @@ export const registerUser = createAsyncThunk(
         }
     }
 );
+
+export const changePassword = createAsyncThunk('auth/changePassword', async ({ old_password, new_password }, { rejectWithValue }) => {
+    try {
+        const res = await API.put(`${baseURL}user/change-password`, { old_password, new_password });
+
+        if (res.data.state == 'success') {
+            toast.success(res.data.message, { autoClose: 3000 });
+        }
+        return res.data;
+    } catch (error) {
+        if (error.response && error.response.data.message) {
+            if (error.response.data.state == 'warning') {
+                toast.warn(error.response.data.message, { autoClose: 3000 });
+            } else if (error.response.data.state == 'error') {
+                toast.error(error.response.data.message, { autoClose: 3000 });
+            }
+            return rejectWithValue(error.response.data.message);
+        } else {
+            toast.error(error.message, { autoClose: 3000 });
+            return rejectWithValue(error.message);
+        }
+    }
+});

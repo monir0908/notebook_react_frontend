@@ -13,9 +13,9 @@ API.interceptors.response.use(
     (error) => {
         if (error.response.status === 403) {
             // redirect to 403 page
-            //console.log('unauth');
             window.location = '/403';
         }
+        return Promise.reject(error);
     }
 );
 

@@ -1,6 +1,7 @@
 // project imports
 import { useState, useEffect } from 'react';
 import {
+    Button,
     FormControl,
     FormControlLabel,
     FormHelperText,
@@ -33,6 +34,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import PhotoCamera from '@mui/icons-material/PhotoCamera';
 
 import { setProfilePic, setProfileData } from 'store/features/auth/authSlice';
+import { changePassword } from 'store/features/auth/authActions';
 import API from 'helpers/jwt.interceptor';
 import { SET_LOADER } from 'store/actions';
 import UpdateProfileDialog from 'layout/components/updateProfileDialog';
@@ -44,7 +46,7 @@ const AccountSettings = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const theme = useTheme();
-    const { userInfo, profile_pic, userToken } = useSelector((state) => state.auth);
+    const { loading, userInfo, profile_pic, userToken } = useSelector((state) => state.auth);
 
     const tableCellStyle = {
         borderBottom: 'none',
@@ -55,7 +57,12 @@ const AccountSettings = () => {
         if (!userToken) {
             navigate('/login');
         }
-    });
+        if (loading) {
+            dispatch({ type: SET_LOADER, loader: true });
+        } else {
+            dispatch({ type: SET_LOADER, loader: false });
+        }
+    }, [loading]);
 
     const handlePicChange = async (e) => {
         const image = e.target.files[0];
@@ -200,17 +207,24 @@ const AccountSettings = () => {
                                 validationSchema={Yup.object().shape({
                                     old_password: Yup.string().max(255).required('Current password is required'),
                                     new_password: Yup.string().max(255).required('New password is required'),
-                                    confirm_password: Yup.string().max(255).required('Confirm password is required')
+                                    confirm_password: Yup.string()
+                                        .oneOf([Yup.ref('new_password'), null], "Passwords don't match")
+                                        .required('Confirm password is required')
                                 })}
-                                onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
+                                onSubmit={async (values, { setErrors, setStatus, setSubmitting, resetForm }) => {
                                     try {
-                                        //dispatch(userLogin({ email: values.email, password: values.password }));
+                                        console.log(values);
+
+                                        await dispatch(
+                                            changePassword({ old_password: values.old_password, new_password: values.new_password })
+                                        );
+                                        resetForm();
                                     } catch (err) {
                                         console.error(err);
                                     }
                                 }}
                             >
-                                {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
+                                {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values, resetForm }) => (
                                     <form noValidate onSubmit={handleSubmit}>
                                         <SubCard title="Change Password">
                                             <Grid container spacing={1}>
@@ -221,7 +235,7 @@ const AccountSettings = () => {
                                                         sx={{ ...theme.typography.customInput }}
                                                     >
                                                         <InputLabel htmlFor="outlined-adornment-password-login">
-                                                            Enter Your Current Password
+                                                            Enter your current password
                                                         </InputLabel>
                                                         <OutlinedInput
                                                             id="outlined-size-small"
@@ -250,7 +264,7 @@ const AccountSettings = () => {
                                                         sx={{ ...theme.typography.customInput }}
                                                     >
                                                         <InputLabel htmlFor="outlined-adornment-password-login">
-                                                            Enter Your New Password
+                                                            Enter your new password
                                                         </InputLabel>
                                                         <OutlinedInput
                                                             id="outlined-size-small"
@@ -277,7 +291,7 @@ const AccountSettings = () => {
                                                         sx={{ ...theme.typography.customInput }}
                                                     >
                                                         <InputLabel htmlFor="outlined-adornment-password-login">
-                                                            Enter Your Password Again
+                                                            Enter your password again
                                                         </InputLabel>
                                                         <OutlinedInput
                                                             id="outlined-size-small"
@@ -304,6 +318,19 @@ const AccountSettings = () => {
                                                     <FormHelperText error>{errors.submit}</FormHelperText>
                                                 </Box>
                                             )}
+                                            <Divider sx={{ my: 3 }} />
+                                            <Grid container spacing={2} direction="row" justifyContent="flex-end" alignItems="center">
+                                                <Grid item>
+                                                    <Button type="submit" color="error" variant="contained">
+                                                        Change Password
+                                                    </Button>
+                                                </Grid>
+                                                <Grid item>
+                                                    <Button onClick={resetForm} type="reset" variant="outlined">
+                                                        Clear
+                                                    </Button>
+                                                </Grid>
+                                            </Grid>
                                         </SubCard>
                                     </form>
                                 )}
