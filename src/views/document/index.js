@@ -25,6 +25,8 @@ import { TextField, Typography, Box, IconButton, Stack, useMediaQuery } from '@m
 import Tooltip from '@mui/material/Tooltip';
 import { useTheme } from '@mui/material/styles';
 // third party
+import { format } from 'date-fns';
+
 import DescriptionIcon from '@mui/icons-material/Description';
 import { updateDocumentTitle } from 'store/features/collection/collectionSlice';
 import ConfirmationDialog from 'layout/components/confirmationDialog';
@@ -120,7 +122,7 @@ const Document = () => {
                 setRange(ranges);
                 setContext(contexts);
                 setMenuPosition({
-                    top: ranges.index == 0 ? 300 : ranges.index + 300,
+                    top: ranges.index == 0 ? 300 : ranges.index + 500,
                     left: 300
                 });
                 handleEditorContextMenuPress();
@@ -344,8 +346,9 @@ const Document = () => {
                         variant="standard"
                     />
                     {docData != null && (
-                        <Typography sx={{ pt: 1 }} variant="body2" style={{ color: 'rgb(155, 166, 178)' }}>
-                            Updated {docData && <ReactTimeAgo date={Date.parse(docData.updated_at)} locale="en-US" />}
+                        <Typography sx={{ pt: 1 }} variant="body2" style={{ color: 'rgb(155, 166, 178)', fontStyle: 'italic' }}>
+                            Last updated at {format(Date.parse(docData.updated_at), 'dd/LL/yyyy hh:mm a')}
+                            {/* Updated {docData && <ReactTimeAgo date={Date.parse(docData.updated_at)} locale="en-US" />} */}
                         </Typography>
                     )}
 

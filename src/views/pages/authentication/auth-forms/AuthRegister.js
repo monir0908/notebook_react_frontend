@@ -42,6 +42,7 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
 const FirebaseRegister = ({ ...others }) => {
     const theme = useTheme();
+    const navigate = useNavigate();
     const scriptedRef = useScriptRef();
     const dispatch = useDispatch();
     const matchDownSM = useMediaQuery(theme.breakpoints.down('md'));
@@ -152,7 +153,8 @@ const FirebaseRegister = ({ ...others }) => {
                                 first_name: values.first_name,
                                 last_name: values.last_name,
                                 email: values.email,
-                                password: values.password
+                                password: values.password,
+                                navigate
                             })
                         );
                     } catch (err) {

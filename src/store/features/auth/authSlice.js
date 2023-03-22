@@ -28,7 +28,8 @@ const initialState = {
     userToken,
     profile_pic,
     error: null,
-    success: false
+    success: false,
+    state: null
 };
 
 const authSlice = createSlice({
@@ -89,12 +90,13 @@ const authSlice = createSlice({
             }),
             builder.addCase(registerUser.fulfilled, (state, { payload }) => {
                 state.loading = false;
-                state.success = true; // registration successful
-                toast.success("You've successfully registered, Now you can login.", { autoClose: true });
+                state.success = true;
+                state.state = payload.state; // registration successful
+                toast.success(payload.message, { autoClose: true });
             }),
             builder.addCase(registerUser.rejected, (state, { payload }) => {
                 state.loading = false;
-                state.error = payload.email[0] ? payload.email[0] : payload;
+                state.error = payload ? (payload.email[0] ? payload.email[0] : payload) : null;
                 toast.warn(state.error, { autoClose: true });
             });
     }

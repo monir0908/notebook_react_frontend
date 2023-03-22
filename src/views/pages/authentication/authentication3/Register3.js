@@ -12,21 +12,27 @@ import AuthCardWrapper from '../AuthCardWrapper';
 import Logo from 'ui-component/Logo';
 import AuthRegister from '../auth-forms/AuthRegister';
 import AuthFooter from 'ui-component/cards/AuthFooter';
-
+import { SET_LOADER } from 'store/actions';
 // assets
 
 // ===============================|| AUTH3 - REGISTER ||=============================== //
 
 const Register = () => {
-    const { loading, userInfo, error, userToken, success } = useSelector((state) => state.auth);
+    const { loading, state, userInfo, error, userToken, success } = useSelector((state) => state.auth);
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     useEffect(() => {
         // redirect authenticated user to / page
         if (userToken) navigate('/home');
+
         // redirect user to login page if registration was successful
-        if (success) navigate('/login');
-    }, [navigate, userToken, success]);
+        if (loading) {
+            dispatch({ type: SET_LOADER, loader: true });
+        } else {
+            dispatch({ type: SET_LOADER, loader: false });
+        }
+    }, [navigate, userToken, loading]);
 
     const theme = useTheme();
     const matchDownSM = useMediaQuery(theme.breakpoints.down('md'));

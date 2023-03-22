@@ -63,7 +63,7 @@ const ContextMenuDocumentFile = (props) => {
                     horizontal: 'right'
                 }}
             >
-                <MenuItem>
+                <MenuItem onClick={() => props.handleOpenFileClick(props.data)}>
                     <Typography variant="body1" style={{ fontWeight: 'bold' }}>
                         {props.data != null && props.data.file_name}
                     </Typography>

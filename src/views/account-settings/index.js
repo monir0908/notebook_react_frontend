@@ -1,6 +1,16 @@
 // project imports
 import { useState, useEffect } from 'react';
-import { Grid, IconButton, Divider } from '@mui/material';
+import {
+    FormControl,
+    FormControlLabel,
+    FormHelperText,
+    InputLabel,
+    OutlinedInput,
+    Grid,
+    IconButton,
+    Divider,
+    Typography
+} from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 
 import Table from '@mui/material/Table';
@@ -8,7 +18,7 @@ import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableRow from '@mui/material/TableRow';
-
+import SubCard from 'ui-component/cards/SubCard';
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
 import CardContent from '@mui/material/CardContent';
@@ -26,6 +36,9 @@ import { setProfilePic, setProfileData } from 'store/features/auth/authSlice';
 import API from 'helpers/jwt.interceptor';
 import { SET_LOADER } from 'store/actions';
 import UpdateProfileDialog from 'layout/components/updateProfileDialog';
+// third party
+import * as Yup from 'yup';
+import { Formik } from 'formik';
 
 const AccountSettings = () => {
     const dispatch = useDispatch();
@@ -96,7 +109,7 @@ const AccountSettings = () => {
     return (
         <>
             {userInfo != null && (
-                <MainCard title="Account Setting">
+                <MainCard title="Account Settings">
                     <Grid container spacing={gridSpacing}>
                         <Grid item md={12}>
                             <Card
@@ -175,6 +188,126 @@ const AccountSettings = () => {
                                     </TableContainer>
                                 </CardContent>
                             </Card>
+                        </Grid>
+
+                        <Grid item md={12}>
+                            <Formik
+                                initialValues={{
+                                    old_password: '',
+                                    new_password: '',
+                                    confirm_password: ''
+                                }}
+                                validationSchema={Yup.object().shape({
+                                    old_password: Yup.string().max(255).required('Current password is required'),
+                                    new_password: Yup.string().max(255).required('New password is required'),
+                                    confirm_password: Yup.string().max(255).required('Confirm password is required')
+                                })}
+                                onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
+                                    try {
+                                        //dispatch(userLogin({ email: values.email, password: values.password }));
+                                    } catch (err) {
+                                        console.error(err);
+                                    }
+                                }}
+                            >
+                                {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
+                                    <form noValidate onSubmit={handleSubmit}>
+                                        <SubCard title="Change Password">
+                                            <Grid container spacing={1}>
+                                                <Grid item md={6}>
+                                                    <FormControl
+                                                        fullWidth
+                                                        error={Boolean(touched.old_password && errors.old_password)}
+                                                        sx={{ ...theme.typography.customInput }}
+                                                    >
+                                                        <InputLabel htmlFor="outlined-adornment-password-login">
+                                                            Enter Your Current Password
+                                                        </InputLabel>
+                                                        <OutlinedInput
+                                                            id="outlined-size-small"
+                                                            defaultValue="Small"
+                                                            size="small"
+                                                            type="password"
+                                                            value={values.old_password}
+                                                            name="old_password"
+                                                            onBlur={handleBlur}
+                                                            onChange={handleChange}
+                                                            inputProps={{}}
+                                                        />
+                                                        {touched.old_password && errors.old_password && (
+                                                            <FormHelperText error id="standard-weight-helper-text-password-login">
+                                                                {errors.old_password}
+                                                            </FormHelperText>
+                                                        )}
+                                                    </FormControl>
+                                                </Grid>
+                                            </Grid>
+                                            <Grid container spacing={1}>
+                                                <Grid item md={6}>
+                                                    <FormControl
+                                                        fullWidth
+                                                        error={Boolean(touched.new_password && errors.new_password)}
+                                                        sx={{ ...theme.typography.customInput }}
+                                                    >
+                                                        <InputLabel htmlFor="outlined-adornment-password-login">
+                                                            Enter Your New Password
+                                                        </InputLabel>
+                                                        <OutlinedInput
+                                                            id="outlined-size-small"
+                                                            defaultValue="Small"
+                                                            size="small"
+                                                            type="password"
+                                                            value={values.new_password}
+                                                            name="new_password"
+                                                            onBlur={handleBlur}
+                                                            onChange={handleChange}
+                                                            inputProps={{}}
+                                                        />
+                                                        {touched.new_password && errors.new_password && (
+                                                            <FormHelperText error id="standard-weight-helper-text-password-login">
+                                                                {errors.new_password}
+                                                            </FormHelperText>
+                                                        )}
+                                                    </FormControl>
+                                                </Grid>
+                                                <Grid item md={6}>
+                                                    <FormControl
+                                                        fullWidth
+                                                        error={Boolean(touched.confirm_password && errors.confirm_password)}
+                                                        sx={{ ...theme.typography.customInput }}
+                                                    >
+                                                        <InputLabel htmlFor="outlined-adornment-password-login">
+                                                            Enter Your Password Again
+                                                        </InputLabel>
+                                                        <OutlinedInput
+                                                            id="outlined-size-small"
+                                                            defaultValue="Small"
+                                                            size="small"
+                                                            type="password"
+                                                            value={values.confirm_password}
+                                                            name="confirm_password"
+                                                            onBlur={handleBlur}
+                                                            onChange={handleChange}
+                                                            inputProps={{}}
+                                                        />
+                                                        {touched.confirm_password && errors.confirm_password && (
+                                                            <FormHelperText error id="standard-weight-helper-text-password-login">
+                                                                {errors.confirm_password}
+                                                            </FormHelperText>
+                                                        )}
+                                                    </FormControl>
+                                                </Grid>
+                                            </Grid>
+
+                                            {errors.submit && (
+                                                <Box sx={{ mt: 3 }}>
+                                                    <FormHelperText error>{errors.submit}</FormHelperText>
+                                                </Box>
+                                            )}
+                                        </SubCard>
+                                    </form>
+                                )}
+                            </Formik>
                         </Grid>
                     </Grid>
 

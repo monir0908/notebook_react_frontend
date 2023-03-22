@@ -29,26 +29,31 @@ export const userLogin = createAsyncThunk('user/login', async ({ email, password
     }
 });
 
-export const registerUser = createAsyncThunk('user/signup', async ({ first_name, last_name, email, password }, { rejectWithValue }) => {
-    //const navigate = useNavigate();
-    try {
-        const config = {
-            headers: {
-                'Content-Type': 'application/json'
+export const registerUser = createAsyncThunk(
+    'user/signup',
+    async ({ first_name, last_name, email, password, navigate }, { rejectWithValue }) => {
+        //const navigate = useNavigate();
+        try {
+            const config = {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            };
+            const { data } = await axios.post(`${baseURL}user/signup`, { first_name, last_name, email, password }, config);
+            console.log(data);
+            // if (data.success && data.status == 'success') {
+            //     navigate('/login');
+            // }
+            if (data.success && data.state == 'success') navigate('/login');
+            return data;
+        } catch (error) {
+            if (error.response.data.details) {
+                return rejectWithValue(error.response.data.details);
+            } else if (error.response && error.response.data.message) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue(error.message);
             }
-        };
-        const { data } = await axios.post(`${baseURL}user/signup`, { first_name, last_name, email, password }, config);
-        console.log(data);
-        if (data.success) {
-            // navigate('/login');
-        }
-    } catch (error) {
-        if (error.response.data.details) {
-            return rejectWithValue(error.response.data.details);
-        } else if (error.response && error.response.data.message) {
-            return rejectWithValue(error.response.data.message);
-        } else {
-            return rejectWithValue(error.message);
         }
     }
-});
+);
