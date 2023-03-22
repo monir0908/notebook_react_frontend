@@ -204,7 +204,13 @@ const ButtonSection = () => {
                     {upload_show && (
                         <Tooltip title="Upload File">
                             <IconButton color="primary" aria-label="upload document" component="label">
-                                <input onChange={handleFileChange} hidden accept=".pdf,.doc,.docx,.xls,.xlsx" multiple type="file" />
+                                <input
+                                    onChange={handleFileChange}
+                                    hidden
+                                    accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.jpg,.jpeg,.png,.gif"
+                                    multiple
+                                    type="file"
+                                />
                                 <UploadFileIcon fontSize="inherit" />
                             </IconButton>
 

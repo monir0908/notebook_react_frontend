@@ -40,7 +40,9 @@ import ContextMenuEditor from 'layout/components/contextMenuEditor';
 import IconPdf from 'ui-component/custom-icon/IconPdf';
 import IconXls from 'ui-component/custom-icon/IconXls';
 import IconDocx from 'ui-component/custom-icon/IconDocx';
+import IconPptx from 'ui-component/custom-icon/IconPptx';
 import IconImg from 'ui-component/custom-icon/IconImg';
+import IconGif from 'ui-component/custom-icon/IconGif';
 
 const Document = () => {
     const dispatch = useDispatch();
@@ -319,10 +321,24 @@ const Document = () => {
                                                     return <IconPdf fontSize="inherit" />;
                                                 case '.xls':
                                                     return <IconXls fontSize="inherit" />;
+                                                case '.xlsx':
+                                                    return <IconXls fontSize="inherit" />;
                                                 case '.doc':
                                                     return <IconDocx fontSize="inherit" />;
                                                 case '.docx':
                                                     return <IconDocx fontSize="inherit" />;
+                                                case '.ppt':
+                                                    return <IconPptx fontSize="inherit" />;
+                                                case '.pptx':
+                                                    return <IconPptx fontSize="inherit" />;
+                                                case '.jpg':
+                                                    return <IconImg fontSize="inherit" />;
+                                                case '.jpeg':
+                                                    return <IconImg fontSize="inherit" />;
+                                                case '.png':
+                                                    return <IconImg fontSize="inherit" />;
+                                                case '.gif':
+                                                    return <IconGif fontSize="inherit" />;
                                                 default:
                                                     return <DescriptionIcon fontSize="inherit" />;
                                             }
