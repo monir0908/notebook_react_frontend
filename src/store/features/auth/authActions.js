@@ -44,7 +44,7 @@ export const registerUser = createAsyncThunk(
             // if (data.success && data.status == 'success') {
             //     navigate('/login');
             // }
-            if (data.success && data.state == 'success') navigate('/login');
+            if (data.state == 'success') navigate('/login');
             return data;
         } catch (error) {
             if (error.response.data.details) {
