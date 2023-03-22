@@ -13,7 +13,7 @@ import AuthCardWrapper from '../AuthCardWrapper';
 import AuthLogin from '../auth-forms/AuthLogin';
 import Logo from 'ui-component/Logo';
 import AuthFooter from 'ui-component/cards/AuthFooter';
-
+import { SET_LOADER } from 'store/actions';
 // assets
 
 // ================================|| AUTH3 - LOGIN ||================================ //
@@ -21,12 +21,19 @@ import AuthFooter from 'ui-component/cards/AuthFooter';
 const Login = () => {
     const { loading, userInfo, error, userToken } = useSelector((state) => state.auth);
     const navigate = useNavigate();
+    const dispatch = useDispatch();
     // redirect authenticated user to / page
     useEffect(() => {
         if (userToken) {
             navigate('/home');
         }
-    }, [navigate, userToken]);
+
+        if (loading) {
+            dispatch({ type: SET_LOADER, loader: true });
+        } else {
+            dispatch({ type: SET_LOADER, loader: false });
+        }
+    }, [navigate, userToken, loading]);
 
     const theme = useTheme();
     const matchDownSM = useMediaQuery(theme.breakpoints.down('md'));
