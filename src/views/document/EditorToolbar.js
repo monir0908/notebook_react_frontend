@@ -32,6 +32,14 @@ Quill.register('modules/linkTooltip', LinkTooltip);
 Quill.register('modules/imageDrop', ImageDrop);
 Quill.register('modules/imageResize', ImageResize);
 
+var Block = Quill.import('blots/block');
+class Div extends Block {}
+Div.tagName = 'p';
+Div.blotName = 'p';
+Div.allowedChildren = Block.allowedChildren;
+Div.allowedChildren.push(Block);
+Quill.register(Div);
+
 // Modules object for setting up the Quill editor
 export const modules = (props) => ({
     cursors: {

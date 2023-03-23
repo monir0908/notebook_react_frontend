@@ -115,6 +115,24 @@ const Document = () => {
         let input = tooltip.root.querySelector('input[data-link]');
         input.dataset.link = 'https://yourdomain.com';
 
+        /////////////////////////////////// drag and drop //////////////////
+        quillRef.on('selection-change', () => {
+            const selection = quillRef.getSelection();
+            if (selection) {
+                const [start, end] = [selection.index, selection.index + selection.length];
+                const nodes = quillRef.getLines(start, end);
+                nodes.forEach((node) => {
+                    if (node.domNode.tagName === 'H1' || node.domNode.tagName === 'P') {
+                        const bounds = quillRef.getBounds(start, end);
+                        node.domNode.setAttribute('draggable', true);
+                        node.domNode.addEventListener('dragstart', handleDragStart);
+                        node.domNode.addEventListener('dragover', handleDragOver);
+                        node.domNode.addEventListener('drop', handleDrop);
+                    }
+                });
+            }
+        });
+        /////////////////////////////////// drag and drop //////////////////
         quillRef.keyboard.addBinding(
             {
                 key: 191,
@@ -327,9 +345,82 @@ const Document = () => {
         setOpenConfirmation(false);
     };
 
+    /////////////////////////////////// drag and drop //////////////////
+
+    const handleDragStart = (event) => {
+        const { target } = event;
+        event.dataTransfer.setData('text/plain', target.tagName);
+        console.log(target.tagName);
+        console.log(target);
+    };
+
+    const handleDragOver = (event) => {
+        event.preventDefault();
+    };
+
+    const handleDrop = (event) => {
+        event.preventDefault();
+
+        // if (typeof reactQuillRef.getEditor !== 'function') return;
+        // quillRef = reactQuillRef.getEditor();
+
+        //const quill = reactQuillRef.getEditor();
+        const tagName = event.dataTransfer.getData('text/plain');
+        const text = event.dataTransfer.getData('text/html'); /// not getting the text value
+        const cursorPosition = quillRef.getSelection().index;
+        const range = quillRef.getSelection(true);
+        range.index = cursorPosition;
+        range.length = text.length;
+        quillRef.deleteText(range.index, range.length);
+        quillRef.insertText(range.index, text, { [tagName.toLowerCase()]: true });
+    };
+
+    // useEffect(() => {
+    //     // Add event listeners to the document to track when elements are being dragged
+    //     document.addEventListener('dragstart', handleDragStart);
+    //     document.addEventListener('dragover', handleDragOver);
+
+    //     return () => {
+    //         // Clean up the event listeners when the component is unmounted
+    //         document.removeEventListener('dragstart', handleDragStart);
+    //         document.removeEventListener('dragover', handleDragOver);
+    //     };
+    // }, []);
+
+    // function handleDragStart(event) {
+    //     // console.log(event.target.parentNode);
+    //     const tagName = event.target.tagName.toLowerCase();
+
+    //     // Only allow dragging of h1 and p tags
+    //     if (tagName === 'h1' || tagName === 'p') {
+    //         // Set the data that will be passed when the element is dropped
+    //         // event.dataTransfer.setData('text/html', event.target.outerHTML);
+    //         event.dataTransfer.setData('text/html', event.target.parentNode);
+    //     }
+    // }
+
+    // function handleDragOver(event) {
+    //     // Allow elements to be dropped onto the Quill editor
+    //     event.preventDefault();
+    // }
+
+    // function handleDrop(event) {
+    //     event.preventDefault();
+
+    //     const draggedHtml = event.dataTransfer.getData('text/html');
+    //     reactQuillRef.getEditor().insertHTML(draggedHtml);
+    // }
+    /////////////////////////////////// drag and drop //////////////////
     return (
         <>
             <MainCard title="" onMouseLeave={(ev) => handleMouseLeave(ev)}>
+                <h1 draggable={true} onDragStart={handleDragStart}>
+                    Heading
+                </h1>
+                <p draggable={true} onDragStart={handleDragStart}>
+                    Paragraph
+                </p>
+
                 {docData != null && (
                     <Box sx={{ m: 1 }} style={{ float: 'right' }}>
                         <Stack direction="row" spacing={1}>
