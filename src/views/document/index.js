@@ -56,6 +56,7 @@ const Document = () => {
     const [progress, setProgress] = useState(0);
     const [isQuillText, setIsQuillText] = useState(true);
     const [selectedFile, setSelectedFile] = useState(null);
+    const [selection, setSelection] = useState(null);
     let bodyText = '';
     const side = 300;
     const padding = 80;
@@ -117,17 +118,25 @@ const Document = () => {
         quillRef.keyboard.addBinding(
             {
                 key: 191,
-                altKey: true,
                 offset: 0
             },
             function (ranges, contexts) {
                 setRange(ranges);
                 setContext(contexts);
-                setMenuPosition({
-                    top: ranges.index == 0 ? 300 : ranges.index + 500,
-                    left: 300
-                });
-                handleEditorContextMenuPress();
+                const selection = quillRef.getSelection();
+                if (selection) {
+                    quillRef.insertText(selection.index, '/');
+                    const bounds = quillRef.getBounds(selection.index);
+                    const editorEl = quillRef.container;
+                    const editorBounds = editorEl.getBoundingClientRect();
+                    setMenuPosition({
+                        top: editorBounds.top + bounds.bottom,
+                        left: editorBounds.left + bounds.left + 10
+                    });
+                    handleEditorContextMenuPress();
+                    quillRef.focus();
+                }
+
                 //this.quill.formatText(range, 'bold', true);
             }
         );
@@ -223,7 +232,7 @@ const Document = () => {
     const fabStyle = {
         position: 'fixed',
         bottom: 25,
-        right: 16
+        right: 36
     };
 
     //////////////////////////// editor context menu //////////////////////////////
@@ -240,21 +249,40 @@ const Document = () => {
         setEditorAnchorEl(false);
         setRange(null);
         setContext(null);
+
+        // if (selection) {
+        //     // quillRef.deleteText(selection.index, 1);
+        //     // setMenuPosition(null);
+        //     quillRef.focus();
+        // }
     };
 
     const handleEditorOnEnter = (values) => {
         if (typeof reactQuillRef.getEditor !== 'function') return;
         quillRef = reactQuillRef.getEditor();
+
         switch (values) {
             case 'h1':
                 quillRef.formatLine(range.index, 1, 'header', '1');
                 break;
-
             case 'h2':
                 quillRef.formatLine(range.index, 1, 'header', '2');
                 break;
+            case 'h3':
+                quillRef.formatLine(range.index, 1, 'header', '3');
+                break;
+            case 'bullet':
+                quillRef.formatLine(range.index, 1, 'list', 'bullet');
+                break;
+            case 'ordered':
+                quillRef.formatLine(range.index, 1, 'list', 'ordered');
+                break;
         }
 
+        // setTimeout(() => {
+        //     quillRef.deleteText(range.index - 1, 1);
+        //     quillRef.focus();
+        // }, 500);
         //   // apply bullet formatting to the line
         //   this.quill.formatLine(range.index, 1, 'list', 'bullet');
 
@@ -408,6 +436,7 @@ const Document = () => {
 
             <ContextMenuEditor
                 anchorPosition={menuPosition}
+                quill={quillRef}
                 open={editorAnchorEl}
                 handleClose={handleEditorContextMenuClose}
                 handleEditorOnEnter={(values) => handleEditorOnEnter(values)}

@@ -238,8 +238,7 @@ const AccountSettings = () => {
                                                             Enter your current password
                                                         </InputLabel>
                                                         <OutlinedInput
-                                                            id="outlined-size-small"
-                                                            defaultValue="Small"
+                                                            id="outlined-size-small-old-pass"
                                                             size="small"
                                                             type="password"
                                                             value={values.old_password}
@@ -267,8 +266,7 @@ const AccountSettings = () => {
                                                             Enter your new password
                                                         </InputLabel>
                                                         <OutlinedInput
-                                                            id="outlined-size-small"
-                                                            defaultValue="Small"
+                                                            id="outlined-size-small-new-pass"
                                                             size="small"
                                                             type="password"
                                                             value={values.new_password}
@@ -291,11 +289,10 @@ const AccountSettings = () => {
                                                         sx={{ ...theme.typography.customInput }}
                                                     >
                                                         <InputLabel htmlFor="outlined-adornment-password-login">
-                                                            Enter your password again
+                                                            Confirm your new password
                                                         </InputLabel>
                                                         <OutlinedInput
-                                                            id="outlined-size-small"
-                                                            defaultValue="Small"
+                                                            id="outlined-size-small-confirm-pass"
                                                             size="small"
                                                             type="password"
                                                             value={values.confirm_password}

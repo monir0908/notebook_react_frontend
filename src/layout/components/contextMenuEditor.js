@@ -11,6 +11,9 @@ import Divider from '@mui/material/Divider';
 import HMobiledataIcon from '@mui/icons-material/HMobiledata';
 import IconH1 from 'ui-component/custom-icon/IconH1';
 import IconH2 from 'ui-component/custom-icon/IconH2';
+import IconH3 from 'ui-component/custom-icon/IconH3';
+import IconOl from 'ui-component/custom-icon/IconOl';
+import IconUl from 'ui-component/custom-icon/IconUl';
 
 const ContextMenuEditor = (props) => {
     const side = 300;
@@ -19,6 +22,12 @@ const ContextMenuEditor = (props) => {
 
     const handleKeyDown = (e, type) => {
         if (e.key === 'Enter') {
+            props.handleEditorOnEnter(type);
+        }
+    };
+
+    const handleOnClick = (e, type) => {
+        if (e) {
             props.handleEditorOnEnter(type);
         }
     };
@@ -33,22 +42,41 @@ const ContextMenuEditor = (props) => {
                 onClick={props.handleClose}
                 anchorReference="anchorPosition"
                 anchorPosition={props.anchorPosition}
-                transformOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'left'
-                }}
+                // transformOrigin={{
+                //     vertical: 'bottom',
+                //     horizontal: 'left'
+                // }}
             >
-                <MenuItem onKeyDown={(event) => handleKeyDown(event, 'h1')}>
+                <MenuItem onClick={(event) => handleOnClick(event, 'h1')} onKeyDown={(event) => handleKeyDown(event, 'h1')}>
                     <ListItemIcon>
                         <IconH1 fontSize="small" />
                     </ListItemIcon>
-                    <ListItemText>Heading 1</ListItemText>
+                    <ListItemText>Big heading</ListItemText>
                 </MenuItem>
-                <MenuItem onKeyDown={(event) => handleKeyDown(event, 'h2')}>
+                <MenuItem onClick={(event) => handleOnClick(event, 'h2')} onKeyDown={(event) => handleKeyDown(event, 'h2')}>
                     <ListItemIcon>
                         <IconH2 fontSize="small" />
                     </ListItemIcon>
-                    <ListItemText>Heading 2</ListItemText>
+                    <ListItemText>Medium heading</ListItemText>
+                </MenuItem>
+                <MenuItem onClick={(event) => handleOnClick(event, 'h3')} onKeyDown={(event) => handleKeyDown(event, 'h3')}>
+                    <ListItemIcon>
+                        <IconH3 fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText>Small heading</ListItemText>
+                </MenuItem>
+                <Divider />
+                <MenuItem onClick={(event) => handleOnClick(event, 'bullet')} onKeyDown={(event) => handleKeyDown(event, 'h3')}>
+                    <ListItemIcon>
+                        <IconUl fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText>Bulleted list</ListItemText>
+                </MenuItem>
+                <MenuItem onClick={(event) => handleOnClick(event, 'ordered')} onKeyDown={(event) => handleKeyDown(event, 'h3')}>
+                    <ListItemIcon>
+                        <IconOl fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText>Ordered list</ListItemText>
                 </MenuItem>
             </Menu>
         </>
