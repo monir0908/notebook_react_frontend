@@ -349,9 +349,8 @@ const Document = () => {
 
     const handleDragStart = (event) => {
         const { target } = event;
-        event.dataTransfer.setData('text/plain', target.tagName);
-        console.log(target.tagName);
-        console.log(target);
+        event.dataTransfer.setData('tag', target.tagName);
+        event.dataTransfer.setData('text', target.innerText);
     };
 
     const handleDragOver = (event) => {
@@ -360,19 +359,14 @@ const Document = () => {
 
     const handleDrop = (event) => {
         event.preventDefault();
-
-        // if (typeof reactQuillRef.getEditor !== 'function') return;
-        // quillRef = reactQuillRef.getEditor();
-
-        //const quill = reactQuillRef.getEditor();
-        const tagName = event.dataTransfer.getData('text/plain');
-        const text = event.dataTransfer.getData('text/html'); /// not getting the text value
+        const tagName = event.dataTransfer.getData('tag');
+        const text = event.dataTransfer.getData('text');
         const cursorPosition = quillRef.getSelection().index;
         const range = quillRef.getSelection(true);
         range.index = cursorPosition;
         range.length = text.length;
         quillRef.deleteText(range.index, range.length);
-        quillRef.insertText(range.index, text, { [tagName.toLowerCase()]: true });
+        quillRef.formatLine(range.index, text, { [tagName.toLowerCase()]: true });
     };
 
     // useEffect(() => {
@@ -414,12 +408,12 @@ const Document = () => {
     return (
         <>
             <MainCard title="" onMouseLeave={(ev) => handleMouseLeave(ev)}>
-                <h1 draggable={true} onDragStart={handleDragStart}>
+                {/* <h1 draggable={true} onDragStart={handleDragStart}>
                     Heading
                 </h1>
                 <p draggable={true} onDragStart={handleDragStart}>
                     Paragraph
-                </p>
+                </p> */}
 
                 {docData != null && (
                     <Box sx={{ m: 1 }} style={{ float: 'right' }}>
