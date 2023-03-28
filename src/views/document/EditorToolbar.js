@@ -3,7 +3,7 @@ import { Quill } from 'react-quill';
 import QuillCursors from 'quill-cursors';
 import { ImageDrop } from 'quill-image-drop-module';
 import ImageResize from 'quill-image-resize-module-react';
-import BlotFormatter from 'quill-blot-formatter';
+// import BlotFormatter from 'quill-blot-formatter';
 
 const fontSizeArr = ['15px', '18px', '22px', '26px'];
 const Size = Quill.import('attributors/style/size');
@@ -32,44 +32,10 @@ Quill.register('modules/linkTooltip', LinkTooltip);
 Quill.register('modules/imageDrop', ImageDrop);
 Quill.register('modules/imageResize', ImageResize);
 
-var Block = Quill.import('blots/block');
-class Div extends Block {}
-Div.tagName = 'p';
-Div.blotName = 'p';
-Div.allowedChildren = Block.allowedChildren;
-Div.allowedChildren.push(Block);
-Quill.register(Div);
-
 // Modules object for setting up the Quill editor
 export const modules = (props) => ({
     cursors: {
         transformOnTextChange: true
-    },
-    imageDrop: true,
-    imageResize: {
-        parchment: Quill.import('parchment'),
-        handleStyles: {
-            displaySize: true,
-            backgroundColor: 'black',
-            border: 'none',
-            color: 'white'
-        },
-        modules: ['Resize', 'DisplaySize', 'Toolbar']
-    },
-    keyboard: {
-        bindings: {
-            // custom: {
-            //     key: '1',
-            //     ctrlKey: false,
-            //     shiftKey: false,
-            //     handler: function (range, context) {
-            //         console.log('1');
-            //         return true;
-            //         // const format = Quill.getFormat(range);
-            //         // Quill.format('strike', !format.strike);
-            //     }
-            // }
-        }
     },
     toolbar: {
         container: '#' + props
@@ -80,6 +46,32 @@ export const modules = (props) => ({
         userOnly: true
     },
     linkTooltip: true
+    // imageDrop: true,
+    // imageResize: {
+    //     parchment: Quill.import('parchment'),
+    //     handleStyles: {
+    //         displaySize: true,
+    //         backgroundColor: 'black',
+    //         border: 'none',
+    //         color: 'white'
+    //     },
+    //     modules: ['Resize', 'DisplaySize', 'Toolbar']
+    // },
+    // keyboard: {
+    //     bindings: {
+    //         // custom: {
+    //         //     key: '1',
+    //         //     ctrlKey: false,
+    //         //     shiftKey: false,
+    //         //     handler: function (range, context) {
+    //         //         console.log('1');
+    //         //         return true;
+    //         //         // const format = Quill.getFormat(range);
+    //         //         // Quill.format('strike', !format.strike);
+    //         //     }
+    //         // }
+    //     }
+    // },
 });
 
 // Formats objects for setting up the Quill editor

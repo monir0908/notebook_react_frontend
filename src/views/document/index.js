@@ -1,5 +1,5 @@
 // material-ui
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import LoadingBar from 'react-top-loading-bar';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -12,6 +12,7 @@ import { Quill } from 'react-quill';
 import { WebsocketProvider } from 'y-websocket';
 import { QuillBinding } from 'y-quill';
 import * as Y from 'yjs';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import ReactQuill from 'react-quill';
 import EditorToolbar, { modules, formats } from './EditorToolbar';
 import 'react-quill/dist/quill.snow.css';
@@ -57,6 +58,7 @@ const Document = () => {
     const [isQuillText, setIsQuillText] = useState(true);
     const [selectedFile, setSelectedFile] = useState(null);
     const [selection, setSelection] = useState(null);
+    const [content, setContent] = useState('');
     let bodyText = '';
     const side = 300;
     const padding = 80;
@@ -115,24 +117,70 @@ const Document = () => {
         let input = tooltip.root.querySelector('input[data-link]');
         input.dataset.link = 'https://yourdomain.com';
 
-        /////////////////////////////////// drag and drop //////////////////
-        quillRef.on('selection-change', () => {
-            const selection = quillRef.getSelection();
-            if (selection) {
-                const [start, end] = [selection.index, selection.index + selection.length];
-                const nodes = quillRef.getLines(start, end);
-                nodes.forEach((node) => {
-                    if (node.domNode.tagName === 'H1' || node.domNode.tagName === 'P') {
-                        const bounds = quillRef.getBounds(start, end);
-                        node.domNode.setAttribute('draggable', true);
-                        node.domNode.addEventListener('dragstart', handleDragStart);
-                        node.domNode.addEventListener('dragover', handleDragOver);
-                        node.domNode.addEventListener('drop', handleDrop);
-                    }
-                });
+        // Add event listeners for mouseover and mouseout
+        const quillContainer = quillRef.container;
+        quillContainer.addEventListener('mouseover', (event) => {
+            const targetElement = event.target;
+            if (
+                targetElement.tagName === 'H1' ||
+                targetElement.tagName === 'H2' ||
+                targetElement.tagName === 'H3' ||
+                targetElement.tagName === 'H4' ||
+                targetElement.tagName === 'H5' ||
+                targetElement.tagName === 'H6' ||
+                targetElement.tagName === 'LI' ||
+                targetElement.tagName === 'P'
+            ) {
+                switch (targetElement.innerText) {
+                    case '\n':
+                        break;
+                    case ' ':
+                        break;
+
+                    default:
+                        targetElement.classList.add('hand-cursor');
+                        break;
+                }
             }
         });
-        /////////////////////////////////// drag and drop //////////////////
+
+        quillContainer.addEventListener('mouseout', (event) => {
+            const targetElement = event.target;
+            if (
+                targetElement.tagName === 'H1' ||
+                targetElement.tagName === 'H2' ||
+                targetElement.tagName === 'H3' ||
+                targetElement.tagName === 'H4' ||
+                targetElement.tagName === 'H5' ||
+                targetElement.tagName === 'H6' ||
+                targetElement.tagName === 'LI' ||
+                targetElement.tagName === 'P'
+            ) {
+                targetElement.classList.remove('hand-cursor'); // remove the CSS class
+            }
+        });
+
+        quillContainer.addEventListener('mousedown', (event) => {
+            const targetElement = event.target;
+            if (
+                targetElement.tagName === 'H1' ||
+                targetElement.tagName === 'H2' ||
+                targetElement.tagName === 'H3' ||
+                targetElement.tagName === 'H4' ||
+                targetElement.tagName === 'H5' ||
+                targetElement.tagName === 'H6' ||
+                targetElement.tagName === 'LI' ||
+                targetElement.tagName === 'P'
+            ) {
+                targetElement.setAttribute('draggable', 'true');
+                const selection = window.getSelection();
+                selection.removeAllRanges();
+                const range = document.createRange();
+                range.selectNodeContents(targetElement);
+                selection.addRange(range);
+            }
+        });
+
         quillRef.keyboard.addBinding(
             {
                 key: 191,
@@ -347,63 +395,43 @@ const Document = () => {
 
     /////////////////////////////////// drag and drop //////////////////
 
-    const handleDragStart = (event) => {
-        const { target } = event;
-        event.dataTransfer.setData('tag', target.tagName);
-        event.dataTransfer.setData('text', target.innerText);
-    };
+    useEffect(() => {
+        const quillContainer = quillRef.container;
+        // Add event listeners to the document to track when elements are being dragged
+        quillContainer.addEventListener('dragstart', handleDragStart);
+        quillContainer.addEventListener('drop', handleDrop);
 
-    const handleDragOver = (event) => {
-        event.preventDefault();
+        return () => {
+            // Clean up the event listeners when the component is unmounted
+            quillContainer.removeEventListener('dragstart', handleDragStart);
+            quillContainer.removeEventListener('drop', handleDrop);
+        };
+    }, []);
+
+    const handleDragStart = (event) => {
+        console.log('dragstart');
+        // console.log(event.target.parentNode);
+        // const tagName = event.target.tagName.toLowerCase();
+        // // Only allow dragging of h1 and p tags
+        // if (tagName === 'h1' || tagName === 'p') {
+        //     // Set the data that will be passed when the element is dropped
+        //     // event.dataTransfer.setData('text/html', event.target.outerHTML);
+        //     event.dataTransfer.setData('text/html', event.target.parentNode);
+        // }
     };
 
     const handleDrop = (event) => {
-        event.preventDefault();
-        const tagName = event.dataTransfer.getData('tag');
-        const text = event.dataTransfer.getData('text');
-        const cursorPosition = quillRef.getSelection().index;
-        const range = quillRef.getSelection(true);
-        range.index = cursorPosition;
-        range.length = text.length;
-        quillRef.deleteText(range.index, range.length);
-        quillRef.formatLine(range.index, text, { [tagName.toLowerCase()]: true });
+        console.log('drop');
+        // console.log(event.target.parentNode);
+        // const tagName = event.target.tagName.toLowerCase();
+        // // Only allow dragging of h1 and p tags
+        // if (tagName === 'h1' || tagName === 'p') {
+        //     // Set the data that will be passed when the element is dropped
+        //     // event.dataTransfer.setData('text/html', event.target.outerHTML);
+        //     event.dataTransfer.setData('text/html', event.target.parentNode);
+        // }
     };
 
-    // useEffect(() => {
-    //     // Add event listeners to the document to track when elements are being dragged
-    //     document.addEventListener('dragstart', handleDragStart);
-    //     document.addEventListener('dragover', handleDragOver);
-
-    //     return () => {
-    //         // Clean up the event listeners when the component is unmounted
-    //         document.removeEventListener('dragstart', handleDragStart);
-    //         document.removeEventListener('dragover', handleDragOver);
-    //     };
-    // }, []);
-
-    // function handleDragStart(event) {
-    //     // console.log(event.target.parentNode);
-    //     const tagName = event.target.tagName.toLowerCase();
-
-    //     // Only allow dragging of h1 and p tags
-    //     if (tagName === 'h1' || tagName === 'p') {
-    //         // Set the data that will be passed when the element is dropped
-    //         // event.dataTransfer.setData('text/html', event.target.outerHTML);
-    //         event.dataTransfer.setData('text/html', event.target.parentNode);
-    //     }
-    // }
-
-    // function handleDragOver(event) {
-    //     // Allow elements to be dropped onto the Quill editor
-    //     event.preventDefault();
-    // }
-
-    // function handleDrop(event) {
-    //     event.preventDefault();
-
-    //     const draggedHtml = event.dataTransfer.getData('text/html');
-    //     reactQuillRef.getEditor().insertHTML(draggedHtml);
-    // }
     /////////////////////////////////// drag and drop //////////////////
     return (
         <>
@@ -483,12 +511,12 @@ const Document = () => {
 
                     <div className="editor-container">
                         <EditorToolbar toolbarId={'t1'} />
-
                         {isQuillText == true ? (
                             <ReactQuill
                                 ref={(el) => {
                                     reactQuillRef = el;
                                 }}
+                                className="quill-editor"
                                 bounds=".editor-container"
                                 theme="bubble"
                                 onChange={onBodyChange}
@@ -502,6 +530,7 @@ const Document = () => {
                                 ref={(el) => {
                                     reactQuillRef = el;
                                 }}
+                                className="quill-editor"
                                 bounds=".editor-container"
                                 theme="bubble"
                                 value={docBody}
