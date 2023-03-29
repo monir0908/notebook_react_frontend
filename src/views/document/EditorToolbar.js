@@ -3,6 +3,7 @@ import { Quill } from 'react-quill';
 import QuillCursors from 'quill-cursors';
 import { ImageDrop } from 'quill-image-drop-module';
 import ImageResize from 'quill-image-resize-module-react';
+
 // import BlotFormatter from 'quill-blot-formatter';
 
 const fontSizeArr = ['15px', '18px', '22px', '26px'];
@@ -27,6 +28,7 @@ class LinkTooltip {
         }
     }
 }
+
 Quill.register('modules/cursors', QuillCursors);
 Quill.register('modules/linkTooltip', LinkTooltip);
 Quill.register('modules/imageDrop', ImageDrop);

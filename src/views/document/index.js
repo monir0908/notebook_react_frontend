@@ -113,9 +113,6 @@ const Document = () => {
         if (typeof reactQuillRef.getEditor !== 'function') return;
         quillRef = reactQuillRef.getEditor();
         quillRef.getModule();
-        let tooltip = quillRef.theme.tooltip;
-        let input = tooltip.root.querySelector('input[data-link]');
-        input.dataset.link = 'https://yourdomain.com';
 
         // Add event listeners for mouseover and mouseout
         const quillContainer = quillRef.container;
@@ -160,25 +157,121 @@ const Document = () => {
             }
         });
 
+        // quillContainer.addEventListener('click', function (event) {
+        //     const target = event.target;
+        //     const pElement = target.closest('.ql-editor p');
+        //     const beforeContent = window.getComputedStyle(pElement, ':before').getPropertyValue('content');
+
+        //     if (target.matches('.ql-editor p::before')) {
+        //         const selection = window.getSelection();
+        //         const range = document.createRange();
+        //         range.selectNodeContents(target);
+        //         selection.removeAllRanges();
+        //         selection.addRange(range);
+        //     }
+
+        //     console.log(beforeContent);
+        //     // const beforePseudoElement = target.closest('.ql-editor p')?.querySelector('::before');
+        //     // if (beforePseudoElement) {
+        //     //     console.log('pseudo-element clicked!!');
+        //     // }
+        //     // if (target.matches('.ql-editor p')) {
+        //     //     const path = event.composedPath();
+        //     //     // Check if the ::before pseudo-element was clicked
+        //     //     //if (path[0] !== target && path[0].classList.contains('hand-cursor')) {
+        //     //     if (path[0] == target && path[0].classList.contains('hand-cursor')) {
+        //     //         console.log('::before clicked!!');
+        //     //     } else {
+        //     //         console.log('p clicked!!');
+        //     //         const selection = window.getSelection();
+        //     //         const range = document.createRange();
+        //     //         range.selectNodeContents(target);
+        //     //         selection.removeAllRanges();
+        //     //         selection.addRange(range);
+        //     //     }
+        //     // }
+        // });
+
+        // quillContainer.addEventListener('click', function (event) {
+        //     const target = event.target;
+        //     if (target.matches('.ql-editor p::before')) {
+        //         console.log('p clicked!!');
+        //         // const wrapper = document.createElement('span');
+        //         // wrapper.classList.add('wrapper');
+        //         // target.parentNode.insertBefore(wrapper, target.nextSibling);
+        //     }
+        // });
+
+        // quillContainer.addEventListener('click', (event) => {
+        //     const targetElement = event.target;
+        //     if (
+        //         targetElement.tagName === 'H1' ||
+        //         targetElement.tagName === 'H2' ||
+        //         targetElement.tagName === 'H3' ||
+        //         targetElement.tagName === 'H4' ||
+        //         targetElement.tagName === 'H5' ||
+        //         targetElement.tagName === 'H6' ||
+        //         targetElement.tagName === 'LI' ||
+        //         targetElement.tagName === 'P'
+        //     ) {
+        //         const selection = window.getSelection();
+        //         const range = document.createRange();
+        //         range.selectNodeContents(targetElement);
+        //         selection.removeAllRanges();
+        //         selection.addRange(range);
+        //     }
+        // });
+
+        //quillContainer.addEventListener('dblclick', (event) => {
+        // quillContainer.addEventListener('mousedown', (event) => {
+        //     const targetElement = event.target;
+        //     if (
+        //         targetElement.tagName === 'H1' ||
+        //         targetElement.tagName === 'H2' ||
+        //         targetElement.tagName === 'H3' ||
+        //         targetElement.tagName === 'H4' ||
+        //         targetElement.tagName === 'H5' ||
+        //         targetElement.tagName === 'H6' ||
+        //         targetElement.tagName === 'LI' ||
+        //         targetElement.tagName === 'P'
+        //     ) {
+        //         targetElement.setAttribute('draggable', 'true');
+        //         const selection = window.getSelection();
+        //         selection.removeAllRanges();
+        //         const range = document.createRange();
+        //         range.selectNodeContents(targetElement);
+        //         selection.addRange(range);
+        //     }
+        // });
+
+        let pressTimer;
         quillContainer.addEventListener('mousedown', (event) => {
+            pressTimer = setTimeout(() => {
+                const targetElement = event.target;
+                if (
+                    targetElement.tagName === 'H1' ||
+                    targetElement.tagName === 'H2' ||
+                    targetElement.tagName === 'H3' ||
+                    targetElement.tagName === 'H4' ||
+                    targetElement.tagName === 'H5' ||
+                    targetElement.tagName === 'H6' ||
+                    targetElement.tagName === 'LI' ||
+                    targetElement.tagName === 'P'
+                ) {
+                    targetElement.setAttribute('draggable', 'true');
+                    const selection = window.getSelection();
+                    selection.removeAllRanges();
+                    const range = document.createRange();
+                    range.selectNodeContents(targetElement);
+                    selection.addRange(range);
+                }
+            }, 500);
+        });
+
+        quillContainer.addEventListener('mouseup', (event) => {
+            clearTimeout(pressTimer);
             const targetElement = event.target;
-            if (
-                targetElement.tagName === 'H1' ||
-                targetElement.tagName === 'H2' ||
-                targetElement.tagName === 'H3' ||
-                targetElement.tagName === 'H4' ||
-                targetElement.tagName === 'H5' ||
-                targetElement.tagName === 'H6' ||
-                targetElement.tagName === 'LI' ||
-                targetElement.tagName === 'P'
-            ) {
-                targetElement.setAttribute('draggable', 'true');
-                const selection = window.getSelection();
-                selection.removeAllRanges();
-                const range = document.createRange();
-                range.selectNodeContents(targetElement);
-                selection.addRange(range);
-            }
+            targetElement.setAttribute('draggable', 'false');
         });
 
         quillRef.keyboard.addBinding(
@@ -202,10 +295,12 @@ const Document = () => {
                     handleEditorContextMenuPress();
                     quillRef.focus();
                 }
-
-                //this.quill.formatText(range, 'bold', true);
             }
         );
+
+        let tooltip = quillRef.theme.tooltip;
+        let input = tooltip.root.querySelector('input[data-link]');
+        input.dataset.link = 'https://yourdomain.com';
     };
 
     const handleMouseLeave = (ev) => {
@@ -395,42 +490,42 @@ const Document = () => {
 
     /////////////////////////////////// drag and drop //////////////////
 
-    useEffect(() => {
-        const quillContainer = quillRef.container;
-        // Add event listeners to the document to track when elements are being dragged
-        quillContainer.addEventListener('dragstart', handleDragStart);
-        quillContainer.addEventListener('drop', handleDrop);
+    // useEffect(() => {
+    //     const quillContainer = quillRef.container;
+    //     // Add event listeners to the document to track when elements are being dragged
+    //     quillContainer.addEventListener('dragstart', handleDragStart);
+    //     quillContainer.addEventListener('drop', handleDrop);
 
-        return () => {
-            // Clean up the event listeners when the component is unmounted
-            quillContainer.removeEventListener('dragstart', handleDragStart);
-            quillContainer.removeEventListener('drop', handleDrop);
-        };
-    }, []);
+    //     return () => {
+    //         // Clean up the event listeners when the component is unmounted
+    //         quillContainer.removeEventListener('dragstart', handleDragStart);
+    //         quillContainer.removeEventListener('drop', handleDrop);
+    //     };
+    // }, []);
 
-    const handleDragStart = (event) => {
-        console.log('dragstart');
-        // console.log(event.target.parentNode);
-        // const tagName = event.target.tagName.toLowerCase();
-        // // Only allow dragging of h1 and p tags
-        // if (tagName === 'h1' || tagName === 'p') {
-        //     // Set the data that will be passed when the element is dropped
-        //     // event.dataTransfer.setData('text/html', event.target.outerHTML);
-        //     event.dataTransfer.setData('text/html', event.target.parentNode);
-        // }
-    };
+    // const handleDragStart = (event) => {
+    //     console.log('dragstart');
+    //     // console.log(event.target.parentNode);
+    //     // const tagName = event.target.tagName.toLowerCase();
+    //     // // Only allow dragging of h1 and p tags
+    //     // if (tagName === 'h1' || tagName === 'p') {
+    //     //     // Set the data that will be passed when the element is dropped
+    //     //     // event.dataTransfer.setData('text/html', event.target.outerHTML);
+    //     //     event.dataTransfer.setData('text/html', event.target.parentNode);
+    //     // }
+    // };
 
-    const handleDrop = (event) => {
-        console.log('drop');
-        // console.log(event.target.parentNode);
-        // const tagName = event.target.tagName.toLowerCase();
-        // // Only allow dragging of h1 and p tags
-        // if (tagName === 'h1' || tagName === 'p') {
-        //     // Set the data that will be passed when the element is dropped
-        //     // event.dataTransfer.setData('text/html', event.target.outerHTML);
-        //     event.dataTransfer.setData('text/html', event.target.parentNode);
-        // }
-    };
+    // const handleDrop = (event) => {
+    //     console.log('drop');
+    //     // console.log(event.target.parentNode);
+    //     // const tagName = event.target.tagName.toLowerCase();
+    //     // // Only allow dragging of h1 and p tags
+    //     // if (tagName === 'h1' || tagName === 'p') {
+    //     //     // Set the data that will be passed when the element is dropped
+    //     //     // event.dataTransfer.setData('text/html', event.target.outerHTML);
+    //     //     event.dataTransfer.setData('text/html', event.target.parentNode);
+    //     // }
+    // };
 
     /////////////////////////////////// drag and drop //////////////////
     return (
