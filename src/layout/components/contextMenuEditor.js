@@ -16,10 +16,6 @@ import IconOl from 'ui-component/custom-icon/IconOl';
 import IconUl from 'ui-component/custom-icon/IconUl';
 
 const ContextMenuEditor = (props) => {
-    const side = 300;
-    const padding = 80;
-    const margin = 100;
-
     const handleKeyDown = (e, type) => {
         if (e.key === 'Enter') {
             props.handleEditorOnEnter(type);
@@ -27,7 +23,7 @@ const ContextMenuEditor = (props) => {
     };
 
     const handleOnClick = (e, type) => {
-        if (e) {
+        if (e.type == 'click') {
             props.handleEditorOnEnter(type);
         }
     };
@@ -66,13 +62,13 @@ const ContextMenuEditor = (props) => {
                     <ListItemText>Small heading</ListItemText>
                 </MenuItem>
                 <Divider />
-                <MenuItem onClick={(event) => handleOnClick(event, 'bullet')} onKeyDown={(event) => handleKeyDown(event, 'h3')}>
+                <MenuItem onClick={(event) => handleOnClick(event, 'bullet')} onKeyDown={(event) => handleKeyDown(event, 'bullet')}>
                     <ListItemIcon>
                         <IconUl fontSize="small" />
                     </ListItemIcon>
                     <ListItemText>Bulleted list</ListItemText>
                 </MenuItem>
-                <MenuItem onClick={(event) => handleOnClick(event, 'ordered')} onKeyDown={(event) => handleKeyDown(event, 'h3')}>
+                <MenuItem onClick={(event) => handleOnClick(event, 'ordered')} onKeyDown={(event) => handleKeyDown(event, 'ordered')}>
                     <ListItemIcon>
                         <IconOl fontSize="small" />
                     </ListItemIcon>

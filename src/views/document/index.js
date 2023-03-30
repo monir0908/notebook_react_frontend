@@ -85,7 +85,7 @@ const Document = () => {
 
     const onTitleBlur = (e) => {
         dispatch(
-            documentUpdate({
+            documentUpdateOnEditorLeave({
                 url: 'document/update-doc/' + docObj.doc_key,
                 navigate,
                 data: {
@@ -154,95 +154,9 @@ const Document = () => {
                 targetElement.tagName === 'P'
             ) {
                 targetElement.classList.remove('hand-cursor'); // remove the CSS class
+                targetElement.removeAttribute('draggable');
             }
         });
-
-        // quillContainer.addEventListener('click', function (event) {
-        //     const target = event.target;
-        //     const pElement = target.closest('.ql-editor p');
-        //     const beforeContent = window.getComputedStyle(pElement, ':before').getPropertyValue('content');
-
-        //     if (target.matches('.ql-editor p::before')) {
-        //         const selection = window.getSelection();
-        //         const range = document.createRange();
-        //         range.selectNodeContents(target);
-        //         selection.removeAllRanges();
-        //         selection.addRange(range);
-        //     }
-
-        //     console.log(beforeContent);
-        //     // const beforePseudoElement = target.closest('.ql-editor p')?.querySelector('::before');
-        //     // if (beforePseudoElement) {
-        //     //     console.log('pseudo-element clicked!!');
-        //     // }
-        //     // if (target.matches('.ql-editor p')) {
-        //     //     const path = event.composedPath();
-        //     //     // Check if the ::before pseudo-element was clicked
-        //     //     //if (path[0] !== target && path[0].classList.contains('hand-cursor')) {
-        //     //     if (path[0] == target && path[0].classList.contains('hand-cursor')) {
-        //     //         console.log('::before clicked!!');
-        //     //     } else {
-        //     //         console.log('p clicked!!');
-        //     //         const selection = window.getSelection();
-        //     //         const range = document.createRange();
-        //     //         range.selectNodeContents(target);
-        //     //         selection.removeAllRanges();
-        //     //         selection.addRange(range);
-        //     //     }
-        //     // }
-        // });
-
-        // quillContainer.addEventListener('click', function (event) {
-        //     const target = event.target;
-        //     if (target.matches('.ql-editor p::before')) {
-        //         console.log('p clicked!!');
-        //         // const wrapper = document.createElement('span');
-        //         // wrapper.classList.add('wrapper');
-        //         // target.parentNode.insertBefore(wrapper, target.nextSibling);
-        //     }
-        // });
-
-        // quillContainer.addEventListener('click', (event) => {
-        //     const targetElement = event.target;
-        //     if (
-        //         targetElement.tagName === 'H1' ||
-        //         targetElement.tagName === 'H2' ||
-        //         targetElement.tagName === 'H3' ||
-        //         targetElement.tagName === 'H4' ||
-        //         targetElement.tagName === 'H5' ||
-        //         targetElement.tagName === 'H6' ||
-        //         targetElement.tagName === 'LI' ||
-        //         targetElement.tagName === 'P'
-        //     ) {
-        //         const selection = window.getSelection();
-        //         const range = document.createRange();
-        //         range.selectNodeContents(targetElement);
-        //         selection.removeAllRanges();
-        //         selection.addRange(range);
-        //     }
-        // });
-
-        //quillContainer.addEventListener('dblclick', (event) => {
-        // quillContainer.addEventListener('mousedown', (event) => {
-        //     const targetElement = event.target;
-        //     if (
-        //         targetElement.tagName === 'H1' ||
-        //         targetElement.tagName === 'H2' ||
-        //         targetElement.tagName === 'H3' ||
-        //         targetElement.tagName === 'H4' ||
-        //         targetElement.tagName === 'H5' ||
-        //         targetElement.tagName === 'H6' ||
-        //         targetElement.tagName === 'LI' ||
-        //         targetElement.tagName === 'P'
-        //     ) {
-        //         targetElement.setAttribute('draggable', 'true');
-        //         const selection = window.getSelection();
-        //         selection.removeAllRanges();
-        //         const range = document.createRange();
-        //         range.selectNodeContents(targetElement);
-        //         selection.addRange(range);
-        //     }
-        // });
 
         let pressTimer;
         quillContainer.addEventListener('mousedown', (event) => {
@@ -265,13 +179,13 @@ const Document = () => {
                     range.selectNodeContents(targetElement);
                     selection.addRange(range);
                 }
-            }, 500);
+            }, 300);
         });
 
         quillContainer.addEventListener('mouseup', (event) => {
             clearTimeout(pressTimer);
             const targetElement = event.target;
-            targetElement.setAttribute('draggable', 'false');
+            targetElement.removeAttribute('draggable');
         });
 
         quillRef.keyboard.addBinding(
@@ -335,15 +249,23 @@ const Document = () => {
 
         dispatch({ type: SET_LOADER, loader: true });
         setTimeout(() => {
+            let quillText;
+            let quillObj = JSON.stringify(ydoc);
+            if (JSON.parse(quillObj).quill) {
+                quillText = JSON.parse(quillObj).quill;
+            }
+            //console.log(quillText);
+
             if (ytext.toJSON().length > 0) {
+                console.log('Inside if block:', quillText);
                 setIsQuillText(true);
             } else {
+                console.log('Inside else block:', quillText);
                 setIsQuillText(false);
             }
             new QuillBinding(ytext, quillRef, provider.awareness);
-
             dispatch({ type: SET_LOADER, loader: false });
-        }, 1000);
+        }, 2000);
 
         provider.awareness.on('change', ({ added, removed, updated }) => {
             const users = [];
@@ -424,18 +346,23 @@ const Document = () => {
 
         switch (values) {
             case 'h1':
+                quillRef.deleteText(range.index, 1);
                 quillRef.formatLine(range.index, 1, 'header', '1');
                 break;
             case 'h2':
+                quillRef.deleteText(range.index, 1);
                 quillRef.formatLine(range.index, 1, 'header', '2');
                 break;
             case 'h3':
+                quillRef.deleteText(range.index, 1);
                 quillRef.formatLine(range.index, 1, 'header', '3');
                 break;
             case 'bullet':
+                quillRef.deleteText(range.index, 1);
                 quillRef.formatLine(range.index, 1, 'list', 'bullet');
                 break;
             case 'ordered':
+                quillRef.deleteText(range.index, 1);
                 quillRef.formatLine(range.index, 1, 'list', 'ordered');
                 break;
         }
@@ -488,46 +415,6 @@ const Document = () => {
         setOpenConfirmation(false);
     };
 
-    /////////////////////////////////// drag and drop //////////////////
-
-    // useEffect(() => {
-    //     const quillContainer = quillRef.container;
-    //     // Add event listeners to the document to track when elements are being dragged
-    //     quillContainer.addEventListener('dragstart', handleDragStart);
-    //     quillContainer.addEventListener('drop', handleDrop);
-
-    //     return () => {
-    //         // Clean up the event listeners when the component is unmounted
-    //         quillContainer.removeEventListener('dragstart', handleDragStart);
-    //         quillContainer.removeEventListener('drop', handleDrop);
-    //     };
-    // }, []);
-
-    // const handleDragStart = (event) => {
-    //     console.log('dragstart');
-    //     // console.log(event.target.parentNode);
-    //     // const tagName = event.target.tagName.toLowerCase();
-    //     // // Only allow dragging of h1 and p tags
-    //     // if (tagName === 'h1' || tagName === 'p') {
-    //     //     // Set the data that will be passed when the element is dropped
-    //     //     // event.dataTransfer.setData('text/html', event.target.outerHTML);
-    //     //     event.dataTransfer.setData('text/html', event.target.parentNode);
-    //     // }
-    // };
-
-    // const handleDrop = (event) => {
-    //     console.log('drop');
-    //     // console.log(event.target.parentNode);
-    //     // const tagName = event.target.tagName.toLowerCase();
-    //     // // Only allow dragging of h1 and p tags
-    //     // if (tagName === 'h1' || tagName === 'p') {
-    //     //     // Set the data that will be passed when the element is dropped
-    //     //     // event.dataTransfer.setData('text/html', event.target.outerHTML);
-    //     //     event.dataTransfer.setData('text/html', event.target.parentNode);
-    //     // }
-    // };
-
-    /////////////////////////////////// drag and drop //////////////////
     return (
         <>
             <MainCard title="" onMouseLeave={(ev) => handleMouseLeave(ev)}>
