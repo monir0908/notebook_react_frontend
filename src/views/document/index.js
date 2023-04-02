@@ -12,7 +12,7 @@ import { Quill } from 'react-quill';
 import { WebsocketProvider } from 'y-websocket';
 import { QuillBinding } from 'y-quill';
 import * as Y from 'yjs';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+
 import ReactQuill from 'react-quill';
 import EditorToolbar, { modules, formats } from './EditorToolbar';
 import 'react-quill/dist/quill.snow.css';
@@ -179,7 +179,7 @@ const Document = () => {
                     range.selectNodeContents(targetElement);
                     selection.addRange(range);
                 }
-            }, 300);
+            }, 500);
         });
 
         quillContainer.addEventListener('mouseup', (event) => {
@@ -257,16 +257,15 @@ const Document = () => {
             //console.log(quillText);
 
             if (ytext.toJSON().length > 0) {
-                console.log('Inside if block:', quillText);
+                //console.log('Inside if block:', quillText);
                 setIsQuillText(true);
             } else {
-                console.log('Inside else block:', quillText);
+                //console.log('Inside else block:', quillText);
                 setIsQuillText(false);
             }
             new QuillBinding(ytext, quillRef, provider.awareness);
             dispatch({ type: SET_LOADER, loader: false });
         }, 2000);
-
         provider.awareness.on('change', ({ added, removed, updated }) => {
             const users = [];
             for (const [clientId, state] of provider.awareness.getStates()) {

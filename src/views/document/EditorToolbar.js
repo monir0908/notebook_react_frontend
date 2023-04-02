@@ -2,9 +2,9 @@ import React from 'react';
 import { Quill } from 'react-quill';
 import QuillCursors from 'quill-cursors';
 import { ImageDrop } from 'quill-image-drop-module';
-import ImageResize from 'quill-image-resize-module-react';
 
-// import BlotFormatter from 'quill-blot-formatter';
+import { ImageActions } from '@xeger/quill-image-actions';
+import { ImageFormats } from '@xeger/quill-image-formats';
 
 const fontSizeArr = ['15px', '18px', '22px', '26px'];
 const Size = Quill.import('attributors/style/size');
@@ -29,13 +29,45 @@ class LinkTooltip {
     }
 }
 
+const Delta = Quill.import('delta');
+
+class imageDrop extends ImageDrop {
+    handlePaste(evt) {
+        // Handle paste events as usual
+        super.handlePaste(evt);
+    }
+
+    handleDrop(evt) {
+        const clipboard = evt.dataTransfer || evt.clipboardData;
+        const type = clipboard.types ? clipboard.types[0] : null;
+        const file = clipboard.files ? clipboard.files[0] : null;
+
+        if (type === 'Files' && file && file.type.match('^image/')) {
+            // Handle image drop events
+            super.handleDrop(evt);
+        }
+        // } else {
+        //     // Handle non-image drop events as usual
+        //     const range = this.quill.getSelection(true);
+        //     const delta = new Delta()
+        //         .retain(range.index)
+        //         .delete(range.length)
+        //         .insert(clipboard.getData('text'))
+        //         .insert('\n', this.quill.getFormat());
+        //     this.quill.updateContents(delta, Quill.sources.USER);
+        // }
+    }
+}
+
 Quill.register('modules/cursors', QuillCursors);
 Quill.register('modules/linkTooltip', LinkTooltip);
-Quill.register('modules/imageDrop', ImageDrop);
-Quill.register('modules/imageResize', ImageResize);
-
+Quill.register('modules/imageDrop', imageDrop);
+Quill.register('modules/imageActions', ImageActions);
+Quill.register('modules/imageFormats', ImageFormats);
 // Modules object for setting up the Quill editor
 export const modules = (props) => ({
+    imageActions: {},
+    imageFormats: {},
     cursors: {
         transformOnTextChange: true
     },
@@ -47,33 +79,8 @@ export const modules = (props) => ({
         maxStack: 100,
         userOnly: true
     },
-    linkTooltip: true
-    // imageDrop: true,
-    // imageResize: {
-    //     parchment: Quill.import('parchment'),
-    //     handleStyles: {
-    //         displaySize: true,
-    //         backgroundColor: 'black',
-    //         border: 'none',
-    //         color: 'white'
-    //     },
-    //     modules: ['Resize', 'DisplaySize', 'Toolbar']
-    // },
-    // keyboard: {
-    //     bindings: {
-    //         // custom: {
-    //         //     key: '1',
-    //         //     ctrlKey: false,
-    //         //     shiftKey: false,
-    //         //     handler: function (range, context) {
-    //         //         console.log('1');
-    //         //         return true;
-    //         //         // const format = Quill.getFormat(range);
-    //         //         // Quill.format('strike', !format.strike);
-    //         //     }
-    //         // }
-    //     }
-    // },
+    linkTooltip: true,
+    imageDrop: true
 });
 
 // Formats objects for setting up the Quill editor
@@ -85,6 +92,9 @@ export const formats = [
     'italic',
     'underline',
     'align',
+    'float',
+    'height',
+    'width',
     'strike',
     'script',
     'blockquote',
@@ -137,6 +147,12 @@ export const QuillToolbar = (props) => {
                     <span className="ql-formats">
                         <button className="ql-list" value="ordered" />
                         <button className="ql-list" value="bullet" />
+                    </span>
+                    <span className="ql-formats">
+                        <button className="ql-align" value="" />
+                        <button className="ql-align" value="center" />
+                        <button className="ql-align" value="right" />
+                        <button className="ql-align" value="justify" />
                     </span>
                     <span className="ql-formats">
                         <select className="ql-color" />

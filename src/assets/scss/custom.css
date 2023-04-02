@@ -154,3 +154,8 @@ ol {
     z-index: 9999;
     transition: opacity 200ms ease-in-out 0s;
 }
+
+
+.image-actions__toolbar{
+    font: 0px Arial, Helvetica, sans-serif !important;
+}
