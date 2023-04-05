@@ -37,7 +37,7 @@ export default function themeTypography(theme) {
             fontWeight: 700
         },
         subtitle1: {
-            fontSize: '0.938rem',
+            fontSize: '1rem',
             fontWeight: 500,
             color: theme.textDark
         },
@@ -52,9 +52,9 @@ export default function themeTypography(theme) {
             fontWeight: 400
         },
         body1: {
-            fontSize: '0.938rem',
+            fontSize: '1rem',
             fontWeight: 400,
-            lineHeight: '1.334em'
+            lineHeight: '1.5em'
         },
         body2: {
             letterSpacing: '0em',

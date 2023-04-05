@@ -1,12 +1,12 @@
 import React from 'react';
+// import { Quill } from 'react-quill-v2-tables';
 import { Quill } from 'react-quill';
 import QuillCursors from 'quill-cursors';
 import { ImageDrop } from 'quill-image-drop-module';
-
 import { ImageActions } from '@xeger/quill-image-actions';
 import { ImageFormats } from '@xeger/quill-image-formats';
 
-const fontSizeArr = ['15px', '18px', '22px', '26px'];
+const fontSizeArr = ['16px', '18px', '22px', '26px'];
 const Size = Quill.import('attributors/style/size');
 Size.whitelist = fontSizeArr;
 Quill.register(Size, true);
@@ -28,8 +28,6 @@ class LinkTooltip {
         }
     }
 }
-
-const Delta = Quill.import('delta');
 
 class imageDrop extends ImageDrop {
     handlePaste(evt) {
@@ -64,6 +62,7 @@ Quill.register('modules/linkTooltip', LinkTooltip);
 Quill.register('modules/imageDrop', imageDrop);
 Quill.register('modules/imageActions', ImageActions);
 Quill.register('modules/imageFormats', ImageFormats);
+
 // Modules object for setting up the Quill editor
 export const modules = (props) => ({
     imageActions: {},
@@ -128,8 +127,8 @@ export const QuillToolbar = (props) => {
                             <option value="georgia">Georgia</option>
                             <option value="lucida">Lucida</option>
                         </select>
-                        <select className="ql-size" defaultValue={'15px'}>
-                            <option value="15px">15px</option>
+                        <select className="ql-size" defaultValue={'16px'}>
+                            <option value="16px">16px</option>
                             <option value="18px">18px</option>
                             <option value="22px">22px</option>
                             <option value="26px">26px</option>
@@ -138,9 +137,9 @@ export const QuillToolbar = (props) => {
                             <option value="1">Heading 1</option>
                             <option value="2">Heading 2</option>
                             <option value="3">Heading 3</option>
-                            <option value="4">Heading 4</option>
+                            {/* <option value="4">Heading 4</option>
                             <option value="5">Heading 5</option>
-                            <option value="6">Heading 6</option>
+                            <option value="6">Heading 6</option> */}
                             <option value="DEFAULT">Normal</option>
                         </select>
                     </span>

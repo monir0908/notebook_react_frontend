@@ -7,13 +7,12 @@ import { documentDetails, documentFileDelete } from 'store/features/document/doc
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
 import API from 'helpers/jwt.interceptor';
-import { Quill } from 'react-quill';
+import ReactQuill, { Quill } from 'react-quill';
 //import { WebrtcProvider } from 'y-webrtc';
 import { WebsocketProvider } from 'y-websocket';
 import { QuillBinding } from 'y-quill';
 import * as Y from 'yjs';
 
-import ReactQuill from 'react-quill';
 import EditorToolbar, { modules, formats } from './EditorToolbar';
 import 'react-quill/dist/quill.snow.css';
 import 'react-quill/dist/quill.bubble.css';
@@ -109,6 +108,11 @@ const Document = () => {
         return colors[Math.floor(Math.random() * colors.length)];
     };
 
+    const insertTable = () => {
+        const tableModule = quillRef.getModule('better-table');
+        tableModule.insertTable(3, 3);
+    };
+
     const attachQuillRefs = () => {
         if (typeof reactQuillRef.getEditor !== 'function') return;
         quillRef = reactQuillRef.getEditor();
@@ -179,7 +183,7 @@ const Document = () => {
                     range.selectNodeContents(targetElement);
                     selection.addRange(range);
                 }
-            }, 500);
+            }, 200);
         });
 
         quillContainer.addEventListener('mouseup', (event) => {
@@ -238,7 +242,10 @@ const Document = () => {
         }
         getDocumentDetails();
         attachQuillRefs();
-
+        const toolbar = quillRef.getModule('toolbar');
+        toolbar.addHandler('table', () => {
+            insertTable();
+        });
         dispatch(documentDetails({ url: `document/${documentKey}` }));
         const url = `collection/list?creator_id=${userInfo.id}&page=1&page_size=100`;
         dispatch(collectionList({ url }));
@@ -246,10 +253,10 @@ const Document = () => {
         const ydoc = new Y.Doc();
         const provider = new WebsocketProvider(process.env.REACT_APP_WEB_SOCKET_URL, documentKey, ydoc);
         const ytext = ydoc.getText('quill');
+        let quillText;
 
         dispatch({ type: SET_LOADER, loader: true });
         setTimeout(() => {
-            let quillText;
             let quillObj = JSON.stringify(ydoc);
             if (JSON.parse(quillObj).quill) {
                 quillText = JSON.parse(quillObj).quill;
@@ -257,19 +264,44 @@ const Document = () => {
             //console.log(quillText);
 
             if (ytext.toJSON().length > 0) {
-                //console.log('Inside if block:', quillText);
+                // console.log('Inside if block:', quillText);
                 setIsQuillText(true);
             } else {
                 //console.log('Inside else block:', quillText);
                 setIsQuillText(false);
             }
+
             new QuillBinding(ytext, quillRef, provider.awareness);
+
             dispatch({ type: SET_LOADER, loader: false });
-        }, 2000);
+        }, 1000);
+
+        // ytext.observe((event) => {
+        //     if (event.transaction) {
+        //         event.transaction.ops.forEach((op) => {
+        //             //quillRef.updateContents(op);
+        //             console.log(op);
+        //         });
+        //     }
+        // });
+        // ytext.observe((event) => {
+        //     if (event.delta) {
+        //         const delta = event.delta;
+        //         console.log(delta);
+        //         quillRef.updateContents(delta, 'api');
+        //     }
+        // });
+
         provider.awareness.on('change', ({ added, removed, updated }) => {
             const users = [];
             for (const [clientId, state] of provider.awareness.getStates()) {
                 const user = state.user;
+                console.log('ws connected: ', provider.wsconnected);
+                let quillObj = JSON.stringify(ydoc);
+                if (JSON.parse(quillObj).quill) {
+                    quillText = JSON.parse(quillObj).quill;
+                }
+                // console.log(user, quillText);
                 users.push(user);
             }
         });
@@ -284,7 +316,7 @@ const Document = () => {
             provider.disconnect();
             ydoc.destroy();
         };
-    }, [navigate, userToken, documentKey]);
+    }, [navigate, userToken, documentKey, isQuillText]);
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -365,13 +397,6 @@ const Document = () => {
                 quillRef.formatLine(range.index, 1, 'list', 'ordered');
                 break;
         }
-
-        // setTimeout(() => {
-        //     quillRef.deleteText(range.index - 1, 1);
-        //     quillRef.focus();
-        // }, 500);
-        //   // apply bullet formatting to the line
-        //   this.quill.formatLine(range.index, 1, 'list', 'bullet');
 
         handleEditorContextMenuClose();
     };
