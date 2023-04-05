@@ -183,7 +183,7 @@ const Document = () => {
                     range.selectNodeContents(targetElement);
                     selection.addRange(range);
                 }
-            }, 200);
+            }, 500);
         });
 
         quillContainer.addEventListener('mouseup', (event) => {
@@ -254,57 +254,51 @@ const Document = () => {
         const provider = new WebsocketProvider(process.env.REACT_APP_WEB_SOCKET_URL, documentKey, ydoc);
         const ytext = ydoc.getText('quill');
         let quillText;
+        //new QuillBinding(ytext, quillRef, provider.awareness);
 
         dispatch({ type: SET_LOADER, loader: true });
         setTimeout(() => {
-            let quillObj = JSON.stringify(ydoc);
-            if (JSON.parse(quillObj).quill) {
-                quillText = JSON.parse(quillObj).quill;
-            }
+            // let quillObj = JSON.stringify(ydoc);
+            // if (JSON.parse(quillObj).quill) {
+            //     quillText = JSON.parse(quillObj).quill;
+            // }
             //console.log(quillText);
 
             if (ytext.toJSON().length > 0) {
                 // console.log('Inside if block:', quillText);
-                setIsQuillText(true);
+                setIsQuillText(true); //Loading from Ydoc
             } else {
                 //console.log('Inside else block:', quillText);
-                setIsQuillText(false);
+                //  ytext.delete(0, ytext.toJSON().length); // delete the current content
+                setIsQuillText(false); //Loading from database
             }
 
             new QuillBinding(ytext, quillRef, provider.awareness);
-
             dispatch({ type: SET_LOADER, loader: false });
+
+            provider.awareness.on('change', ({ added, removed, updated }) => {
+                const users = [];
+                for (const [clientId, state] of provider.awareness.getStates()) {
+                    const user = state.user;
+                    console.log('ws connected: ', provider.wsconnected);
+                    users.push(user);
+                }
+            });
         }, 1000);
 
-        // ytext.observe((event) => {
-        //     if (event.transaction) {
-        //         event.transaction.ops.forEach((op) => {
-        //             //quillRef.updateContents(op);
-        //             console.log(op);
-        //         });
+        // provider.awareness.on('change', ({ added, removed, updated }) => {
+        //     const users = [];
+        //     for (const [clientId, state] of provider.awareness.getStates()) {
+        //         const user = state.user;
+        //         console.log('ws connected: ', provider.wsconnected);
+        //         // let quillObj = JSON.stringify(ydoc);
+        //         // if (JSON.parse(quillObj).quill) {
+        //         //     quillText = JSON.parse(quillObj).quill;
+        //         // }
+        //         // console.log(user, quillText);
+        //         users.push(user);
         //     }
         // });
-        // ytext.observe((event) => {
-        //     if (event.delta) {
-        //         const delta = event.delta;
-        //         console.log(delta);
-        //         quillRef.updateContents(delta, 'api');
-        //     }
-        // });
-
-        provider.awareness.on('change', ({ added, removed, updated }) => {
-            const users = [];
-            for (const [clientId, state] of provider.awareness.getStates()) {
-                const user = state.user;
-                console.log('ws connected: ', provider.wsconnected);
-                let quillObj = JSON.stringify(ydoc);
-                if (JSON.parse(quillObj).quill) {
-                    quillText = JSON.parse(quillObj).quill;
-                }
-                // console.log(user, quillText);
-                users.push(user);
-            }
-        });
 
         provider.awareness.setLocalStateField('user', {
             name: userInfo.first_name,
@@ -316,7 +310,7 @@ const Document = () => {
             provider.disconnect();
             ydoc.destroy();
         };
-    }, [navigate, userToken, documentKey, isQuillText]);
+    }, [navigate, userToken, documentKey]);
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -510,8 +504,7 @@ const Document = () => {
                     />
                     {docData != null && (
                         <Typography sx={{ pt: 1 }} variant="body2" style={{ color: 'rgb(155, 166, 178)', fontStyle: 'italic' }}>
-                            Last updated at {format(Date.parse(docData.updated_at), 'dd/LL/yyyy hh:mm a')}
-                            {/* Updated {docData && <ReactTimeAgo date={Date.parse(docData.updated_at)} locale="en-US" />} */}
+                            Last updated at {docData.attachments != null && format(Date.parse(docData.updated_at), 'dd/LL/yyyy hh:mm a')}
                         </Typography>
                     )}
 

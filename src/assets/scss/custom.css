@@ -79,6 +79,21 @@ ol {
     text-align: start !important;
     text-align-last: start !important;
 }
+.ql-editor p > span {
+    font-size: 16px !important;
+}
+
+.ql-editor h1.hand-cursor[draggable="true"]::before,
+.ql-editor h2.hand-cursor[draggable="true"]::before,
+.ql-editor h3.hand-cursor[draggable="true"]::before,
+.ql-editor h4.hand-cursor[draggable="true"]::before,
+.ql-editor h5.hand-cursor[draggable="true"]::before,
+.ql-editor h6.hand-cursor[draggable="true"]::before,
+.ql-editor li.hand-cursor[draggable="true"]::before,
+.ql-editor p.hand-cursor[draggable="true"]::before{
+    cursor: grabbing;
+}
+
 
 .ql-editor h1.hand-cursor::before,
 .ql-editor h2.hand-cursor::before,
@@ -101,10 +116,10 @@ ol {
     content: '';
     display: inline-block;
     cursor: grab;
-    width: 24px;
+    width: 16px;
     height: 35px;
     position: absolute;
-    left: -5px;
+    left: -8px;
     opacity: 0;
     z-index: 9999;
     transition: opacity 200ms ease-in-out 0s;
@@ -116,10 +131,10 @@ ol {
     content: '';
     display: inline-block;
     cursor: grab;
-    width: 24px;
+    width: 16px;
     height: 35px;
     position: absolute;
-    left: -5px;
+    left: -8px;
     opacity: 0;
     z-index: 9999;
     transition: opacity 200ms ease-in-out 0s;
@@ -131,10 +146,10 @@ ol {
     content: '';
     display: inline-block;
     cursor: grab;
-    width: 24px;
+    width: 16px;
     height: 35px;
     position: absolute;
-    left: -5px;
+    left: -8px;
     opacity: 0;
     z-index: 9999;
     transition: opacity 200ms ease-in-out 0s;
