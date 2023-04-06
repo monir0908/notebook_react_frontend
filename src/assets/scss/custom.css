@@ -61,7 +61,7 @@ ol {
     content: '*';
 } */
 
-.ql-editor li {
+/* .ql-editor li {
     display: list-item;
     text-align: -webkit-match-parent;
 }
@@ -78,7 +78,8 @@ ol {
     text-indent: 0px !important;
     text-align: start !important;
     text-align-last: start !important;
-}
+} */
+
 .ql-editor p > span,
 .ql-editor h1 > span,
 .ql-editor h2 > span,

@@ -21,7 +21,7 @@ import Fab from '@mui/material/Fab';
 // assets
 import { IconDeviceFloppy } from '@tabler/icons';
 
-import { TextField, Typography, Box, IconButton, Stack, useMediaQuery } from '@mui/material';
+import { TextField, Grid, Typography, Box, IconButton, Stack, useMediaQuery } from '@mui/material';
 import Tooltip from '@mui/material/Tooltip';
 import { useTheme } from '@mui/material/styles';
 // third party
@@ -30,6 +30,7 @@ import { format } from 'date-fns';
 import DescriptionIcon from '@mui/icons-material/Description';
 import { updateDocumentTitle } from 'store/features/collection/collectionSlice';
 import ConfirmationDialog from 'layout/components/confirmationDialog';
+import ErrorDialog from 'layout/components/errorDialog';
 import { documentUpdate, documentUpdateOnEditorLeave } from 'store/features/document/documentActions';
 import { collectionList } from 'store/features/collection/collectionActions';
 import { updateDoc, updateDocId } from 'store/features/header/headerSlice';
@@ -58,6 +59,7 @@ const Document = () => {
     const [selectedFile, setSelectedFile] = useState(null);
     const [selection, setSelection] = useState(null);
     const [content, setContent] = useState('');
+    const [isServerError, setIsServerError] = useState(false);
     let bodyText = '';
     const side = 300;
     const padding = 80;
@@ -108,15 +110,10 @@ const Document = () => {
         return colors[Math.floor(Math.random() * colors.length)];
     };
 
-    const insertTable = () => {
-        const tableModule = quillRef.getModule('better-table');
-        tableModule.insertTable(3, 3);
-    };
-
     const attachQuillRefs = () => {
+        if (reactQuillRef == null) return;
         if (typeof reactQuillRef.getEditor !== 'function') return;
         quillRef = reactQuillRef.getEditor();
-        quillRef.getModule();
 
         // Add event listeners for mouseover and mouseout
         const quillContainer = quillRef.container;
@@ -242,10 +239,7 @@ const Document = () => {
         }
         getDocumentDetails();
         attachQuillRefs();
-        const toolbar = quillRef.getModule('toolbar');
-        toolbar.addHandler('table', () => {
-            insertTable();
-        });
+
         dispatch(documentDetails({ url: `document/${documentKey}` }));
         const url = `collection/list?creator_id=${userInfo.id}&page=1&page_size=100`;
         dispatch(collectionList({ url }));
@@ -272,19 +266,40 @@ const Document = () => {
                 //  ytext.delete(0, ytext.toJSON().length); // delete the current content
                 setIsQuillText(false); //Loading from database
             }
-
-            new QuillBinding(ytext, quillRef, provider.awareness);
+            if (quillRef != null) {
+                new QuillBinding(ytext, quillRef, provider.awareness);
+            }
             dispatch({ type: SET_LOADER, loader: false });
 
             provider.awareness.on('change', ({ added, removed, updated }) => {
                 const users = [];
                 for (const [clientId, state] of provider.awareness.getStates()) {
                     const user = state.user;
-                    console.log('ws connected: ', provider.wsconnected);
+                    //console.log('ws connected: ', provider.wsconnected);
+                    // if (provider.wsconnected) {
+                    //     setOpenErrorDialog(false);
+                    // } else {
+                    //     setOpenErrorDialog(true);
+                    // }
+
                     users.push(user);
                 }
             });
         }, 1000);
+
+        // In every 2 second tries 5 times if any socket connection. If not show modal
+        let falseCount = 0;
+        const checkWebSocketConnection = setInterval(() => {
+            if (!provider.wsconnected) {
+                falseCount++;
+                if (falseCount === 5) {
+                    setOpenErrorDialog(true);
+                }
+            } else {
+                falseCount = 0;
+                setOpenErrorDialog(false);
+            }
+        }, 2 * 1000);
 
         // provider.awareness.on('change', ({ added, removed, updated }) => {
         //     const users = [];
@@ -306,6 +321,7 @@ const Document = () => {
         });
 
         return () => {
+            clearInterval(checkWebSocketConnection);
             // Clean up Yjs document
             provider.disconnect();
             ydoc.destroy();
@@ -431,6 +447,22 @@ const Document = () => {
             dispatch(documentDetails({ url: `document/${documentKey}` }));
         }, 500);
         setOpenConfirmation(false);
+    };
+
+    //////////////////////////////// sever error dialog /////////
+    const [openErrorDialog, setOpenErrorDialog] = useState(false);
+
+    const handleOpenErrorDialog = () => {
+        setOpenErrorDialog(true);
+    };
+
+    const handleCloseErrorDialog = () => {
+        setOpenErrorDialog(false);
+        navigate('/home');
+    };
+    const handleOkErrorDialog = () => {
+        window.location.reload(true);
+        setOpenErrorDialog(false);
     };
 
     return (
@@ -564,6 +596,15 @@ const Document = () => {
                 handleDeleteClick={handleClickOpenConfirmation}
             />
 
+            <ErrorDialog
+                title="Trying to connect with server.."
+                description="Please contact your system administrator."
+                open={openErrorDialog}
+                handleClose={handleCloseErrorDialog}
+                handleOk={handleOkErrorDialog}
+                okButtonText="Refresh"
+                closeButtonText="Home"
+            />
             <ConfirmationDialog
                 title="Delete File"
                 description="Are you sure? File will be deleted."
@@ -576,6 +617,7 @@ const Document = () => {
             />
 
             <LoadingBar color="#8800ff" progress={progress} onLoaderFinished={() => setProgress(0)} />
+            {/* <BlockUIEditor blocking={editorLoader} title="Server Error" /> */}
         </>
     );
 };
