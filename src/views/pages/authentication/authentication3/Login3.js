@@ -19,7 +19,8 @@ import { SET_LOADER } from 'store/actions';
 // ================================|| AUTH3 - LOGIN ||================================ //
 
 const Login = () => {
-    const { loading, userInfo, error, userToken } = useSelector((state) => state.auth);
+    const { loading, userInfo, error } = useSelector((state) => state.auth);
+    const userToken = localStorage.getItem('userToken') ? localStorage.getItem('userToken') : null;
     const navigate = useNavigate();
     const dispatch = useDispatch();
     // redirect authenticated user to / page

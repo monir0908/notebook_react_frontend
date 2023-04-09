@@ -42,9 +42,6 @@ export const registerUser = createAsyncThunk(
                 }
             };
             const { data } = await axios.post(`${baseURL}user/signup`, { first_name, last_name, email, password }, config);
-            // if (data.success && data.status == 'success') {
-            //     navigate('/login');
-            // }
             if (data.state == 'success') navigate('/login');
             return data;
         } catch (error) {
