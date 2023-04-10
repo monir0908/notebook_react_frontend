@@ -180,7 +180,7 @@ const Document = () => {
                     range.selectNodeContents(targetElement);
                     selection.addRange(range);
                 }
-            }, 500);
+            }, 100);
         });
 
         quillContainer.addEventListener('mouseup', (event) => {
