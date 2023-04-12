@@ -259,8 +259,8 @@ const Document = () => {
         dispatch(collectionList({ url }));
 
         const ydoc = new Y.Doc();
-        const provider = new WebsocketProvider(process.env.REACT_APP_WEB_SOCKET_URL, documentKey, ydoc);
         const ytext = ydoc.getText('quill');
+        const provider = new WebsocketProvider(process.env.REACT_APP_WEB_SOCKET_URL, documentKey, ydoc);
         let quillText;
         //new QuillBinding(ytext, quillRef, provider.awareness);
 
@@ -272,7 +272,7 @@ const Document = () => {
             // }
             //console.log(quillText);
 
-            if (ytext.toJSON().length > 0) {
+            if (ytext._.length > 0) {
                 // console.log('Inside if block:', quillText);
                 setIsQuillText(true); //Loading from Ydoc
             } else {
@@ -292,7 +292,7 @@ const Document = () => {
                     users.push(user);
                 }
             });
-        }, 2500);
+        }, 2000);
 
         // In every 2 second tries 5 times if any socket connection. If not show modal
         let falseCount = 0;
