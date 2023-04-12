@@ -272,7 +272,7 @@ const Document = () => {
             // }
             //console.log(quillText);
 
-            if (ytext._.length > 0) {
+            if (ytext._length > 0) {
                 // console.log('Inside if block:', quillText);
                 setIsQuillText(true); //Loading from Ydoc
             } else {
