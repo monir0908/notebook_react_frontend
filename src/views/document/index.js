@@ -262,22 +262,12 @@ const Document = () => {
         const ytext = ydoc.getText('quill');
         const provider = new WebsocketProvider(process.env.REACT_APP_WEB_SOCKET_URL, documentKey, ydoc);
         let quillText;
-        //new QuillBinding(ytext, quillRef, provider.awareness);
 
         dispatch({ type: SET_LOADER, loader: true });
-        setTimeout(() => {
-            // let quillObj = JSON.stringify(ydoc);
-            // if (JSON.parse(quillObj).quill) {
-            //     quillText = JSON.parse(quillObj).quill;
-            // }
-            //console.log(quillText);
-
+        provider.once('synced', () => {
             if (ytext._length > 0) {
-                // console.log('Inside if block:', quillText);
                 setIsQuillText(true); //Loading from Ydoc
             } else {
-                //console.log('Inside else block:', quillText);
-                //  ytext.delete(0, ytext.toJSON().length); // delete the current content
                 setIsQuillText(false); //Loading from database
             }
             if (quillRef != null) {
@@ -292,7 +282,37 @@ const Document = () => {
                     users.push(user);
                 }
             });
-        }, 2000);
+        });
+
+        // dispatch({ type: SET_LOADER, loader: true });
+        // setTimeout(() => {
+        //     // let quillObj = JSON.stringify(ydoc);
+        //     // if (JSON.parse(quillObj).quill) {
+        //     //     quillText = JSON.parse(quillObj).quill;
+        //     // }
+        //     //console.log(quillText);
+
+        //     if (ytext._length > 0) {
+        //         // console.log('Inside if block:', quillText);
+        //         setIsQuillText(true); //Loading from Ydoc
+        //     } else {
+        //         //console.log('Inside else block:', quillText);
+        //         //  ytext.delete(0, ytext.toJSON().length); // delete the current content
+        //         setIsQuillText(false); //Loading from database
+        //     }
+        //     if (quillRef != null) {
+        //         new QuillBinding(ytext, quillRef, provider.awareness);
+        //     }
+        //     dispatch({ type: SET_LOADER, loader: false });
+
+        //     provider.awareness.on('change', ({ added, removed, updated }) => {
+        //         const users = [];
+        //         for (const [clientId, state] of provider.awareness.getStates()) {
+        //             const user = state.user;
+        //             users.push(user);
+        //         }
+        //     });
+        // }, 2000);
 
         // In every 2 second tries 5 times if any socket connection. If not show modal
         let falseCount = 0;
