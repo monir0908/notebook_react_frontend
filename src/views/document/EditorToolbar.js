@@ -1,5 +1,4 @@
 import React from 'react';
-// import { Quill } from 'react-quill-v2-tables';
 import { Quill } from 'react-quill';
 import QuillCursors from 'quill-cursors';
 import { ImageDrop } from 'quill-image-drop-module';
@@ -63,10 +62,17 @@ Quill.register('modules/imageDrop', imageDrop);
 Quill.register('modules/imageActions', ImageActions);
 Quill.register('modules/imageFormats', ImageFormats);
 
+const imageActionsCallbacks = {
+    onLeft: function () {
+        console.log('Left aligned');
+    },
+    onRight: function () {
+        console.log('Right aligned');
+    }
+};
+
 // Modules object for setting up the Quill editor
 export const modules = (props) => ({
-    imageActions: {},
-    imageFormats: {},
     cursors: {
         transformOnTextChange: true
     },
@@ -79,7 +85,9 @@ export const modules = (props) => ({
         userOnly: true
     },
     linkTooltip: true,
-    imageDrop: true
+    imageDrop: true,
+    imageActions: {},
+    imageFormats: {}
 });
 
 // Formats objects for setting up the Quill editor
@@ -91,9 +99,13 @@ export const formats = [
     'italic',
     'underline',
     'align',
-    'float',
+    'clear',
+    'alt',
     'height',
     'width',
+    'style',
+    'direction',
+    'float',
     'strike',
     'script',
     'blockquote',
@@ -103,6 +115,7 @@ export const formats = [
     'indent',
     'link',
     'image',
+    'image-format',
     'color',
     'code-block'
 ];
@@ -137,9 +150,6 @@ export const QuillToolbar = (props) => {
                             <option value="1">Heading 1</option>
                             <option value="2">Heading 2</option>
                             <option value="3">Heading 3</option>
-                            {/* <option value="4">Heading 4</option>
-                            <option value="5">Heading 5</option>
-                            <option value="6">Heading 6</option> */}
                             <option value="DEFAULT">Normal</option>
                         </select>
                     </span>

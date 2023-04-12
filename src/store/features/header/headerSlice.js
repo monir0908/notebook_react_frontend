@@ -9,7 +9,8 @@ const initialState = {
     share_show: false,
     publish_show: false,
     unpublish_show: false,
-    delete_show: false
+    delete_show: false,
+    viewers: []
 };
 
 const headerSlice = createSlice({
@@ -43,6 +44,10 @@ const headerSlice = createSlice({
         updateUploadButton(state, action) {
             const { isUploadShow } = action.payload;
             state.upload_show = isUploadShow;
+        },
+        updateViewers(state, action) {
+            const { viewers } = action.payload;
+            state.viewers = viewers;
         }
     },
     extraReducers: (builder) => {
@@ -57,6 +62,7 @@ export const {
     updatePublishButton,
     updateUnpublishButton,
     updateDeleteButton,
-    updateUploadButton
+    updateUploadButton,
+    updateViewers
 } = headerSlice.actions;
 export default headerSlice.reducer;

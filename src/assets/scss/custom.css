@@ -80,16 +80,24 @@ ol {
     text-align-last: start !important;
 } */
 
-.ql-editor p > span,
+/* .ql-editor p > span,
 .ql-editor h1 > span,
 .ql-editor h2 > span,
 .ql-editor h3 > span,
-.ql-editor h4 > span,
+.ql-editor h4 > span, 
 .ql-editor h5 > span,
 .ql-editor h6 > span,
 .ql-editor li > span{
     font-size: 16px !important;
-}
+} */
+/* .ql-editor p > span{
+    font-size: 16px !important;
+} */
+.ql-editor .image-format {
+    float: none;
+    display: block;
+    margin: auto;
+  }
 
 .ql-editor h1.hand-cursor[draggable="true"]::before,
 .ql-editor h2.hand-cursor[draggable="true"]::before,
@@ -182,3 +190,8 @@ ol {
 .image-actions__toolbar{
     font: 0px Arial, Helvetica, sans-serif !important;
 }
+
+/* .ql-bubble .ql-editor img {
+    max-width: 100%;
+    float: none !important;
+} */

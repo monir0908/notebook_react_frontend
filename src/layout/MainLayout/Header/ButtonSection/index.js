@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 // material-ui
@@ -54,6 +54,7 @@ import {
 const ButtonSection = () => {
     const theme = useTheme();
     const dispatch = useDispatch();
+    const location = useLocation();
     const { userInfo, userToken } = useSelector((state) => state.auth);
     const { doc_id, doc, upload_show, share_show, publish_show, unpublish_show, delete_show } = useSelector((state) => state.header);
     const navigate = useNavigate();
@@ -141,6 +142,8 @@ const ButtonSection = () => {
 
     useEffect(() => {
         // getDocumentDetails();
+        let currentUrl = location.pathname;
+        const urlArr = currentUrl.split('/');
 
         if (userInfo.id == doc.doc_creator_id) {
             if (doc.doc_status == 1) {
@@ -162,6 +165,10 @@ const ButtonSection = () => {
             dispatch(updateUnpublishButton({ isDeleteShow: false }));
             dispatch(updateDeleteButton({ isDeleteShow: false }));
             dispatch(updateUploadButton({ isUploadShow: false }));
+        }
+
+        if (urlArr[1] == 'document') {
+            dispatch(updateUploadButton({ isUploadShow: true }));
         }
 
         return () => {

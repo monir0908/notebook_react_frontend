@@ -45,10 +45,13 @@ import IconPptx from 'ui-component/custom-icon/IconPptx';
 import IconImg from 'ui-component/custom-icon/IconImg';
 import IconGif from 'ui-component/custom-icon/IconGif';
 
+import { updateViewers } from 'store/features/header/headerSlice';
+
 const Document = () => {
     const dispatch = useDispatch();
     const { userInfo, userToken } = useSelector((state) => state.auth);
     const docData = useSelector((state) => state.document.data);
+    const { viewers } = useSelector((state) => state.header);
     const navigate = useNavigate();
     const { documentKey } = useParams();
     const [docObj, setDocObj] = useState(null);
@@ -114,9 +117,20 @@ const Document = () => {
         if (reactQuillRef == null) return;
         if (typeof reactQuillRef.getEditor !== 'function') return;
         quillRef = reactQuillRef.getEditor();
-
+        quillRef.root.dataset.noWrap = true;
         // Add event listeners for mouseover and mouseout
         const quillContainer = quillRef.container;
+
+        // image-actions__toolbar-button is-selected
+
+        // const alignButton = quillRef.querySelector('.image-actions__toolbar-button');
+        // alignButton.addEventListener('click', () => {
+        //     console.log('clicked');
+        //     // const range = editor.getSelection();
+        //     // const format = alignButton.getAttribute('data-align');
+        //     // editor.format('align', format, range);
+        // });
+
         quillContainer.addEventListener('mouseover', (event) => {
             const targetElement = event.target;
             if (
@@ -180,7 +194,7 @@ const Document = () => {
                     range.selectNodeContents(targetElement);
                     selection.addRange(range);
                 }
-            }, 100);
+            }, 200);
         });
 
         quillContainer.addEventListener('mouseup', (event) => {
@@ -208,7 +222,7 @@ const Document = () => {
                         left: editorBounds.left + bounds.left + 10
                     });
                     handleEditorContextMenuPress();
-                    quillRef.focus();
+                    //  quillRef.focus();
                 }
             }
         );
@@ -275,17 +289,10 @@ const Document = () => {
                 const users = [];
                 for (const [clientId, state] of provider.awareness.getStates()) {
                     const user = state.user;
-                    //console.log('ws connected: ', provider.wsconnected);
-                    // if (provider.wsconnected) {
-                    //     setOpenErrorDialog(false);
-                    // } else {
-                    //     setOpenErrorDialog(true);
-                    // }
-
                     users.push(user);
                 }
             });
-        }, 1000);
+        }, 2500);
 
         // In every 2 second tries 5 times if any socket connection. If not show modal
         let falseCount = 0;
@@ -298,6 +305,11 @@ const Document = () => {
             } else {
                 falseCount = 0;
                 setOpenErrorDialog(false);
+                const users = [];
+                for (const [clientId, state] of provider.awareness.getStates()) {
+                    users.push(state.user);
+                }
+                dispatch(updateViewers({ viewers: users }));
             }
         }, 2 * 1000);
 
@@ -535,9 +547,30 @@ const Document = () => {
                         variant="standard"
                     />
                     {docData != null && (
-                        <Typography sx={{ pt: 1 }} variant="body2" style={{ color: 'rgb(155, 166, 178)', fontStyle: 'italic' }}>
-                            Last updated at {docData.attachments != null && format(Date.parse(docData.updated_at), 'dd/LL/yyyy hh:mm a')}
-                        </Typography>
+                        <>
+                            <Grid container direction="row" justifyContent="space-between" alignItems="center">
+                                <Grid item>
+                                    <Typography sx={{ pt: 1 }} variant="body2" style={{ color: 'rgb(155, 166, 178)', fontStyle: 'italic' }}>
+                                        Last updated at{' '}
+                                        {docData.attachments != null && format(Date.parse(docData.updated_at), 'dd/LL/yyyy hh:mm a')} <br />{' '}
+                                        Created by{' '}
+                                        {userInfo.full_name == docData.doc_creator_full_name ? 'me' : docData.doc_creator_full_name}
+                                    </Typography>
+                                </Grid>
+                                <Grid item>
+                                    <Typography sx={{ pt: 1 }} variant="body2" style={{ color: 'rgb(155, 166, 178)', fontStyle: 'italic' }}>
+                                        Currently viewing{' : '}
+                                        {viewers.map((item, index) =>
+                                            index === viewers.length - 1 && viewers.length === 1
+                                                ? item.name
+                                                : index === viewers.length - 1
+                                                ? item.name
+                                                : item.name + ', '
+                                        )}
+                                    </Typography>
+                                </Grid>
+                            </Grid>
+                        </>
                     )}
 
                     <div className="editor-container">
@@ -554,7 +587,7 @@ const Document = () => {
                                 placeholder={'Write something here...'}
                                 formats={formats}
                                 modules={modules('t1')}
-                                preserveWhitespace
+                                scrollingContainer="html"
                             />
                         ) : (
                             <ReactQuill
@@ -569,12 +602,12 @@ const Document = () => {
                                 placeholder={'Write something here...'}
                                 formats={formats}
                                 modules={modules('t1')}
-                                preserveWhitespace
+                                scrollingContainer="html"
                             />
                         )}
-                        <Fab sx={fabStyle} onClick={handleSubmit} aria-label="Save" color="primary">
+                        {/* <Fab sx={fabStyle} onClick={handleSubmit} aria-label="Save" color="primary">
                             <IconDeviceFloppy />
-                        </Fab>
+                        </Fab> */}
                     </div>
                 </form>
             </MainCard>
