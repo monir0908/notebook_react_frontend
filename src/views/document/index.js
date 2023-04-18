@@ -110,6 +110,7 @@ const Document = () => {
 
     let quillRef = null;
     let reactQuillRef = null;
+    let quillText;
     //let isQuillText = true;
 
     const getRamndomColors = () => {
@@ -156,12 +157,36 @@ const Document = () => {
                         } else {
                             boundingRect = targetElement.getBoundingClientRect();
                         }
+                        console.log(boundingRect);
                         const uuid = uuidv4();
                         hoverDiv.setAttribute('data-block-id', uuid);
                         targetElement.setAttribute('id', uuid);
                         hoverDiv.style.cursor = 'grab';
                         const containerBoundingRect = quillContainer.getBoundingClientRect();
                         hoverDiv.style.top = `${boundingRect.top - containerBoundingRect.top}px`;
+
+                        if (targetElement.tagName === 'LI') {
+                            if (targetElement.classList.contains('ql-indent-1')) {
+                                hoverDiv.style.left = '30px';
+                            } else if (targetElement.classList.contains('ql-indent-2')) {
+                                hoverDiv.style.left = '60px';
+                            } else if (targetElement.classList.contains('ql-indent-3')) {
+                                hoverDiv.style.left = '90px';
+                            } else if (targetElement.classList.contains('ql-indent-4')) {
+                                hoverDiv.style.left = '120px';
+                            } else if (targetElement.classList.contains('ql-indent-5')) {
+                                hoverDiv.style.left = '150px';
+                            } else if (targetElement.classList.contains('ql-indent-6')) {
+                                hoverDiv.style.left = '180px';
+                            } else if (targetElement.classList.contains('ql-indent-7')) {
+                                hoverDiv.style.left = '210px';
+                            } else {
+                                hoverDiv.style.left = '10px';
+                            }
+                        } else {
+                            hoverDiv.style.left = '-7px';
+                        }
+
                         quillContainer.appendChild(hoverDiv);
                         break;
                 }
@@ -224,7 +249,8 @@ const Document = () => {
         quillContainer.addEventListener('mouseup', (event) => {
             clearTimeout(pressTimer);
             const targetElement = event.target;
-            // targetElement.removeAttribute('draggable');
+            targetElement.style.cursor = 'grab';
+            targetElement.removeAttribute('draggable');
             if (selectedElement) selectedElement.removeAttribute('draggable');
         });
 
@@ -350,6 +376,12 @@ const Document = () => {
 
         dispatch({ type: SET_LOADER, loader: true });
         provider.once('synced', () => {
+            // let quillObj = JSON.stringify(ydoc);
+            // if (JSON.parse(quillObj).quill) {
+            //     quillText = JSON.parse(quillObj).quill;
+            // }
+            // console.log(quillText);
+
             if (ytext._length > 0) {
                 setIsQuillText(true); //Loading from Ydoc
             } else {
@@ -661,7 +693,7 @@ const Document = () => {
                                 <Grid item>
                                     <Typography sx={{ pt: 1 }} variant="body2" style={{ color: 'rgb(155, 166, 178)', fontStyle: 'italic' }}>
                                         Last updated at{' '}
-                                        {docData.attachments != null && format(Date.parse(docData.updated_at), 'dd/LL/yyyy hh:mm a')}{' '}
+                                        {docData.attachments != null && format(Date.parse(docData.updated_at), 'dd/LL/yyyy hh:mm a')} <br />
                                         Created by{' '}
                                         {userInfo.full_name == docData.doc_creator_full_name ? 'me' : docData.doc_creator_full_name}
                                     </Typography>

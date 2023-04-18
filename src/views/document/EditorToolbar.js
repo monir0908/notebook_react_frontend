@@ -52,18 +52,8 @@ Quill.register('modules/imageDrop', imageDrop);
 Quill.register('modules/imageActions', ImageActions);
 Quill.register('modules/imageFormats', ImageFormats);
 
-const imageActionsCallbacks = {
-    onLeft: function () {
-        console.log('Left aligned');
-    },
-    onRight: function () {
-        console.log('Right aligned');
-    }
-};
-
 // Modules object for setting up the Quill editor
 export const modules = (props) => ({
-    autoParagraph: false,
     cursors: {
         transformOnTextChange: true
     },
@@ -106,9 +96,7 @@ export const formats = [
     'indent',
     'link',
     'image',
-    'image-format',
-    'color',
-    'code-block'
+    'color'
 ];
 
 // Quill Toolbar component
