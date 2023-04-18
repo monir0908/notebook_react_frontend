@@ -25,14 +25,14 @@ const SharedWithMe = () => {
             navigate('/login');
         } else {
             dispatch({ type: SET_LOADER, loader: true });
+            dispatch(resetState());
             setTimeout(() => {
                 const url = `document/list-shared-with-me`;
-                dispatch(resetState());
                 dispatch(sharedDocumentList({ url }));
                 if (!loading) {
                     dispatch({ type: SET_LOADER, loader: false });
                 }
-            }, 300);
+            }, 500);
         }
     }, [navigate, userToken]);
 

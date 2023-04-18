@@ -1,7 +1,7 @@
 // material-ui
 
-import { Button, Grid, Typography, Divider } from '@mui/material';
-
+import { Avatar, Button, Box, ButtonBase, Grid, InputAdornment, OutlinedInput, Typography, Divider } from '@mui/material';
+import { useTheme, styled } from '@mui/material/styles';
 import { useState, useEffect } from 'react';
 import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
@@ -10,19 +10,53 @@ import { useDispatch, useSelector } from 'react-redux';
 import { collectionList } from 'store/features/collection/collectionActions';
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
-
+import { shouldForwardProp } from '@mui/system';
 import { IconPlus } from '@tabler/icons';
+import { IconSearch } from '@tabler/icons';
 import ReactTimeAgo from 'react-time-ago';
 import ContextMenuNewDoc from 'layout/components/contextMenuNewDoc';
 import { documentList, documentCreate } from 'store/features/document/documentActions';
 import { resetState } from 'store/features/document/documentSlice';
 import { SET_LOADER } from 'store/actions';
 
+const OutlineInputStyle = styled(OutlinedInput, { shouldForwardProp })(({ theme }) => ({
+    width: 400,
+    marginLeft: 5,
+    paddingLeft: 16,
+    paddingRight: 16,
+    '& input': {
+        background: 'transparent !important',
+        paddingLeft: '4px !important',
+        height: '0.4375em !important'
+    },
+    [theme.breakpoints.down('lg')]: {
+        width: 500
+    },
+    [theme.breakpoints.down('md')]: {
+        width: '100%',
+        marginLeft: 4,
+        background: '#fff'
+    }
+}));
+
+const HeaderAvatarStyle = styled(Avatar, { shouldForwardProp })(({ theme }) => ({
+    ...theme.typography.commonAvatar,
+    ...theme.typography.mediumAvatar,
+    background: theme.palette.secondary.light,
+    color: theme.palette.secondary.dark,
+    '&:hover': {
+        background: theme.palette.secondary.dark,
+        color: theme.palette.secondary.light
+    }
+}));
+
 const Home = () => {
+    const theme = useTheme();
     const { userInfo, userToken } = useSelector((state) => state.auth);
     const collection = useSelector((state) => state.collection.data);
     const { loading } = useSelector((state) => state.document);
     const data = useSelector((state) => state.document.documentList);
+    const [searchValue, setSearchValue] = useState('');
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
@@ -63,10 +97,47 @@ const Home = () => {
     const itemClicked = (item) => {
         navigate('/document/' + item.doc_key);
     };
+
+    const onEnter = (e) => {
+        if (e.keyCode === 13 || e.type == 'click') {
+            if (searchValue.length > 0) {
+                navigate('/search/' + searchValue);
+            }
+        }
+    };
+
     return (
         <>
             <MainCard title="">
-                <Grid container direction="row" justifyContent="end" alignItems="center">
+                <Grid sx={{ mb: 3 }} container direction="row" justifyContent="space-between" alignItems="center">
+                    <Grid item>
+                        <Box>
+                            <OutlineInputStyle
+                                id="input-search-header"
+                                style={{ height: '3em' }}
+                                value={searchValue}
+                                onChange={(e) => setSearchValue(e.target.value)}
+                                onKeyDown={onEnter}
+                                placeholder="Search by document title, document texts.."
+                                startAdornment={
+                                    <InputAdornment position="start">
+                                        <IconSearch stroke={2} size="1rem" color={theme.palette.grey[500]} />
+                                    </InputAdornment>
+                                }
+                                endAdornment={
+                                    <InputAdornment position="end">
+                                        <ButtonBase onClick={onEnter} sx={{ borderRadius: '12px' }}>
+                                            <HeaderAvatarStyle variant="rounded">
+                                                <IconSearch stroke={1.5} size="1.3rem" />
+                                            </HeaderAvatarStyle>
+                                        </ButtonBase>
+                                    </InputAdornment>
+                                }
+                                aria-describedby="search-helper-text"
+                                inputProps={{ 'aria-label': 'weight' }}
+                            />
+                        </Box>
+                    </Grid>
                     <Grid item>
                         <Button onClick={handleContextMenuNewDocClick} variant="contained" color="info" startIcon={<IconPlus />}>
                             <Typography stroke={2.5}>New Doc..</Typography>

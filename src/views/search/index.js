@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { useTheme, styled } from '@mui/material/styles';
 import { Avatar, Box, ButtonBase, Grid, InputAdornment, OutlinedInput, Typography, Divider } from '@mui/material';
 
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
@@ -54,6 +54,7 @@ const Search = () => {
     const theme = useTheme();
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const { searchText } = useParams();
     const [value, setValue] = useState('');
     const [initPage, setInitPage] = useState(false);
     useEffect(() => {
@@ -61,6 +62,20 @@ const Search = () => {
             navigate('/login');
         }
         dispatch(resetState());
+
+        if (searchText) {
+            setValue(searchText);
+            let url = `document/list?creator_id=${userInfo.id}&search_param=${searchText}`;
+            dispatch(documentList({ url }));
+            setTimeout(() => {
+                setInitPage(true);
+            }, 500);
+        }
+
+        return () => {
+            setValue('');
+            setInitPage(false);
+        };
     }, [navigate, userToken]);
     useEffect(() => {}, [value]);
 

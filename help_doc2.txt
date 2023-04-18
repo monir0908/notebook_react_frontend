@@ -1,6 +1,5 @@
 // material-ui
 import React, { useState, useEffect } from 'react';
-import { v4 as uuidv4 } from 'uuid';
 import LoadingBar from 'react-top-loading-bar';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -47,6 +46,7 @@ import IconImg from 'ui-component/custom-icon/IconImg';
 import IconGif from 'ui-component/custom-icon/IconGif';
 
 import { updateViewers } from 'store/features/header/headerSlice';
+import { ConsoleView } from 'react-device-detect';
 
 const Document = () => {
     const dispatch = useDispatch();
@@ -69,7 +69,6 @@ const Document = () => {
     const padding = 80;
     const margin = 100;
     let selectedElement = null;
-    let boundingRect = null;
 
     const getDocumentDetails = async () => {
         const res = await API.get(`document/${documentKey}`);
@@ -122,10 +121,6 @@ const Document = () => {
         quillRef = reactQuillRef.getEditor();
         const quillContainer = quillRef.container;
 
-        quillContainer.querySelectorAll('.hover-div').forEach((div) => {
-            div.remove();
-        });
-
         quillContainer.addEventListener('mouseover', (event) => {
             const targetElement = event.target;
             const fromElement = event.fromElement;
@@ -151,22 +146,21 @@ const Document = () => {
                         selectedElement = targetElement;
                         const hoverDiv = document.createElement('div');
                         hoverDiv.classList.add('hover-div');
+                        let boundingRect;
                         if (targetElement.tagName === 'SPAN') {
                             boundingRect = fromElement.getBoundingClientRect();
                         } else {
                             boundingRect = targetElement.getBoundingClientRect();
                         }
-                        const uuid = uuidv4();
-                        hoverDiv.setAttribute('data-block-id', uuid);
-                        targetElement.setAttribute('id', uuid);
-                        hoverDiv.style.cursor = 'grab';
-                        const containerBoundingRect = quillContainer.getBoundingClientRect();
-                        hoverDiv.style.top = `${boundingRect.top - containerBoundingRect.top}px`;
-                        quillContainer.appendChild(hoverDiv);
+                        hoverDiv.setAttribute('data-block-id', '1');
+                        hoverDiv.style.top = `${boundingRect.top - 305}px`;
+                        quillContainer.appendChild(hoverDiv); // Append the div to the editor container
                         break;
                 }
             }
         });
+
+        // document.body.appendChild(clickableDiv);
 
         quillContainer.addEventListener('mouseout', (event) => {
             const targetElement = event.target;
@@ -182,12 +176,10 @@ const Document = () => {
             ) {
                 targetElement.classList.remove('hand-cursor'); // remove the CSS class
                 targetElement.removeAttribute('draggable');
-                const targetId = targetElement.getAttribute('id');
-                quillContainer.querySelectorAll('.hover-div').forEach((div) => {
-                    if (div.dataset.blockId !== targetId) {
-                        div.remove(); // Remove the hover-div only if its data-block-id is not equal to targetId
-                    }
-                });
+
+                // quillContainer.querySelectorAll('.hover-div').forEach((div) => {
+                //     div.remove(); // Remove any existing hover divs from the container
+                // });
             }
         });
 
@@ -195,11 +187,11 @@ const Document = () => {
         quillContainer.addEventListener('mousedown', (event) => {
             pressTimer = setTimeout(() => {
                 const targetElement = event.target;
-                // const dataBlockId = targetElement.dataset.blockId;
+                const dataBlockId = targetElement.dataset.blockId;
 
-                if (targetElement.classList.contains('hover-div')) {
+                if (targetElement.classList.contains('hover-div') && dataBlockId === '1') {
                     // Do something on mousedown of hover-div with data-block-id=1
-                    targetElement.style.cursor = 'grabbing';
+                    console.log(selectedElement);
                     targetElement.setAttribute('draggable', 'true');
                     selectedElement.setAttribute('draggable', 'true');
                     const selection = window.getSelection();
@@ -210,46 +202,71 @@ const Document = () => {
 
                     targetElement.addEventListener('dragstart', (event) => {
                         // Set the data that will be transferred during the drag operation
-
-                        if (selectedElement.tagName === 'LI') {
-                            event.dataTransfer.setData('text/plain', selectedElement.innerText);
-                        } else {
-                            event.dataTransfer.setData('text/html', selectedElement.outerHTML);
-                        }
+                        event.dataTransfer.setData('text/plain', selectedElement.innerText);
                     });
                 }
-            }, 10);
+            }, 200);
         });
+
+        // quillContainer.addEventListener('mousedown', (event) => {
+        //     pressTimer = setTimeout(() => {
+        //         const targetElement = event.target;
+        //         if (
+        //             targetElement.tagName === 'H1' ||
+        //             targetElement.tagName === 'H2' ||
+        //             targetElement.tagName === 'H3' ||
+        //             targetElement.tagName === 'H4' ||
+        //             targetElement.tagName === 'H5' ||
+        //             targetElement.tagName === 'H6' ||
+        //             targetElement.tagName === 'LI' ||
+        //             targetElement.tagName === 'P'
+        //         ) {
+        //             targetElement.setAttribute('draggable', 'true');
+        //             const selection = window.getSelection();
+        //             selection.removeAllRanges();
+        //             const range = document.createRange();
+        //             range.selectNodeContents(targetElement);
+        //             selection.addRange(range);
+        //         }
+        //     }, 200);
+        // });
 
         quillContainer.addEventListener('mouseup', (event) => {
             clearTimeout(pressTimer);
             const targetElement = event.target;
             // targetElement.removeAttribute('draggable');
-            if (selectedElement) selectedElement.removeAttribute('draggable');
+            selectedElement.removeAttribute('draggable');
+            selectedElement.removeEventListener('dragstart', dragStart);
         });
 
-        quillContainer.addEventListener('dragover', (event) => {
-            const targetElement = event.target;
+        // Define dragStart function to handle dragstart event
+        function dragStart(event) {
+            event.dataTransfer.setData('text/plain', ''); // Set data to drag
+            console.log('Dragging started');
+        }
 
-            if (
-                targetElement.tagName === 'H1' ||
-                targetElement.tagName === 'H2' ||
-                targetElement.tagName === 'H3' ||
-                targetElement.tagName === 'H4' ||
-                targetElement.tagName === 'H5' ||
-                targetElement.tagName === 'H6' ||
-                targetElement.tagName === 'SPAN' ||
-                targetElement.tagName === 'P'
-            ) {
-                if (event.dataTransfer.types.includes('text/html')) {
-                    if (targetElement.innerText === '\n') {
-                    } else if (targetElement.innerText === ' ') {
-                    } else {
-                        event.preventDefault();
-                    }
-                }
-            }
-        });
+        // quillContainer.addEventListener('dragover', (event) => {
+        //     const targetElement = event.target;
+
+        //     if (
+        //         targetElement.tagName === 'H1' ||
+        //         targetElement.tagName === 'H2' ||
+        //         targetElement.tagName === 'H3' ||
+        //         targetElement.tagName === 'H4' ||
+        //         targetElement.tagName === 'H5' ||
+        //         targetElement.tagName === 'H6' ||
+        //         targetElement.tagName === 'SPAN' ||
+        //         targetElement.tagName === 'P'
+        //     ) {
+        //         if (event.dataTransfer.types.includes('text/plain')) {
+        //             if (targetElement.innerText === '\n') {
+        //             } else if (targetElement.innerText === ' ') {
+        //             } else {
+        //                 event.preventDefault();
+        //             }
+        //         }
+        //     }
+        // });
 
         quillRef.keyboard.addBinding(
             {
@@ -347,6 +364,7 @@ const Document = () => {
         const ydoc = new Y.Doc();
         const ytext = ydoc.getText('quill');
         const provider = new WebsocketProvider(process.env.REACT_APP_WEB_SOCKET_URL, documentKey, ydoc);
+        let quillText;
 
         dispatch({ type: SET_LOADER, loader: true });
         provider.once('synced', () => {
@@ -661,7 +679,7 @@ const Document = () => {
                                 <Grid item>
                                     <Typography sx={{ pt: 1 }} variant="body2" style={{ color: 'rgb(155, 166, 178)', fontStyle: 'italic' }}>
                                         Last updated at{' '}
-                                        {docData.attachments != null && format(Date.parse(docData.updated_at), 'dd/LL/yyyy hh:mm a')}{' '}
+                                        {docData.attachments != null && format(Date.parse(docData.updated_at), 'dd/LL/yyyy hh:mm a')} <br />{' '}
                                         Created by{' '}
                                         {userInfo.full_name == docData.doc_creator_full_name ? 'me' : docData.doc_creator_full_name}
                                     </Typography>

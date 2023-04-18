@@ -32,6 +32,10 @@ const MainRoutes = {
             element: <Search />
         },
         {
+            path: 'search/:searchText',
+            element: <Search />
+        },
+        {
             path: 'drafts',
             element: <Drafts />
         },

@@ -43,16 +43,6 @@ class imageDrop extends ImageDrop {
             // Handle image drop events
             super.handleDrop(evt);
         }
-        // } else {
-        //     // Handle non-image drop events as usual
-        //     const range = this.quill.getSelection(true);
-        //     const delta = new Delta()
-        //         .retain(range.index)
-        //         .delete(range.length)
-        //         .insert(clipboard.getData('text'))
-        //         .insert('\n', this.quill.getFormat());
-        //     this.quill.updateContents(delta, Quill.sources.USER);
-        // }
     }
 }
 
@@ -73,6 +63,7 @@ const imageActionsCallbacks = {
 
 // Modules object for setting up the Quill editor
 export const modules = (props) => ({
+    autoParagraph: false,
     cursors: {
         transformOnTextChange: true
     },
