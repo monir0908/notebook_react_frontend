@@ -322,7 +322,9 @@ const Document = () => {
             pointerDiv.style.right = '0px';
             pointerDiv.style.bottom = '-4px';
             pointerDiv.style.width = '70%';
-            pointerDiv.style.height = '1px';
+            pointerDiv.style.height = '3px';
+            pointerDiv.style.marginTop = '1px';
+            pointerDiv.style.marginBottom = '1px';
             const boundingRect = targetElement.getBoundingClientRect();
             const containerBoundingRect = quillContainer.getBoundingClientRect();
             pointerDiv.style.top = `${boundingRect.top - containerBoundingRect.top + 20}px`;
