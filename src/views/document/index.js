@@ -123,10 +123,6 @@ const Document = () => {
         quillRef = reactQuillRef.getEditor();
         const quillContainer = quillRef.container;
 
-        quillContainer.querySelectorAll('.hover-div').forEach((div) => {
-            div.remove();
-        });
-
         quillContainer.addEventListener('mouseover', (event) => {
             const targetElement = event.target;
             const fromElement = event.fromElement;
@@ -157,7 +153,7 @@ const Document = () => {
                         } else {
                             boundingRect = targetElement.getBoundingClientRect();
                         }
-                        console.log(boundingRect);
+
                         const uuid = uuidv4();
                         hoverDiv.setAttribute('data-block-id', uuid);
                         targetElement.setAttribute('id', uuid);
@@ -166,6 +162,7 @@ const Document = () => {
                         hoverDiv.style.top = `${boundingRect.top - containerBoundingRect.top}px`;
 
                         if (targetElement.tagName === 'LI') {
+                            targetElement.parentNode.setAttribute('data-block-id', uuid);
                             if (targetElement.classList.contains('ql-indent-1')) {
                                 hoverDiv.style.left = '30px';
                             } else if (targetElement.classList.contains('ql-indent-2')) {
@@ -237,22 +234,52 @@ const Document = () => {
                         // Set the data that will be transferred during the drag operation
 
                         if (selectedElement.tagName === 'LI') {
-                            event.dataTransfer.setData('text/plain', selectedElement.innerText);
+                            // const listId = selectedElement.parentNode.getAttribute('data-block-id');
+                            // const listItemIndex = [...selectedElement.parentNode.children].indexOf(selectedElement);
+                            // event.dataTransfer.setData('application/json', JSON.stringify({ listId, listItemIndex }));
+
+                            //event.dataTransfer.setData('text/plain', selectedElement.innerText);
+
+                            const ul = document.createElement('ul');
+                            const li = document.createElement('li');
+                            li.innerHTML = selectedElement.innerHTML;
+                            ul.appendChild(li);
+
+                            event.dataTransfer.setData('text/html', ul.outerHTML); // set the HTML data
                         } else {
                             event.dataTransfer.setData('text/html', selectedElement.outerHTML);
                         }
                     });
                 }
-            }, 10);
+            }, 100);
         });
 
         quillContainer.addEventListener('mouseup', (event) => {
             clearTimeout(pressTimer);
             const targetElement = event.target;
-            targetElement.style.cursor = 'grab';
-            targetElement.removeAttribute('draggable');
+            if (targetElement.classList.contains('hover-div')) {
+                targetElement.style.cursor = 'grab';
+                targetElement.removeAttribute('draggable');
+            }
+
             if (selectedElement) selectedElement.removeAttribute('draggable');
         });
+
+        // // Add a 'drop' event listener to the quill container
+        // quillContainer.addEventListener('drop', (event) => {
+        //     event.preventDefault();
+        //     const targetElement = event.target;
+        //     if (targetElement.classList.contains('hover-div')) {
+        //         const data = event.dataTransfer.getData('text/plain');
+        //         if (data) {
+        //             const listItem = document.createElement('li');
+        //             listItem.innerText = data;
+        //             targetElement.parentNode.insertBefore(listItem, targetElement);
+        //         } else {
+        //             targetElement.parentNode.insertBefore(selectedElement, targetElement);
+        //         }
+        //     }
+        // });
 
         quillContainer.addEventListener('dragover', (event) => {
             const targetElement = event.target;
