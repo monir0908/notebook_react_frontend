@@ -164,19 +164,19 @@ const Document = () => {
                         if (targetElement.tagName === 'LI') {
                             targetElement.parentNode.setAttribute('data-block-id', uuid);
                             if (targetElement.classList.contains('ql-indent-1')) {
-                                hoverDiv.style.left = '30px';
+                                hoverDiv.style.left = '25px';
                             } else if (targetElement.classList.contains('ql-indent-2')) {
-                                hoverDiv.style.left = '60px';
+                                hoverDiv.style.left = '55px';
                             } else if (targetElement.classList.contains('ql-indent-3')) {
-                                hoverDiv.style.left = '90px';
+                                hoverDiv.style.left = '85px';
                             } else if (targetElement.classList.contains('ql-indent-4')) {
-                                hoverDiv.style.left = '120px';
+                                hoverDiv.style.left = '115px';
                             } else if (targetElement.classList.contains('ql-indent-5')) {
-                                hoverDiv.style.left = '150px';
+                                hoverDiv.style.left = '145px';
                             } else if (targetElement.classList.contains('ql-indent-6')) {
-                                hoverDiv.style.left = '180px';
+                                hoverDiv.style.left = '175px';
                             } else if (targetElement.classList.contains('ql-indent-7')) {
-                                hoverDiv.style.left = '210px';
+                                hoverDiv.style.left = '205px';
                             } else {
                                 hoverDiv.style.left = '10px';
                             }
@@ -209,6 +209,10 @@ const Document = () => {
                     if (div.dataset.blockId !== targetId) {
                         div.remove(); // Remove the hover-div only if its data-block-id is not equal to targetId
                     }
+                });
+
+                quillContainer.querySelectorAll('.pointer-div').forEach((div) => {
+                    div.remove(); // Remove the hover-div only if its data-block-id is not equal to targetId
                 });
             }
         });
@@ -292,17 +296,42 @@ const Document = () => {
                 targetElement.tagName === 'H5' ||
                 targetElement.tagName === 'H6' ||
                 targetElement.tagName === 'SPAN' ||
+                targetElement.tagName === 'LI' ||
                 targetElement.tagName === 'P'
             ) {
                 if (event.dataTransfer.types.includes('text/html')) {
-                    if (targetElement.innerText === '\n') {
-                    } else if (targetElement.innerText === ' ') {
-                    } else {
-                        event.preventDefault();
+                    quillContainer.querySelectorAll('.pointer-div').forEach((div) => {
+                        div.remove();
+                    });
+                    //selectedElement.tagName
+                    if (targetElement.tagName !== 'LI') {
+                        if (targetElement.innerText === '\n') {
+                            pointerDiv(targetElement);
+                        } else if (targetElement.innerText === ' ') {
+                            pointerDiv(targetElement);
+                        } else {
+                            event.preventDefault();
+                        }
                     }
                 }
             }
         });
+
+        const pointerDiv = (targetElement) => {
+            const pointerDiv = document.createElement('div');
+            pointerDiv.classList.add('pointer-div');
+            pointerDiv.style.position = 'absolute';
+            pointerDiv.style.zIndex = 50;
+            pointerDiv.style.pointerEvents = 'none';
+            pointerDiv.style.backgroundColor = 'rgb(17,19,25)';
+            pointerDiv.style.left = '10px';
+            pointerDiv.style.width = '100%';
+            pointerDiv.style.height = '1px';
+            const boundingRect = targetElement.getBoundingClientRect();
+            const containerBoundingRect = quillContainer.getBoundingClientRect();
+            pointerDiv.style.top = `${boundingRect.top - containerBoundingRect.top}px`;
+            quillContainer.appendChild(pointerDiv);
+        };
 
         quillRef.keyboard.addBinding(
             {
