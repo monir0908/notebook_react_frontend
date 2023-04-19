@@ -52,6 +52,7 @@
   margin-left: 10px;
   line-height: 1.63 !important;
   tab-size: 2 !important;
+  margin-top: 25px;
 }
 
 .ql-editor ol, .ql-editor ul {
@@ -102,6 +103,13 @@
   background-color: #0e101a !important;
   border-radius: 5px !important;
   color: #fff;
+
+  transform: translateY(-170%) !important;
+}
+
+.ql-bubble .ql-tooltip:not(.ql-flip) .ql-tooltip-arrow {
+  top: 38px !important;
+  transform: rotate(180deg);
 }
 
  @page {
@@ -175,4 +183,7 @@
 .ql-editor.ql-blank::before {
   left: 15px !important;
 }
+
+
+
 

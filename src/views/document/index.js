@@ -263,51 +263,63 @@ const Document = () => {
             if (selectedElement) selectedElement.removeAttribute('draggable');
         });
 
-        // // Add a 'drop' event listener to the quill container
-        // quillContainer.addEventListener('drop', (event) => {
-        //     event.preventDefault();
-        //     const targetElement = event.target;
-        //     if (targetElement.classList.contains('hover-div')) {
-        //         const data = event.dataTransfer.getData('text/plain');
-        //         if (data) {
-        //             const listItem = document.createElement('li');
-        //             listItem.innerText = data;
-        //             targetElement.parentNode.insertBefore(listItem, targetElement);
-        //         } else {
-        //             targetElement.parentNode.insertBefore(selectedElement, targetElement);
-        //         }
-        //     }
-        // });
-
         quillContainer.addEventListener('dragover', (event) => {
             const targetElement = event.target;
+            quillContainer.querySelectorAll('.pointer-div').forEach((div) => {
+                div.remove();
+            });
+            if (event.dataTransfer.types.includes('text/html')) {
+                pointerDiv(targetElement);
+            }
 
-            if (
-                targetElement.tagName === 'H1' ||
-                targetElement.tagName === 'H2' ||
-                targetElement.tagName === 'H3' ||
-                targetElement.tagName === 'H4' ||
-                targetElement.tagName === 'H5' ||
-                targetElement.tagName === 'H6' ||
-                targetElement.tagName === 'SPAN' ||
-                targetElement.tagName === 'LI' ||
-                targetElement.tagName === 'P'
-            ) {
-                if (event.dataTransfer.types.includes('text/html')) {
-                    quillContainer.querySelectorAll('.pointer-div').forEach((div) => {
-                        div.remove();
-                    });
-                    //selectedElement.tagName
-                    if (targetElement.tagName !== 'LI') {
-                        if (targetElement.innerText === '\n') {
-                            pointerDiv(targetElement);
-                        } else if (targetElement.innerText === ' ') {
-                            pointerDiv(targetElement);
-                        } else {
-                            event.preventDefault();
-                        }
-                    }
-                }
+            // event.preventDefault();
+            // if (
+            //     targetElement.tagName === 'H1' ||
+            //     targetElement.tagName === 'H2' ||
+            //     targetElement.tagName === 'H3' ||
+            //     targetElement.tagName === 'H4' ||
+            //     targetElement.tagName === 'H5' ||
+            //     targetElement.tagName === 'H6' ||
+            //     targetElement.tagName === 'SPAN' ||
+            //     targetElement.tagName === 'LI' ||
+            //     targetElement.tagName === 'P'
+            // ) {
+            //     if (event.dataTransfer.types.includes('text/html')) {
+            //         quillContainer.querySelectorAll('.pointer-div').forEach((div) => {
+            //             div.remove();
+            //         });
+            //         pointerDiv(targetElement);
+            //         event.preventDefault();
+
+            //         // //selectedElement.tagName
+            //         // if (targetElement.tagName !== 'LI') {
+            //         //     if (targetElement.innerText === '\n') {
+            //         //         pointerDiv(targetElement);
+            //         //     } else if (targetElement.innerText === ' ') {
+            //         //         pointerDiv(targetElement);
+            //         //     } else {
+            //         //         event.preventDefault();
+            //         //     }
+            //         // }
+            //     }
+            // }
+        });
+
+        quillContainer.addEventListener('drop', (event) => {
+            event.preventDefault();
+            const targetElement = event.target;
+            const dropPosition = getDropPosition(event.clientY, targetElement);
+
+            // Check if the target element is a text node and get its parent element if it is
+            if (targetElement.nodeType === Node.TEXT_NODE) {
+                targetElement = targetElement.parentNode;
+            }
+
+            // Add your custom code to create the new element here
+            if (dropPosition === 'before') {
+                targetElement.parentNode.insertBefore(selectedElement, targetElement);
+            } else {
+                targetElement.parentNode.insertBefore(selectedElement, targetElement.nextSibling);
             }
         });
 
@@ -327,8 +339,18 @@ const Document = () => {
             pointerDiv.style.marginBottom = '1px';
             const boundingRect = targetElement.getBoundingClientRect();
             const containerBoundingRect = quillContainer.getBoundingClientRect();
-            pointerDiv.style.top = `${boundingRect.top - containerBoundingRect.top + 20}px`;
+            pointerDiv.style.top = `${boundingRect.top - containerBoundingRect.top}px`;
             quillContainer.appendChild(pointerDiv);
+        };
+
+        const getDropPosition = (clientY, targetElement) => {
+            const boundingRect = targetElement.getBoundingClientRect();
+            const dropPosition = (clientY - boundingRect.top) / boundingRect.height;
+            if (dropPosition <= 1) {
+                return 'before';
+            } else {
+                return 'after';
+            }
         };
 
         quillRef.keyboard.addBinding(
