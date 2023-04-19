@@ -97,6 +97,11 @@
   white-space: normal;
 }
 
+.ql-bubble {
+  bottom: auto !important;
+  top: 0 !important;
+}
+
 
 .ql-bubble .ql-tooltip {
   background-color: #0e101a !important;
@@ -175,3 +180,4 @@
 .ql-editor.ql-blank::before {
   left: 15px !important;
 }
+

@@ -238,12 +238,6 @@ const Document = () => {
                         // Set the data that will be transferred during the drag operation
 
                         if (selectedElement.tagName === 'LI') {
-                            // const listId = selectedElement.parentNode.getAttribute('data-block-id');
-                            // const listItemIndex = [...selectedElement.parentNode.children].indexOf(selectedElement);
-                            // event.dataTransfer.setData('application/json', JSON.stringify({ listId, listItemIndex }));
-
-                            //event.dataTransfer.setData('text/plain', selectedElement.innerText);
-
                             const ul = document.createElement('ul');
                             const li = document.createElement('li');
                             li.innerHTML = selectedElement.innerHTML;
@@ -321,15 +315,17 @@ const Document = () => {
             const pointerDiv = document.createElement('div');
             pointerDiv.classList.add('pointer-div');
             pointerDiv.style.position = 'absolute';
-            pointerDiv.style.zIndex = 50;
+            pointerDiv.style.zIndex = 88;
             pointerDiv.style.pointerEvents = 'none';
-            pointerDiv.style.backgroundColor = 'rgb(17,19,25)';
-            pointerDiv.style.left = '10px';
-            pointerDiv.style.width = '100%';
+            pointerDiv.style.backgroundColor = 'rgb(35,131,226,0.43)';
+            pointerDiv.style.left = '14px';
+            pointerDiv.style.right = '0px';
+            pointerDiv.style.bottom = '-4px';
+            pointerDiv.style.width = '70%';
             pointerDiv.style.height = '1px';
             const boundingRect = targetElement.getBoundingClientRect();
             const containerBoundingRect = quillContainer.getBoundingClientRect();
-            pointerDiv.style.top = `${boundingRect.top - containerBoundingRect.top}px`;
+            pointerDiv.style.top = `${boundingRect.top - containerBoundingRect.top + 20}px`;
             quillContainer.appendChild(pointerDiv);
         };
 
@@ -377,44 +373,6 @@ const Document = () => {
         }
     };
 
-    // useEffect(() => {
-    //     if (reactQuillRef == null) return;
-    //     if (typeof reactQuillRef.getEditor !== 'function') return;
-    //     quillRef = reactQuillRef.getEditor();
-    //     const quillContainer = quillRef.container;
-
-    //     const clickableDiv = document.createElement('div');
-    //     clickableDiv.style.position = 'absolute';
-    //     clickableDiv.style.left = '0';
-    //     clickableDiv.style.top = '0';
-    //     clickableDiv.style.width = '100px';
-    //     clickableDiv.style.height = '50px';
-    //     clickableDiv.style.backgroundColor = 'red';
-    //     clickableDiv.style.zIndex = '999';
-    //     clickableDiv.style.cursor = '-webkit-grab';
-    //     clickableDiv.style.pointerEvents = 'auto';
-    //     clickableDiv.textContent = 'Click me';
-
-    //     quillContainer.addEventListener('mouseover', (event) => {
-    //         const targetElement = event.target;
-    //         const fromElement = event.fromElement;
-    //         if (targetElement.tagName === 'P') {
-    //             const boundingRect = targetElement.getBoundingClientRect();
-    //             clickableDiv.style.top = `${boundingRect.top}px`;
-    //             clickableDiv.style.display = 'block';
-    //         } else {
-    //             clickableDiv.style.display = 'none';
-    //         }
-
-    //         document.body.appendChild(clickableDiv);
-    //     });
-
-    //     return () => {
-    //         quillContainer.removeEventListener('mouseover');
-    //         document.body.removeChild(clickableDiv);
-    //     };
-    // }, []);
-
     useEffect(() => {
         if (!userToken) {
             navigate('/login');
@@ -456,36 +414,6 @@ const Document = () => {
                 }
             });
         });
-
-        // dispatch({ type: SET_LOADER, loader: true });
-        // setTimeout(() => {
-        //     // let quillObj = JSON.stringify(ydoc);
-        //     // if (JSON.parse(quillObj).quill) {
-        //     //     quillText = JSON.parse(quillObj).quill;
-        //     // }
-        //     //console.log(quillText);
-
-        //     if (ytext._length > 0) {
-        //         // console.log('Inside if block:', quillText);
-        //         setIsQuillText(true); //Loading from Ydoc
-        //     } else {
-        //         //console.log('Inside else block:', quillText);
-        //         //  ytext.delete(0, ytext.toJSON().length); // delete the current content
-        //         setIsQuillText(false); //Loading from database
-        //     }
-        //     if (quillRef != null) {
-        //         new QuillBinding(ytext, quillRef, provider.awareness);
-        //     }
-        //     dispatch({ type: SET_LOADER, loader: false });
-
-        //     provider.awareness.on('change', ({ added, removed, updated }) => {
-        //         const users = [];
-        //         for (const [clientId, state] of provider.awareness.getStates()) {
-        //             const user = state.user;
-        //             users.push(user);
-        //         }
-        //     });
-        // }, 2000);
 
         // In every 2 second tries 5 times if any socket connection. If not show modal
         let falseCount = 0;
