@@ -308,6 +308,12 @@ const Document = () => {
         quillContainer.addEventListener('drop', (event) => {
             event.preventDefault();
             const targetElement = event.target;
+
+            // Check if the dropped element is an image
+            if (event.dataTransfer.files && event.dataTransfer.files.length > 0) {
+                return; // Do nothing if the dropped item is an image
+            }
+
             const dropPosition = getDropPosition(event.clientY, targetElement);
 
             // Check if the target element is a text node and get its parent element if it is
