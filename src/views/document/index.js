@@ -22,7 +22,7 @@ import Fab from '@mui/material/Fab';
 // assets
 import { IconDeviceFloppy } from '@tabler/icons';
 
-import { TextField, Grid, Typography, Box, IconButton, Stack, useMediaQuery } from '@mui/material';
+import { TextField, Button, Grid, Typography, Box, IconButton, Stack, useMediaQuery } from '@mui/material';
 import Tooltip from '@mui/material/Tooltip';
 import { useTheme } from '@mui/material/styles';
 // third party
@@ -121,6 +121,7 @@ const Document = () => {
         if (reactQuillRef == null) return;
         if (typeof reactQuillRef.getEditor !== 'function') return;
         quillRef = reactQuillRef.getEditor();
+
         const quillContainer = quillRef.container;
 
         quillContainer.addEventListener('mouseover', (event) => {
@@ -145,46 +146,49 @@ const Document = () => {
                         break;
 
                     default:
-                        selectedElement = targetElement;
-                        const hoverDiv = document.createElement('div');
-                        hoverDiv.classList.add('hover-div');
-                        if (targetElement.tagName === 'SPAN') {
-                            boundingRect = fromElement.getBoundingClientRect();
-                        } else {
-                            boundingRect = targetElement.getBoundingClientRect();
-                        }
-
-                        const uuid = uuidv4();
-                        hoverDiv.setAttribute('data-block-id', uuid);
-                        targetElement.setAttribute('id', uuid);
-                        hoverDiv.style.cursor = 'grab';
-                        const containerBoundingRect = quillContainer.getBoundingClientRect();
-                        hoverDiv.style.top = `${boundingRect.top - containerBoundingRect.top}px`;
-
-                        if (targetElement.tagName === 'LI') {
-                            targetElement.parentNode.setAttribute('data-block-id', uuid);
-                            if (targetElement.classList.contains('ql-indent-1')) {
-                                hoverDiv.style.left = '25px';
-                            } else if (targetElement.classList.contains('ql-indent-2')) {
-                                hoverDiv.style.left = '55px';
-                            } else if (targetElement.classList.contains('ql-indent-3')) {
-                                hoverDiv.style.left = '85px';
-                            } else if (targetElement.classList.contains('ql-indent-4')) {
-                                hoverDiv.style.left = '115px';
-                            } else if (targetElement.classList.contains('ql-indent-5')) {
-                                hoverDiv.style.left = '145px';
-                            } else if (targetElement.classList.contains('ql-indent-6')) {
-                                hoverDiv.style.left = '175px';
-                            } else if (targetElement.classList.contains('ql-indent-7')) {
-                                hoverDiv.style.left = '205px';
+                        if (targetElement.querySelector('img') == null) {
+                            selectedElement = targetElement;
+                            const hoverDiv = document.createElement('div');
+                            hoverDiv.classList.add('hover-div');
+                            if (targetElement.tagName === 'SPAN') {
+                                boundingRect = fromElement.getBoundingClientRect();
                             } else {
-                                hoverDiv.style.left = '10px';
+                                boundingRect = targetElement.getBoundingClientRect();
                             }
-                        } else {
-                            hoverDiv.style.left = '-7px';
+
+                            const uuid = uuidv4();
+                            hoverDiv.setAttribute('data-block-id', uuid);
+                            targetElement.setAttribute('id', uuid);
+                            hoverDiv.style.cursor = 'grab';
+                            const containerBoundingRect = quillContainer.getBoundingClientRect();
+                            hoverDiv.style.top = `${boundingRect.top - containerBoundingRect.top}px`;
+
+                            if (targetElement.tagName === 'LI') {
+                                targetElement.parentNode.setAttribute('data-block-id', uuid);
+                                if (targetElement.classList.contains('ql-indent-1')) {
+                                    hoverDiv.style.left = '25px';
+                                } else if (targetElement.classList.contains('ql-indent-2')) {
+                                    hoverDiv.style.left = '55px';
+                                } else if (targetElement.classList.contains('ql-indent-3')) {
+                                    hoverDiv.style.left = '85px';
+                                } else if (targetElement.classList.contains('ql-indent-4')) {
+                                    hoverDiv.style.left = '115px';
+                                } else if (targetElement.classList.contains('ql-indent-5')) {
+                                    hoverDiv.style.left = '145px';
+                                } else if (targetElement.classList.contains('ql-indent-6')) {
+                                    hoverDiv.style.left = '175px';
+                                } else if (targetElement.classList.contains('ql-indent-7')) {
+                                    hoverDiv.style.left = '205px';
+                                } else {
+                                    hoverDiv.style.left = '10px';
+                                }
+                            } else {
+                                hoverDiv.style.left = '-7px';
+                            }
+
+                            quillContainer.appendChild(hoverDiv);
                         }
 
-                        quillContainer.appendChild(hoverDiv);
                         break;
                 }
             }

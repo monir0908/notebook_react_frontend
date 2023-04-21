@@ -5,6 +5,7 @@ import { ImageDrop } from 'quill-image-drop-module';
 import { ImageActions } from '@xeger/quill-image-actions';
 import { ImageFormats } from '@xeger/quill-image-formats';
 
+// xeger
 const fontSizeArr = ['16px', '18px', '22px', '26px'];
 const Size = Quill.import('attributors/style/size');
 Size.whitelist = fontSizeArr;
@@ -65,6 +66,7 @@ export const modules = (props) => ({
         maxStack: 100,
         userOnly: true
     },
+
     linkTooltip: true,
     imageDrop: true,
     imageActions: {},
@@ -73,6 +75,7 @@ export const modules = (props) => ({
 
 // Formats objects for setting up the Quill editor
 export const formats = [
+    'table',
     'header',
     'font',
     'size',
@@ -96,7 +99,8 @@ export const formats = [
     'indent',
     'link',
     'image',
-    'color'
+    'color',
+    'clean'
 ];
 
 // Quill Toolbar component
