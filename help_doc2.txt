@@ -1,5 +1,6 @@
 // material-ui
 import React, { useState, useEffect } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 import LoadingBar from 'react-top-loading-bar';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -21,7 +22,7 @@ import Fab from '@mui/material/Fab';
 // assets
 import { IconDeviceFloppy } from '@tabler/icons';
 
-import { TextField, Grid, Typography, Box, IconButton, Stack, useMediaQuery } from '@mui/material';
+import { TextField, Button, Grid, Typography, Box, IconButton, Stack, useMediaQuery } from '@mui/material';
 import Tooltip from '@mui/material/Tooltip';
 import { useTheme } from '@mui/material/styles';
 // third party
@@ -46,7 +47,6 @@ import IconImg from 'ui-component/custom-icon/IconImg';
 import IconGif from 'ui-component/custom-icon/IconGif';
 
 import { updateViewers } from 'store/features/header/headerSlice';
-import { ConsoleView } from 'react-device-detect';
 
 const Document = () => {
     const dispatch = useDispatch();
@@ -69,6 +69,7 @@ const Document = () => {
     const padding = 80;
     const margin = 100;
     let selectedElement = null;
+    let boundingRect = null;
 
     const getDocumentDetails = async () => {
         const res = await API.get(`document/${documentKey}`);
@@ -109,6 +110,7 @@ const Document = () => {
 
     let quillRef = null;
     let reactQuillRef = null;
+    let quillText;
     //let isQuillText = true;
 
     const getRamndomColors = () => {
@@ -119,6 +121,7 @@ const Document = () => {
         if (reactQuillRef == null) return;
         if (typeof reactQuillRef.getEditor !== 'function') return;
         quillRef = reactQuillRef.getEditor();
+
         const quillContainer = quillRef.container;
 
         quillContainer.addEventListener('mouseover', (event) => {
@@ -143,24 +146,68 @@ const Document = () => {
                         break;
 
                     default:
-                        selectedElement = targetElement;
-                        const hoverDiv = document.createElement('div');
-                        hoverDiv.classList.add('hover-div');
-                        let boundingRect;
-                        if (targetElement.tagName === 'SPAN') {
-                            boundingRect = fromElement.getBoundingClientRect();
-                        } else {
-                            boundingRect = targetElement.getBoundingClientRect();
+                        if (targetElement.querySelector('img') == null) {
+                            selectedElement = targetElement;
+                            const hoverDiv = document.createElement('div');
+                            hoverDiv.classList.add('hover-div');
+                            if (targetElement.tagName === 'SPAN') {
+                                boundingRect = fromElement.getBoundingClientRect();
+                            } else {
+                                boundingRect = targetElement.getBoundingClientRect();
+                            }
+
+                            quillContainer.querySelectorAll('.hover-div').forEach((div) => {
+                                div.remove();
+                            });
+                            let extraTop = 0;
+
+                            if (
+                                targetElement.tagName === 'H1' ||
+                                targetElement.tagName === 'H2' ||
+                                targetElement.tagName === 'H3' ||
+                                targetElement.tagName === 'H4' ||
+                                targetElement.tagName === 'H5' ||
+                                targetElement.tagName === 'H6'
+                            ) {
+                                extraTop = 10;
+                            }
+                            const uuid = uuidv4();
+                            hoverDiv.setAttribute('data-block-id', uuid);
+                            targetElement.setAttribute('id', uuid);
+                            hoverDiv.style.cursor = 'grab';
+                            const containerBoundingRect = quillContainer.getBoundingClientRect();
+                            hoverDiv.style.top = `${boundingRect.top - containerBoundingRect.top - 2 + extraTop}px`;
+
+                            if (targetElement.tagName === 'LI') {
+                                targetElement.parentNode.setAttribute('data-block-id', uuid);
+                                if (targetElement.classList.contains('ql-indent-1')) {
+                                    hoverDiv.style.left = '30px';
+                                } else if (targetElement.classList.contains('ql-indent-2')) {
+                                    hoverDiv.style.left = '55px';
+                                } else if (targetElement.classList.contains('ql-indent-3')) {
+                                    hoverDiv.style.left = '85px';
+                                } else if (targetElement.classList.contains('ql-indent-4')) {
+                                    hoverDiv.style.left = '115px';
+                                } else if (targetElement.classList.contains('ql-indent-5')) {
+                                    hoverDiv.style.left = '145px';
+                                } else if (targetElement.classList.contains('ql-indent-6')) {
+                                    hoverDiv.style.left = '175px';
+                                } else if (targetElement.classList.contains('ql-indent-7')) {
+                                    hoverDiv.style.left = '205px';
+                                } else {
+                                    hoverDiv.style.left = '10px';
+                                }
+                            } else {
+                                hoverDiv.style.left = '-8px';
+                            }
+
+                            quillContainer.appendChild(hoverDiv);
                         }
-                        hoverDiv.setAttribute('data-block-id', '1');
-                        hoverDiv.style.top = `${boundingRect.top - 305}px`;
-                        quillContainer.appendChild(hoverDiv); // Append the div to the editor container
+
                         break;
                 }
             }
         });
-
-        // document.body.appendChild(clickableDiv);
 
         quillContainer.addEventListener('mouseout', (event) => {
             const targetElement = event.target;
@@ -176,97 +223,178 @@ const Document = () => {
             ) {
                 targetElement.classList.remove('hand-cursor'); // remove the CSS class
                 targetElement.removeAttribute('draggable');
+                const targetId = targetElement.getAttribute('id');
+                quillContainer.querySelectorAll('.hover-div').forEach((div) => {
+                    if (div.dataset.blockId !== targetId) {
+                        div.remove(); // Remove the hover-div only if its data-block-id is not equal to targetId
+                    }
+                });
 
-                // quillContainer.querySelectorAll('.hover-div').forEach((div) => {
-                //     div.remove(); // Remove any existing hover divs from the container
-                // });
+                quillContainer.querySelectorAll('.pointer-div').forEach((div) => {
+                    div.remove(); // Remove the hover-div only if its data-block-id is not equal to targetId
+                });
             }
         });
 
         let pressTimer;
         quillContainer.addEventListener('mousedown', (event) => {
-            pressTimer = setTimeout(() => {
-                const targetElement = event.target;
-                const dataBlockId = targetElement.dataset.blockId;
+            // pressTimer = setTimeout(() => {
+            const targetElement = event.target;
+            // const dataBlockId = targetElement.dataset.blockId;
 
-                if (targetElement.classList.contains('hover-div') && dataBlockId === '1') {
-                    // Do something on mousedown of hover-div with data-block-id=1
-                    console.log(selectedElement);
-                    targetElement.setAttribute('draggable', 'true');
-                    selectedElement.setAttribute('draggable', 'true');
-                    const selection = window.getSelection();
-                    selection.removeAllRanges();
-                    const range = document.createRange();
-                    range.selectNodeContents(selectedElement);
-                    selection.addRange(range);
+            if (targetElement.classList.contains('hover-div')) {
+                // Do something on mousedown of hover-div with data-block-id=1
+                targetElement.style.cursor = 'grabbing';
+                targetElement.setAttribute('draggable', 'true');
+                selectedElement.setAttribute('draggable', 'true');
+                const selection = window.getSelection();
+                selection.removeAllRanges();
+                const range = document.createRange();
+                range.selectNodeContents(selectedElement);
+                selection.addRange(range);
 
-                    targetElement.addEventListener('dragstart', (event) => {
-                        // Set the data that will be transferred during the drag operation
-                        event.dataTransfer.setData('text/plain', selectedElement.innerText);
-                    });
-                }
-            }, 200);
+                targetElement.addEventListener('dragstart', (event) => {
+                    // Set the data that will be transferred during the drag operation
+
+                    // targetElement.style.cursor = 'grabbing !important';
+                    // event.dataTransfer.cursor = 'grabbing !important';
+
+                    if (selectedElement.tagName === 'LI') {
+                        const ul = document.createElement('ul');
+                        const li = document.createElement('li');
+                        li.innerHTML = selectedElement.innerHTML;
+                        ul.appendChild(li);
+
+                        event.dataTransfer.setData('text/html', ul.outerHTML); // set the HTML data
+                    } else {
+                        event.dataTransfer.setData('text/html', selectedElement.outerHTML);
+                    }
+                    console.log(event.dataTransfer);
+                    event.dataTransfer.effectAllowed = 'move';
+                    event.dataTransfer.dropEffect = 'move';
+                    event.dataTransfer.setDragImage(selectedElement, 0, 0);
+                });
+
+                // targetElement.addEventListener('drag', (event) => {
+                //     event.dataTransfer.cursor = '-webkit-grabbing !important';
+                //     targetElement.style.cursor = '-webkit-grabbing !important';
+                // });
+
+                // targetElement.addEventListener('dragend', (event) => {
+                //     document.body.style.cursor = 'auto'; // add this line
+                //     targetElement.style.userSelect = ''; // Add this line
+                // });
+            }
+            // }, 100);
         });
-
-        // quillContainer.addEventListener('mousedown', (event) => {
-        //     pressTimer = setTimeout(() => {
-        //         const targetElement = event.target;
-        //         if (
-        //             targetElement.tagName === 'H1' ||
-        //             targetElement.tagName === 'H2' ||
-        //             targetElement.tagName === 'H3' ||
-        //             targetElement.tagName === 'H4' ||
-        //             targetElement.tagName === 'H5' ||
-        //             targetElement.tagName === 'H6' ||
-        //             targetElement.tagName === 'LI' ||
-        //             targetElement.tagName === 'P'
-        //         ) {
-        //             targetElement.setAttribute('draggable', 'true');
-        //             const selection = window.getSelection();
-        //             selection.removeAllRanges();
-        //             const range = document.createRange();
-        //             range.selectNodeContents(targetElement);
-        //             selection.addRange(range);
-        //         }
-        //     }, 200);
-        // });
 
         quillContainer.addEventListener('mouseup', (event) => {
-            clearTimeout(pressTimer);
+            // clearTimeout(pressTimer);
             const targetElement = event.target;
-            // targetElement.removeAttribute('draggable');
-            selectedElement.removeAttribute('draggable');
-            selectedElement.removeEventListener('dragstart', dragStart);
+            if (targetElement.classList.contains('hover-div')) {
+                targetElement.style.cursor = 'grab';
+                targetElement.removeAttribute('draggable');
+            }
+
+            if (selectedElement) selectedElement.removeAttribute('draggable');
         });
 
-        // Define dragStart function to handle dragstart event
-        function dragStart(event) {
-            event.dataTransfer.setData('text/plain', ''); // Set data to drag
-            console.log('Dragging started');
-        }
+        quillContainer.addEventListener('dragover', (event) => {
+            const targetElement = event.target;
 
-        // quillContainer.addEventListener('dragover', (event) => {
-        //     const targetElement = event.target;
+            quillContainer.querySelectorAll('.pointer-div').forEach((div) => {
+                div.remove();
+            });
+            if (event.dataTransfer.types.includes('text/html')) {
+                pointerDiv(targetElement);
+            }
 
-        //     if (
-        //         targetElement.tagName === 'H1' ||
-        //         targetElement.tagName === 'H2' ||
-        //         targetElement.tagName === 'H3' ||
-        //         targetElement.tagName === 'H4' ||
-        //         targetElement.tagName === 'H5' ||
-        //         targetElement.tagName === 'H6' ||
-        //         targetElement.tagName === 'SPAN' ||
-        //         targetElement.tagName === 'P'
-        //     ) {
-        //         if (event.dataTransfer.types.includes('text/plain')) {
-        //             if (targetElement.innerText === '\n') {
-        //             } else if (targetElement.innerText === ' ') {
-        //             } else {
-        //                 event.preventDefault();
-        //             }
-        //         }
-        //     }
-        // });
+            // event.preventDefault();
+            // if (
+            //     targetElement.tagName === 'H1' ||
+            //     targetElement.tagName === 'H2' ||
+            //     targetElement.tagName === 'H3' ||
+            //     targetElement.tagName === 'H4' ||
+            //     targetElement.tagName === 'H5' ||
+            //     targetElement.tagName === 'H6' ||
+            //     targetElement.tagName === 'SPAN' ||
+            //     targetElement.tagName === 'LI' ||
+            //     targetElement.tagName === 'P'
+            // ) {
+            //     if (event.dataTransfer.types.includes('text/html')) {
+            //         quillContainer.querySelectorAll('.pointer-div').forEach((div) => {
+            //             div.remove();
+            //         });
+            //         pointerDiv(targetElement);
+            //         event.preventDefault();
+
+            //         // //selectedElement.tagName
+            //         // if (targetElement.tagName !== 'LI') {
+            //         //     if (targetElement.innerText === '\n') {
+            //         //         pointerDiv(targetElement);
+            //         //     } else if (targetElement.innerText === ' ') {
+            //         //         pointerDiv(targetElement);
+            //         //     } else {
+            //         //         event.preventDefault();
+            //         //     }
+            //         // }
+            //     }
+            // }
+        });
+
+        quillContainer.addEventListener('drop', (event) => {
+            event.preventDefault();
+            const targetElement = event.target;
+
+            // Check if the dropped element is an image
+            if (event.dataTransfer.files && event.dataTransfer.files.length > 0) {
+                return; // Do nothing if the dropped item is an image
+            }
+
+            const dropPosition = getDropPosition(event.clientY, targetElement);
+
+            // Check if the target element is a text node and get its parent element if it is
+            if (targetElement.nodeType === Node.TEXT_NODE) {
+                targetElement = targetElement.parentNode;
+            }
+
+            // Add your custom code to create the new element here
+            if (dropPosition === 'before') {
+                targetElement.parentNode.insertBefore(selectedElement, targetElement);
+            } else {
+                targetElement.parentNode.insertBefore(selectedElement, targetElement.nextSibling);
+            }
+        });
+
+        const pointerDiv = (targetElement) => {
+            const pointerDiv = document.createElement('div');
+            pointerDiv.classList.add('pointer-div');
+            pointerDiv.style.position = 'absolute';
+            pointerDiv.style.zIndex = 88;
+            pointerDiv.style.pointerEvents = 'none';
+            pointerDiv.style.backgroundColor = 'rgb(35,131,226,0.43)';
+            pointerDiv.style.left = '14px';
+            pointerDiv.style.right = '0px';
+            pointerDiv.style.bottom = '-4px';
+            pointerDiv.style.width = '70%';
+            pointerDiv.style.height = '3px';
+            pointerDiv.style.marginTop = '1px';
+            pointerDiv.style.marginBottom = '1px';
+            const boundingRect = targetElement.getBoundingClientRect();
+            const containerBoundingRect = quillContainer.getBoundingClientRect();
+            pointerDiv.style.top = `${boundingRect.top - containerBoundingRect.top}px`;
+            quillContainer.appendChild(pointerDiv);
+        };
+
+        const getDropPosition = (clientY, targetElement) => {
+            const boundingRect = targetElement.getBoundingClientRect();
+            const dropPosition = (clientY - boundingRect.top) / boundingRect.height;
+            if (dropPosition <= 1) {
+                return 'before';
+            } else {
+                return 'after';
+            }
+        };
 
         quillRef.keyboard.addBinding(
             {
@@ -312,44 +440,6 @@ const Document = () => {
         }
     };
 
-    // useEffect(() => {
-    //     if (reactQuillRef == null) return;
-    //     if (typeof reactQuillRef.getEditor !== 'function') return;
-    //     quillRef = reactQuillRef.getEditor();
-    //     const quillContainer = quillRef.container;
-
-    //     const clickableDiv = document.createElement('div');
-    //     clickableDiv.style.position = 'absolute';
-    //     clickableDiv.style.left = '0';
-    //     clickableDiv.style.top = '0';
-    //     clickableDiv.style.width = '100px';
-    //     clickableDiv.style.height = '50px';
-    //     clickableDiv.style.backgroundColor = 'red';
-    //     clickableDiv.style.zIndex = '999';
-    //     clickableDiv.style.cursor = '-webkit-grab';
-    //     clickableDiv.style.pointerEvents = 'auto';
-    //     clickableDiv.textContent = 'Click me';
-
-    //     quillContainer.addEventListener('mouseover', (event) => {
-    //         const targetElement = event.target;
-    //         const fromElement = event.fromElement;
-    //         if (targetElement.tagName === 'P') {
-    //             const boundingRect = targetElement.getBoundingClientRect();
-    //             clickableDiv.style.top = `${boundingRect.top}px`;
-    //             clickableDiv.style.display = 'block';
-    //         } else {
-    //             clickableDiv.style.display = 'none';
-    //         }
-
-    //         document.body.appendChild(clickableDiv);
-    //     });
-
-    //     return () => {
-    //         quillContainer.removeEventListener('mouseover');
-    //         document.body.removeChild(clickableDiv);
-    //     };
-    // }, []);
-
     useEffect(() => {
         if (!userToken) {
             navigate('/login');
@@ -364,10 +454,15 @@ const Document = () => {
         const ydoc = new Y.Doc();
         const ytext = ydoc.getText('quill');
         const provider = new WebsocketProvider(process.env.REACT_APP_WEB_SOCKET_URL, documentKey, ydoc);
-        let quillText;
 
         dispatch({ type: SET_LOADER, loader: true });
         provider.once('synced', () => {
+            // let quillObj = JSON.stringify(ydoc);
+            // if (JSON.parse(quillObj).quill) {
+            //     quillText = JSON.parse(quillObj).quill;
+            // }
+            // console.log(quillText);
+
             if (ytext._length > 0) {
                 setIsQuillText(true); //Loading from Ydoc
             } else {
@@ -386,36 +481,6 @@ const Document = () => {
                 }
             });
         });
-
-        // dispatch({ type: SET_LOADER, loader: true });
-        // setTimeout(() => {
-        //     // let quillObj = JSON.stringify(ydoc);
-        //     // if (JSON.parse(quillObj).quill) {
-        //     //     quillText = JSON.parse(quillObj).quill;
-        //     // }
-        //     //console.log(quillText);
-
-        //     if (ytext._length > 0) {
-        //         // console.log('Inside if block:', quillText);
-        //         setIsQuillText(true); //Loading from Ydoc
-        //     } else {
-        //         //console.log('Inside else block:', quillText);
-        //         //  ytext.delete(0, ytext.toJSON().length); // delete the current content
-        //         setIsQuillText(false); //Loading from database
-        //     }
-        //     if (quillRef != null) {
-        //         new QuillBinding(ytext, quillRef, provider.awareness);
-        //     }
-        //     dispatch({ type: SET_LOADER, loader: false });
-
-        //     provider.awareness.on('change', ({ added, removed, updated }) => {
-        //         const users = [];
-        //         for (const [clientId, state] of provider.awareness.getStates()) {
-        //             const user = state.user;
-        //             users.push(user);
-        //         }
-        //     });
-        // }, 2000);
 
         // In every 2 second tries 5 times if any socket connection. If not show modal
         let falseCount = 0;
@@ -679,8 +744,8 @@ const Document = () => {
                                 <Grid item>
                                     <Typography sx={{ pt: 1 }} variant="body2" style={{ color: 'rgb(155, 166, 178)', fontStyle: 'italic' }}>
                                         Last updated at{' '}
-                                        {docData.attachments != null && format(Date.parse(docData.updated_at), 'dd/LL/yyyy hh:mm a')} <br />{' '}
-                                        Created by{' '}
+                                        {docData.attachments != null && format(Date.parse(docData.updated_at), 'dd/LL/yyyy hh:mm a')}
+                                        &nbsp;&nbsp;&nbsp; Created by{' '}
                                         {userInfo.full_name == docData.doc_creator_full_name ? 'me' : docData.doc_creator_full_name}
                                     </Typography>
                                 </Grid>

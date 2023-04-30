@@ -156,17 +156,32 @@ const Document = () => {
                                 boundingRect = targetElement.getBoundingClientRect();
                             }
 
+                            quillContainer.querySelectorAll('.hover-div').forEach((div) => {
+                                div.remove();
+                            });
+                            let extraTop = 0;
+
+                            if (
+                                targetElement.tagName === 'H1' ||
+                                targetElement.tagName === 'H2' ||
+                                targetElement.tagName === 'H3' ||
+                                targetElement.tagName === 'H4' ||
+                                targetElement.tagName === 'H5' ||
+                                targetElement.tagName === 'H6'
+                            ) {
+                                extraTop = 10;
+                            }
                             const uuid = uuidv4();
                             hoverDiv.setAttribute('data-block-id', uuid);
                             targetElement.setAttribute('id', uuid);
                             hoverDiv.style.cursor = 'grab';
                             const containerBoundingRect = quillContainer.getBoundingClientRect();
-                            hoverDiv.style.top = `${boundingRect.top - containerBoundingRect.top}px`;
+                            hoverDiv.style.top = `${boundingRect.top - containerBoundingRect.top - 2 + extraTop}px`;
 
                             if (targetElement.tagName === 'LI') {
                                 targetElement.parentNode.setAttribute('data-block-id', uuid);
                                 if (targetElement.classList.contains('ql-indent-1')) {
-                                    hoverDiv.style.left = '25px';
+                                    hoverDiv.style.left = '30px';
                                 } else if (targetElement.classList.contains('ql-indent-2')) {
                                     hoverDiv.style.left = '55px';
                                 } else if (targetElement.classList.contains('ql-indent-3')) {
@@ -183,7 +198,7 @@ const Document = () => {
                                     hoverDiv.style.left = '10px';
                                 }
                             } else {
-                                hoverDiv.style.left = '-7px';
+                                hoverDiv.style.left = '-8px';
                             }
 
                             quillContainer.appendChild(hoverDiv);
@@ -223,41 +238,71 @@ const Document = () => {
 
         let pressTimer;
         quillContainer.addEventListener('mousedown', (event) => {
-            pressTimer = setTimeout(() => {
-                const targetElement = event.target;
-                // const dataBlockId = targetElement.dataset.blockId;
-
-                if (targetElement.classList.contains('hover-div')) {
-                    // Do something on mousedown of hover-div with data-block-id=1
-                    targetElement.style.cursor = 'grabbing';
-                    targetElement.setAttribute('draggable', 'true');
-                    selectedElement.setAttribute('draggable', 'true');
-                    const selection = window.getSelection();
-                    selection.removeAllRanges();
-                    const range = document.createRange();
-                    range.selectNodeContents(selectedElement);
-                    selection.addRange(range);
-
-                    targetElement.addEventListener('dragstart', (event) => {
-                        // Set the data that will be transferred during the drag operation
-
-                        if (selectedElement.tagName === 'LI') {
-                            const ul = document.createElement('ul');
-                            const li = document.createElement('li');
-                            li.innerHTML = selectedElement.innerHTML;
-                            ul.appendChild(li);
-
-                            event.dataTransfer.setData('text/html', ul.outerHTML); // set the HTML data
-                        } else {
-                            event.dataTransfer.setData('text/html', selectedElement.outerHTML);
-                        }
-                    });
-                }
-            }, 100);
+            let userAgentString = navigator.userAgent;
+            let firefoxAgent = userAgentString.indexOf('Firefox') > -1;
+            if (!firefoxAgent) {
+                pressTimer = setTimeout(() => {
+                    mouseDownEvent(event.target);
+                }, 50);
+            } else {
+                mouseDownEvent(event.target);
+            }
         });
 
+        const mouseDownEvent = (targetEle) => {
+            const targetElement = targetEle;
+            // const dataBlockId = targetElement.dataset.blockId;
+
+            if (targetElement.classList.contains('hover-div')) {
+                // Do something on mousedown of hover-div with data-block-id=1
+                targetElement.style.cursor = 'grabbing';
+                targetElement.setAttribute('draggable', 'true');
+                selectedElement.setAttribute('draggable', 'true');
+                const selection = window.getSelection();
+                selection.removeAllRanges();
+                const range = document.createRange();
+                range.selectNodeContents(selectedElement);
+                selection.addRange(range);
+
+                targetElement.addEventListener('dragstart', (event) => {
+                    // event.dataTransfer.effectAllowed = 'move';
+                    // event.dataTransfer.dropEffect = 'move';
+
+                    // event.dataTransfer.cursor = 'grabbing';
+                    // selectedElement.style.cursor = 'grabbing';
+                    // targetElement.style.cursor = 'grabbing';
+
+                    // targetElement.classList.add('dragging');
+                    // selectedElement.classList.add('dragging');
+
+                    if (selectedElement.tagName === 'LI') {
+                        const ul = document.createElement('ul');
+                        const li = document.createElement('li');
+                        li.innerHTML = selectedElement.innerHTML;
+                        ul.appendChild(li);
+
+                        event.dataTransfer.setData('text/html', ul.outerHTML); // set the HTML data
+                    } else {
+                        event.dataTransfer.setData('text/html', selectedElement.outerHTML);
+                    }
+
+                    event.dataTransfer.setDragImage(selectedElement, 0, 0);
+                    // document.body.style.cursor = 'grabbing';
+                });
+
+                // targetElement.addEventListener('drag', (event) => {
+                //     event.dataTransfer.cursor = '-webkit-grabbing';
+                //     event.dataTransfer.cursor = 'grabbing';
+                //     selectedElement.style.cursor = 'grabbing';
+                //     targetElement.style.cursor = 'grabbing'; // <-- Add this line
+                //     console.log(event);
+                // });
+            }
+        };
+
         quillContainer.addEventListener('mouseup', (event) => {
-            clearTimeout(pressTimer);
+            //    clearTimeout(pressTimer);
+
             const targetElement = event.target;
             if (targetElement.classList.contains('hover-div')) {
                 targetElement.style.cursor = 'grab';
@@ -268,45 +313,21 @@ const Document = () => {
         });
 
         quillContainer.addEventListener('dragover', (event) => {
+            // event.dataTransfer.dropEffect = 'copyMove';
+            // event.dataTransfer.cursor = 'grabbing';
+            event.preventDefault();
+            //event.currentTarget.style.cursor = 'grabbing';
             const targetElement = event.target;
+
+            // selectedElement.style.cursor = 'grabbing';
+            // targetElement.style.cursor = 'grabbing'; // <-- Add this line
+
             quillContainer.querySelectorAll('.pointer-div').forEach((div) => {
                 div.remove();
             });
             if (event.dataTransfer.types.includes('text/html')) {
                 pointerDiv(targetElement);
             }
-
-            // event.preventDefault();
-            // if (
-            //     targetElement.tagName === 'H1' ||
-            //     targetElement.tagName === 'H2' ||
-            //     targetElement.tagName === 'H3' ||
-            //     targetElement.tagName === 'H4' ||
-            //     targetElement.tagName === 'H5' ||
-            //     targetElement.tagName === 'H6' ||
-            //     targetElement.tagName === 'SPAN' ||
-            //     targetElement.tagName === 'LI' ||
-            //     targetElement.tagName === 'P'
-            // ) {
-            //     if (event.dataTransfer.types.includes('text/html')) {
-            //         quillContainer.querySelectorAll('.pointer-div').forEach((div) => {
-            //             div.remove();
-            //         });
-            //         pointerDiv(targetElement);
-            //         event.preventDefault();
-
-            //         // //selectedElement.tagName
-            //         // if (targetElement.tagName !== 'LI') {
-            //         //     if (targetElement.innerText === '\n') {
-            //         //         pointerDiv(targetElement);
-            //         //     } else if (targetElement.innerText === ' ') {
-            //         //         pointerDiv(targetElement);
-            //         //     } else {
-            //         //         event.preventDefault();
-            //         //     }
-            //         // }
-            //     }
-            // }
         });
 
         quillContainer.addEventListener('drop', (event) => {
@@ -711,8 +732,8 @@ const Document = () => {
                                 <Grid item>
                                     <Typography sx={{ pt: 1 }} variant="body2" style={{ color: 'rgb(155, 166, 178)', fontStyle: 'italic' }}>
                                         Last updated at{' '}
-                                        {docData.attachments != null && format(Date.parse(docData.updated_at), 'dd/LL/yyyy hh:mm a')} <br />
-                                        Created by{' '}
+                                        {docData.attachments != null && format(Date.parse(docData.updated_at), 'dd/LL/yyyy hh:mm a')}
+                                        &nbsp;&nbsp;&nbsp; Created by{' '}
                                         {userInfo.full_name == docData.doc_creator_full_name ? 'me' : docData.doc_creator_full_name}
                                     </Typography>
                                 </Grid>
