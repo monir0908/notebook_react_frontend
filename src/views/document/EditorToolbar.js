@@ -47,33 +47,33 @@ class imageDrop extends ImageDrop {
     }
 }
 
-// const BubbleTheme = Quill.import('themes/bubble');
+const BubbleTheme = Quill.import('themes/bubble');
 
-// class ExtendBubbleTheme extends BubbleTheme {
-//     constructor(quill, options) {
-//         super(quill, options);
+class ExtendBubbleTheme extends BubbleTheme {
+    constructor(quill, options) {
+        super(quill, options);
 
-//         quill.on('selection-change', (range) => {
-//             if (range) {
-//                 //quill.theme.tooltip.show();
-//                 console.log(range);
-//                 console.log(quill.getBounds(range).top);
+        quill.on('selection-change', (range) => {
+            if (range) {
+                //quill.theme.tooltip.show();
+                console.log(range);
+                console.log(quill.getBounds(range));
 
-//                 //     {
-//                 //     bottom: 21,
-//                 //     height: 17,
-//                 //     left: 15,
-//                 //     right: 71.046875,
-//                 //     top: 0,
-//                 //     width: 56.046875
-//                 // }
-//                 quill.theme.tooltip.position(quill.getBounds(range));
-//             }
-//         });
-//     }
-// }
+                //     {
+                //     bottom: 21,
+                //     height: 17,
+                //     left: 15,
+                //     right: 71.046875,
+                //     top: 0,
+                //     width: 56.046875
+                // }
+                quill.theme.tooltip.position(quill.getBounds(range));
+            }
+        });
+    }
+}
 
-// Quill.register('themes/bubble', ExtendBubbleTheme);
+Quill.register('themes/bubble', ExtendBubbleTheme);
 
 Quill.register('modules/cursors', QuillCursors);
 Quill.register('modules/linkTooltip', LinkTooltip);
