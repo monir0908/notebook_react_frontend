@@ -181,21 +181,21 @@ const Document = () => {
                             if (targetElement.tagName === 'LI') {
                                 targetElement.parentNode.setAttribute('data-block-id', uuid);
                                 if (targetElement.classList.contains('ql-indent-1')) {
-                                    hoverDiv.style.left = '30px';
+                                    hoverDiv.style.left = '20px';
                                 } else if (targetElement.classList.contains('ql-indent-2')) {
-                                    hoverDiv.style.left = '55px';
+                                    hoverDiv.style.left = '45px';
                                 } else if (targetElement.classList.contains('ql-indent-3')) {
-                                    hoverDiv.style.left = '85px';
+                                    hoverDiv.style.left = '60px';
                                 } else if (targetElement.classList.contains('ql-indent-4')) {
-                                    hoverDiv.style.left = '115px';
+                                    hoverDiv.style.left = '85px';
                                 } else if (targetElement.classList.contains('ql-indent-5')) {
-                                    hoverDiv.style.left = '145px';
+                                    hoverDiv.style.left = '115px';
                                 } else if (targetElement.classList.contains('ql-indent-6')) {
-                                    hoverDiv.style.left = '175px';
+                                    hoverDiv.style.left = '136px';
                                 } else if (targetElement.classList.contains('ql-indent-7')) {
-                                    hoverDiv.style.left = '205px';
+                                    hoverDiv.style.left = '155px';
                                 } else {
-                                    hoverDiv.style.left = '10px';
+                                    hoverDiv.style.left = '5px';
                                 }
                             } else {
                                 hoverDiv.style.left = '-8px';
