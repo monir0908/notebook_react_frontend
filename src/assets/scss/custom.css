@@ -104,8 +104,7 @@ ol {
 .dragging {
     cursor: -webkit-grabbing;
     cursor: grabbing;
-    background-color: red;
-  }
+}
 
 /* ::selection {
     cursor: grabbing;

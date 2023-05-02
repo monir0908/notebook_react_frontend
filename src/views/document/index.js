@@ -265,13 +265,13 @@ const Document = () => {
                 selection.addRange(range);
 
                 targetElement.addEventListener('dragstart', (event) => {
-                    // event.dataTransfer.effectAllowed = 'move';
+                    event.dataTransfer.effectAllowed = 'move';
                     // event.dataTransfer.dropEffect = 'move';
 
                     // event.dataTransfer.cursor = 'grabbing';
                     // selectedElement.style.cursor = 'grabbing';
-                    // targetElement.style.cursor = 'grabbing';
-
+                    targetElement.style.cursor = 'grabbing';
+                    targetElement.classList.add('dragging');
                     // targetElement.classList.add('dragging');
                     // selectedElement.classList.add('dragging');
 
@@ -287,6 +287,7 @@ const Document = () => {
                     }
 
                     event.dataTransfer.setDragImage(selectedElement, 0, 0);
+                    //event.dataTransfer.setDragImage('https://www.google.com/intl/en_ALL/mapfiles/closedhand.cur', -10, -10);
                     // document.body.style.cursor = 'grabbing';
                 });
 
@@ -297,6 +298,11 @@ const Document = () => {
                 //     targetElement.style.cursor = 'grabbing'; // <-- Add this line
                 //     console.log(event);
                 // });
+
+                targetElement.addEventListener('dragend', (event) => {
+                    // Reset the cursor style to its default value
+                    targetElement.style.cursor = 'default';
+                });
             }
         };
 
@@ -315,13 +321,15 @@ const Document = () => {
         quillContainer.addEventListener('dragover', (event) => {
             // event.dataTransfer.dropEffect = 'copyMove';
             // event.dataTransfer.cursor = 'grabbing';
+
             event.preventDefault();
+            // event.currentTarget.classList.add('dragging');
+
             //event.currentTarget.style.cursor = 'grabbing';
-            const targetElement = event.target;
 
             // selectedElement.style.cursor = 'grabbing';
             // targetElement.style.cursor = 'grabbing'; // <-- Add this line
-
+            const targetElement = event.target;
             quillContainer.querySelectorAll('.pointer-div').forEach((div) => {
                 div.remove();
             });
