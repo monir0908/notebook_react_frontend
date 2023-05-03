@@ -257,6 +257,7 @@ const Document = () => {
                 targetElement.style.cursor = 'grabbing';
                 targetElement.setAttribute('draggable', 'true');
                 selectedElement.setAttribute('draggable', 'true');
+
                 const selection = window.getSelection();
                 selection.removeAllRanges();
                 const range = document.createRange();
@@ -313,9 +314,6 @@ const Document = () => {
         quillContainer.addEventListener('dragover', (event) => {
             event.preventDefault();
             const targetElement = event.target;
-            quillContainer.querySelectorAll('.pointer-div').forEach((div) => {
-                div.remove();
-            });
 
             if (event.dataTransfer.types.includes('text/html')) {
                 if (
@@ -334,11 +332,17 @@ const Document = () => {
 
                     if (targetElement.tagName == 'LI' || selectedElement.tagName == 'LI') {
                         if (targetElement.tagName == selectedElement.tagName) {
+                            quillContainer.querySelectorAll('.pointer-div').forEach((div) => {
+                                div.remove();
+                            });
                             pointerDiv(targetElement);
                         } else {
                             return;
                         }
                     } else {
+                        quillContainer.querySelectorAll('.pointer-div').forEach((div) => {
+                            div.remove();
+                        });
                         pointerDiv(targetElement);
                     }
                 }
@@ -347,6 +351,9 @@ const Document = () => {
 
         quillContainer.addEventListener('drop', (event) => {
             event.preventDefault();
+            quillContainer.querySelectorAll('.hover-div').forEach((div) => {
+                div.remove(); // Remove the hover-div only if its data-block-id is not equal to targetId
+            });
             const targetElement = event.target;
             console.log(targetElement);
             console.log(targetElement.parentNode);
