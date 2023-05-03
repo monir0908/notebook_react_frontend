@@ -136,8 +136,7 @@ const Document = () => {
                 targetElement.tagName === 'H5' ||
                 targetElement.tagName === 'H6' ||
                 targetElement.tagName === 'LI' ||
-                targetElement.tagName === 'P' ||
-                targetElement.tagName === 'SPAN'
+                targetElement.tagName === 'P'
             ) {
                 switch (targetElement.innerText) {
                     case '\n':
@@ -319,16 +318,7 @@ const Document = () => {
         });
 
         quillContainer.addEventListener('dragover', (event) => {
-            // event.dataTransfer.dropEffect = 'copyMove';
-            // event.dataTransfer.cursor = 'grabbing';
-
             event.preventDefault();
-            // event.currentTarget.classList.add('dragging');
-
-            //event.currentTarget.style.cursor = 'grabbing';
-
-            // selectedElement.style.cursor = 'grabbing';
-            // targetElement.style.cursor = 'grabbing'; // <-- Add this line
             const targetElement = event.target;
             quillContainer.querySelectorAll('.pointer-div').forEach((div) => {
                 div.remove();
@@ -366,7 +356,7 @@ const Document = () => {
             const pointerDiv = document.createElement('div');
             pointerDiv.classList.add('pointer-div');
             pointerDiv.style.position = 'absolute';
-            pointerDiv.style.zIndex = 88;
+            pointerDiv.style.zIndex = 8;
             pointerDiv.style.pointerEvents = 'none';
             pointerDiv.style.backgroundColor = 'rgb(35,131,226,0.43)';
             pointerDiv.style.left = '14px';
@@ -531,7 +521,7 @@ const Document = () => {
         return () => {
             clearInterval(interval);
         };
-    }, [docBody, docTitle]);
+    }, [docBody, docTitle, selectedElement]);
 
     useEffect(() => {}, [docData]);
 
