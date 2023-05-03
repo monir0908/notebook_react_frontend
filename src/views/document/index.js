@@ -242,7 +242,7 @@ const Document = () => {
             if (!firefoxAgent) {
                 pressTimer = setTimeout(() => {
                     mouseDownEvent(event.target);
-                }, 50);
+                }, 100);
             } else {
                 mouseDownEvent(event.target);
             }
@@ -316,6 +316,7 @@ const Document = () => {
             quillContainer.querySelectorAll('.pointer-div').forEach((div) => {
                 div.remove();
             });
+
             if (event.dataTransfer.types.includes('text/html')) {
                 if (
                     targetElement.tagName === 'H1' ||
@@ -327,6 +328,10 @@ const Document = () => {
                     targetElement.tagName === 'LI' ||
                     targetElement.tagName === 'P'
                 ) {
+                    // quillContainer.querySelectorAll('.pointer-div').forEach((div) => {
+                    //     div.remove();
+                    // });
+
                     if (targetElement.tagName == 'LI' || selectedElement.tagName == 'LI') {
                         if (targetElement.tagName == selectedElement.tagName) {
                             pointerDiv(targetElement);
@@ -351,7 +356,16 @@ const Document = () => {
                 return; // Do nothing if the dropped item is an image
             } else if (targetElement.tagName === 'SPAN') {
                 return;
-            } else {
+            } else if (
+                targetElement.tagName === 'H1' ||
+                targetElement.tagName === 'H2' ||
+                targetElement.tagName === 'H3' ||
+                targetElement.tagName === 'H4' ||
+                targetElement.tagName === 'H5' ||
+                targetElement.tagName === 'H6' ||
+                targetElement.tagName === 'LI' ||
+                targetElement.tagName === 'P'
+            ) {
                 if (targetElement.tagName == 'LI' || selectedElement.tagName == 'LI') {
                     if (targetElement.tagName == selectedElement.tagName) {
                         const dropPosition = getDropPosition(event.clientY, targetElement);
@@ -392,18 +406,20 @@ const Document = () => {
             const pointerDiv = document.createElement('div');
             pointerDiv.classList.add('pointer-div');
             pointerDiv.style.position = 'absolute';
-            pointerDiv.style.zIndex = 8;
+            pointerDiv.style.zIndex = 999;
             pointerDiv.style.pointerEvents = 'none';
             pointerDiv.style.backgroundColor = 'rgb(35,131,226,0.43)';
             pointerDiv.style.left = '14px';
             pointerDiv.style.right = '0px';
             pointerDiv.style.bottom = '-4px';
             pointerDiv.style.width = '70%';
-            pointerDiv.style.height = '3px';
+            pointerDiv.style.height = '4px';
             pointerDiv.style.marginTop = '1px';
             pointerDiv.style.marginBottom = '1px';
             const boundingRect = targetElement.getBoundingClientRect();
+            console.log(boundingRect);
             const containerBoundingRect = quillContainer.getBoundingClientRect();
+            console.log(containerBoundingRect);
             pointerDiv.style.top = `${boundingRect.top - containerBoundingRect.top}px`;
             quillContainer.appendChild(pointerDiv);
         };
