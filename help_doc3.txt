@@ -265,7 +265,14 @@ const Document = () => {
 
                 targetElement.addEventListener('dragstart', (event) => {
                     event.dataTransfer.effectAllowed = 'move';
+                    // event.dataTransfer.dropEffect = 'move';
+
+                    // event.dataTransfer.cursor = 'grabbing';
+                    // selectedElement.style.cursor = 'grabbing';
                     targetElement.style.cursor = 'grabbing';
+                    //targetElement.classList.add('dragging');
+                    // targetElement.classList.add('dragging');
+                    // selectedElement.classList.add('dragging');
 
                     if (selectedElement.tagName === 'LI') {
                         const ul = document.createElement('ul');
@@ -317,74 +324,31 @@ const Document = () => {
                 div.remove();
             });
             if (event.dataTransfer.types.includes('text/html')) {
-                if (
-                    targetElement.tagName === 'H1' ||
-                    targetElement.tagName === 'H2' ||
-                    targetElement.tagName === 'H3' ||
-                    targetElement.tagName === 'H4' ||
-                    targetElement.tagName === 'H5' ||
-                    targetElement.tagName === 'H6' ||
-                    targetElement.tagName === 'LI' ||
-                    targetElement.tagName === 'P'
-                ) {
-                    if (targetElement.tagName == 'LI' || selectedElement.tagName == 'LI') {
-                        if (targetElement.tagName == selectedElement.tagName) {
-                            pointerDiv(targetElement);
-                        } else {
-                            return;
-                        }
-                    } else {
-                        pointerDiv(targetElement);
-                    }
-                }
+                pointerDiv(targetElement);
             }
         });
 
         quillContainer.addEventListener('drop', (event) => {
             event.preventDefault();
             const targetElement = event.target;
-            console.log(targetElement);
-            console.log(targetElement.parentNode);
-            console.log(targetElement.nextSibling);
+
             // Check if the dropped element is an image
             if (event.dataTransfer.files && event.dataTransfer.files.length > 0) {
                 return; // Do nothing if the dropped item is an image
-            } else if (targetElement.tagName === 'SPAN') {
-                return;
+            }
+
+            const dropPosition = getDropPosition(event.clientY, targetElement);
+
+            // Check if the target element is a text node and get its parent element if it is
+            if (targetElement.nodeType === Node.TEXT_NODE) {
+                targetElement = targetElement.parentNode;
+            }
+
+            // Add your custom code to create the new element here
+            if (dropPosition === 'before') {
+                targetElement.parentNode.insertBefore(selectedElement, targetElement);
             } else {
-                if (targetElement.tagName == 'LI' || selectedElement.tagName == 'LI') {
-                    if (targetElement.tagName == selectedElement.tagName) {
-                        const dropPosition = getDropPosition(event.clientY, targetElement);
-
-                        // Check if the target element is a text node and get its parent element if it is
-                        if (targetElement.nodeType === Node.TEXT_NODE) {
-                            targetElement = targetElement.parentNode;
-                        }
-
-                        // Add your custom code to create the new element here
-                        if (dropPosition === 'before') {
-                            targetElement.parentNode.insertBefore(selectedElement, targetElement);
-                        } else {
-                            targetElement.parentNode.insertBefore(selectedElement, targetElement.nextSibling);
-                        }
-                    } else {
-                        return;
-                    }
-                } else {
-                    const dropPosition = getDropPosition(event.clientY, targetElement);
-
-                    // Check if the target element is a text node and get its parent element if it is
-                    if (targetElement.nodeType === Node.TEXT_NODE) {
-                        targetElement = targetElement.parentNode;
-                    }
-
-                    // Add your custom code to create the new element here
-                    if (dropPosition === 'before') {
-                        targetElement.parentNode.insertBefore(selectedElement, targetElement);
-                    } else {
-                        targetElement.parentNode.insertBefore(selectedElement, targetElement.nextSibling);
-                    }
-                }
+                targetElement.parentNode.insertBefore(selectedElement, targetElement.nextSibling);
             }
         });
 
