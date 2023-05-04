@@ -122,6 +122,16 @@ const Document = () => {
         if (typeof reactQuillRef.getEditor !== 'function') return;
         quillRef = reactQuillRef.getEditor();
 
+        // quillRef.on('editor-change', function (eventName, ...args) {
+        //     if (eventName === 'text-change') {
+        //         console.log(eventName);
+        //         console.log(args[0]);
+        //     } else if (eventName === 'selection-change') {
+        //         console.log(eventName);
+        //         console.log(args[0]);
+        //     }
+        // });
+
         const quillContainer = quillRef.container;
 
         quillContainer.addEventListener('mouseover', (event) => {
@@ -171,14 +181,26 @@ const Document = () => {
                                 extraTop = 10;
                             }
                             const uuid = uuidv4();
-                            hoverDiv.setAttribute('data-block-id', uuid);
-                            targetElement.setAttribute('id', uuid);
+                            //hoverDiv.setAttribute('data-block-id', uuid);
+                            //targetElement.setAttribute('id', uuid);
+                            const value = targetElement.getAttribute('id');
+                            if (value) {
+                                hoverDiv.setAttribute('data-block-id', value);
+                            } else {
+                                targetElement.setAttribute('id', uuid);
+                            }
                             hoverDiv.style.cursor = 'grab';
+
+                            targetElement.style.userSelect = 'none';
+                            targetElement.querySelectorAll('*').forEach((el) => {
+                                el.style.userSelect = 'none';
+                            });
+
                             const containerBoundingRect = quillContainer.getBoundingClientRect();
                             hoverDiv.style.top = `${boundingRect.top - containerBoundingRect.top - 2 + extraTop}px`;
 
                             if (targetElement.tagName === 'LI') {
-                                targetElement.parentNode.setAttribute('data-block-id', uuid);
+                                //targetElement.parentNode.setAttribute('data-block-id', uuid);
                                 if (targetElement.classList.contains('ql-indent-1')) {
                                     hoverDiv.style.left = '20px';
                                 } else if (targetElement.classList.contains('ql-indent-2')) {
@@ -258,11 +280,11 @@ const Document = () => {
                 targetElement.setAttribute('draggable', 'true');
                 //selectedElement.setAttribute('draggable', 'true');
 
-                // const selection = window.getSelection();
-                // selection.removeAllRanges();
-                // const range = document.createRange();
-                // range.selectNodeContents(selectedElement);
-                // selection.addRange(range);
+                const selection = window.getSelection();
+                selection.removeAllRanges();
+                const range = document.createRange();
+                range.selectNodeContents(selectedElement);
+                selection.addRange(range);
 
                 targetElement.addEventListener('dragstart', (event) => {
                     event.dataTransfer.effectAllowed = 'move';
@@ -389,6 +411,12 @@ const Document = () => {
                         } else {
                             targetElement.parentNode.insertBefore(selectedElement, targetElement.nextSibling);
                         }
+
+                        const selection = window.getSelection();
+                        selection.removeAllRanges();
+                        const range = document.createRange();
+                        range.selectNodeContents(selectedElement);
+                        selection.addRange(range);
                     } else {
                         return;
                     }
@@ -406,6 +434,12 @@ const Document = () => {
                     } else {
                         targetElement.parentNode.insertBefore(selectedElement, targetElement.nextSibling);
                     }
+
+                    const selection = window.getSelection();
+                    selection.removeAllRanges();
+                    const range = document.createRange();
+                    range.selectNodeContents(selectedElement);
+                    selection.addRange(range);
                 }
             }
         });
@@ -421,7 +455,7 @@ const Document = () => {
             pointerDiv.style.right = '0px';
             pointerDiv.style.bottom = '-4px';
             pointerDiv.style.width = '70%';
-            pointerDiv.style.height = '4px';
+            pointerDiv.style.height = '3px';
             pointerDiv.style.marginTop = '1px';
             pointerDiv.style.marginBottom = '1px';
             const boundingRect = targetElement.getBoundingClientRect();

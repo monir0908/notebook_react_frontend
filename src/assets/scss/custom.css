@@ -106,6 +106,10 @@ ol {
     cursor: grabbing;
 }
 
+*::selection {
+    background: rgba(35, 131, 226, 0.28);
+}
+
 /* ::selection {
     cursor: grabbing;
     user-select: none;
