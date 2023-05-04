@@ -332,8 +332,7 @@ const Document = () => {
         };
 
         quillContainer.addEventListener('mouseup', (event) => {
-            //    clearTimeout(pressTimer);
-
+            clearTimeout(pressTimer);
             const targetElement = event.target;
             if (targetElement.classList.contains('hover-div')) {
                 targetElement.style.cursor = 'grab';
@@ -615,6 +614,11 @@ const Document = () => {
             // Clean up Yjs document
             provider.disconnect();
             ydoc.destroy();
+
+            const quillContainer = quillRef.container;
+            quillContainer.querySelectorAll('.hover-div').forEach((div) => {
+                div.remove(); // Remove the hover-div only if its data-block-id is not equal to targetId
+            });
         };
     }, [navigate, userToken, documentKey]);
 

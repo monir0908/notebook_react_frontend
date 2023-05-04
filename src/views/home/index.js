@@ -20,7 +20,7 @@ import { resetState } from 'store/features/document/documentSlice';
 import { SET_LOADER } from 'store/actions';
 
 const OutlineInputStyle = styled(OutlinedInput, { shouldForwardProp })(({ theme }) => ({
-    width: 400,
+    width: 500,
     marginLeft: 5,
     paddingLeft: 16,
     paddingRight: 16,
@@ -30,7 +30,7 @@ const OutlineInputStyle = styled(OutlinedInput, { shouldForwardProp })(({ theme 
         height: '0.4375em !important'
     },
     [theme.breakpoints.down('lg')]: {
-        width: 500
+        width: 600
     },
     [theme.breakpoints.down('md')]: {
         width: '100%',
