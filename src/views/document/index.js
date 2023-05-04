@@ -256,13 +256,13 @@ const Document = () => {
                 // Do something on mousedown of hover-div with data-block-id=1
                 targetElement.style.cursor = 'grabbing';
                 targetElement.setAttribute('draggable', 'true');
-                selectedElement.setAttribute('draggable', 'true');
+                //selectedElement.setAttribute('draggable', 'true');
 
-                const selection = window.getSelection();
-                selection.removeAllRanges();
-                const range = document.createRange();
-                range.selectNodeContents(selectedElement);
-                selection.addRange(range);
+                // const selection = window.getSelection();
+                // selection.removeAllRanges();
+                // const range = document.createRange();
+                // range.selectNodeContents(selectedElement);
+                // selection.addRange(range);
 
                 targetElement.addEventListener('dragstart', (event) => {
                     event.dataTransfer.effectAllowed = 'move';
@@ -355,9 +355,10 @@ const Document = () => {
                 div.remove(); // Remove the hover-div only if its data-block-id is not equal to targetId
             });
             const targetElement = event.target;
-            console.log(targetElement);
-            console.log(targetElement.parentNode);
-            console.log(targetElement.nextSibling);
+            // console.log(targetElement);
+            // console.log(targetElement.parentNode);
+            // console.log(targetElement.nextSibling);
+
             // Check if the dropped element is an image
             if (event.dataTransfer.files && event.dataTransfer.files.length > 0) {
                 return; // Do nothing if the dropped item is an image
