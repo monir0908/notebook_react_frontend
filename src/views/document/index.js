@@ -111,6 +111,7 @@ const Document = () => {
     let quillRef = null;
     let reactQuillRef = null;
     let quillText;
+    //let isLoadedOnce = true;
     //let isQuillText = true;
 
     const getRamndomColors = () => {
@@ -124,6 +125,15 @@ const Document = () => {
 
         // quillRef.on('editor-change', function (eventName, ...args) {
         //     if (eventName === 'text-change') {
+        //         if (isLoadedOnce) {
+        //             const range = quillRef.getSelection(true);
+        //             quillRef.setSelection(range.index, quillRef.getLength(), 'user');
+        //             isLoadedOnce = false;
+        //             // setTimeout(() => {
+        //             //     const selection = window.getSelection();
+        //             //     selection.removeAllRanges();
+        //             // }, 10);
+        //         }
         //         console.log(eventName);
         //         console.log(args[0]);
         //     } else if (eventName === 'selection-change') {
@@ -180,21 +190,21 @@ const Document = () => {
                             ) {
                                 extraTop = 10;
                             }
-                            const uuid = uuidv4();
+                            //const uuid = uuidv4();
                             //hoverDiv.setAttribute('data-block-id', uuid);
                             //targetElement.setAttribute('id', uuid);
-                            const value = targetElement.getAttribute('id');
-                            if (value) {
-                                hoverDiv.setAttribute('data-block-id', value);
-                            } else {
-                                targetElement.setAttribute('id', uuid);
-                            }
+                            // const value = targetElement.getAttribute('id');
+                            // if (value) {
+                            //     hoverDiv.setAttribute('data-block-id', value);
+                            // } else {
+                            //     //targetElement.setAttribute('id', uuid);
+                            // }
                             hoverDiv.style.cursor = 'grab';
 
-                            targetElement.style.userSelect = 'none';
-                            targetElement.querySelectorAll('*').forEach((el) => {
-                                el.style.userSelect = 'none';
-                            });
+                            // targetElement.style.userSelect = 'none';
+                            // targetElement.querySelectorAll('*').forEach((el) => {
+                            //     el.style.userSelect = 'none';
+                            // });
 
                             const containerBoundingRect = quillContainer.getBoundingClientRect();
                             hoverDiv.style.top = `${boundingRect.top - containerBoundingRect.top - 2 + extraTop}px`;
@@ -244,12 +254,12 @@ const Document = () => {
             ) {
                 targetElement.classList.remove('hand-cursor'); // remove the CSS class
                 targetElement.removeAttribute('draggable');
-                const targetId = targetElement.getAttribute('id');
-                quillContainer.querySelectorAll('.hover-div').forEach((div) => {
-                    if (div.dataset.blockId !== targetId) {
-                        div.remove(); // Remove the hover-div only if its data-block-id is not equal to targetId
-                    }
-                });
+                //const targetId = targetElement.getAttribute('id');
+                // quillContainer.querySelectorAll('.hover-div').forEach((div) => {
+                //     if (div.dataset.blockId !== targetId) {
+                //         div.remove(); // Remove the hover-div only if its data-block-id is not equal to targetId
+                //     }
+                // });
 
                 quillContainer.querySelectorAll('.pointer-div').forEach((div) => {
                     div.remove(); // Remove the hover-div only if its data-block-id is not equal to targetId
