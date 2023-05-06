@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-
+import React, { useState, useEffect } from 'react';
 // material-ui
 import { useTheme } from '@mui/material/styles';
 import { Avatar, Box, ButtonBase } from '@mui/material';
@@ -17,23 +17,37 @@ import { IconMenu2 } from '@tabler/icons';
 
 const Header = ({ handleLeftDrawerToggle }) => {
     const theme = useTheme();
-
+    const [isDocPage, setIsDocPage] = useState(false);
+    let currentUrl = location.pathname;
+    const urlArr = currentUrl.split('/');
+    useEffect(() => {
+        if (urlArr[1] == 'document') {
+            setIsDocPage(true);
+        } else {
+            setIsDocPage(false);
+        }
+    });
     return (
         <>
             {/* logo & toggler button */}
             <Box
                 sx={{
-                    width: 228,
+                    width: 275,
+                    height: 73,
+                    marginTop: isDocPage ? '-60px' : '0px',
+                    marginLeft: '-23px',
+                    paddingLeft: '14px',
                     display: 'flex',
+                    background: 'linear-gradient(to bottom, white, #eef2f6 )',
                     [theme.breakpoints.down('md')]: {
                         width: 'auto'
                     }
                 }}
             >
-                <Box component="span" sx={{ display: { xs: 'none', md: 'block' }, flexGrow: 1 }}>
+                <Box component="span" sx={{ display: { xs: 'none', md: 'block' }, flexGrow: 1, pr: 1 }}>
                     <LogoSection />
                 </Box>
-                <ButtonBase sx={{ borderRadius: '12px', overflow: 'hidden' }}>
+                <ButtonBase sx={{ borderRadius: '12px', overflow: 'hidden', pr: 1, marginLeft: '27px' }}>
                     <Avatar
                         variant="rounded"
                         sx={{

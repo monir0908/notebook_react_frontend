@@ -79,29 +79,29 @@ const Document = () => {
             dispatch(updateDocId({ doc_id: doc.doc_key }));
             dispatch(updateDoc({ doc: doc }));
 
-            setDocTitle(doc.doc_title);
+            //setDocTitle(doc.doc_title);
             setDocBody(doc.doc_body);
             bodyText = doc.doc_body;
         }
     };
 
-    const onTitleChange = (e) => {
-        setDocTitle(e.target.value);
-        dispatch(updateDocumentTitle({ document_key: documentKey, doc_title: e.target.value }));
-    };
+    // const onTitleChange = (e) => {
+    //     setDocTitle(e.target.value);
+    //     dispatch(updateDocumentTitle({ document_key: documentKey, doc_title: e.target.value }));
+    // };
 
-    const onTitleBlur = (e) => {
-        dispatch(
-            documentUpdateOnEditorLeave({
-                url: 'document/update-doc/' + docObj.doc_key,
-                navigate,
-                data: {
-                    doc_title: e.target.value
-                },
-                extraData: {}
-            })
-        );
-    };
+    // const onTitleBlur = (e) => {
+    //     dispatch(
+    //         documentUpdateOnEditorLeave({
+    //             url: 'document/update-doc/' + docObj.doc_key,
+    //             navigate,
+    //             data: {
+    //                 doc_title: e.target.value
+    //             },
+    //             extraData: {}
+    //         })
+    //     );
+    // };
 
     const onBodyChange = (value) => {
         setDocBody(value);
@@ -624,19 +624,19 @@ const Document = () => {
 
     useEffect(() => {
         const interval = setInterval(() => {
-            if (docBody || docTitle) handleSubmit();
+            if (docBody) handleSubmit();
         }, 60 * 1000);
         return () => {
             clearInterval(interval);
         };
-    }, [docBody, docTitle, selectedElement]);
+    }, [docBody, selectedElement]);
 
     useEffect(() => {}, [docData]);
 
     const handleSubmit = async () => {
         try {
             const res = await API.patch(`document/update-doc/${documentKey}`, {
-                doc_title: docTitle,
+                // doc_title: docTitle,
                 doc_body: docBody ?? bodyText
             });
             if (res.data.state == 'success') {
@@ -766,14 +766,7 @@ const Document = () => {
     return (
         <>
             <MainCard title="" onMouseLeave={(ev) => handleMouseLeave(ev)}>
-                {/* <h1 draggable={true} onDragStart={handleDragStart}>
-                    Heading
-                </h1>
-                <p draggable={true} onDragStart={handleDragStart}>
-                    Paragraph
-                </p> */}
-
-                {docData != null && (
+                {/* {docData != null && (
                     <Box sx={{ m: 1 }} style={{ float: 'right' }}>
                         <Stack direction="row" spacing={1}>
                             {docData.attachments != null &&
@@ -818,85 +811,90 @@ const Document = () => {
                                 ))}
                         </Stack>
                     </Box>
-                )}
-                <form>
-                    <TextField
-                        inputProps={{ style: { fontSize: 40, fontWeight: 600 } }}
-                        fullWidth
-                        id="standard-basic"
-                        className="title-text"
-                        value={docTitle}
-                        onChange={onTitleChange}
-                        onBlur={onTitleBlur}
-                        name="docTitle"
-                        label=""
-                        variant="standard"
-                    />
-                    {docData != null && (
-                        <>
-                            <Grid container direction="row" justifyContent="space-between" alignItems="center">
-                                <Grid item>
-                                    <Typography sx={{ pt: 1 }} variant="body2" style={{ color: 'rgb(155, 166, 178)', fontStyle: 'italic' }}>
-                                        Last updated at{' '}
-                                        {docData.attachments != null && format(Date.parse(docData.updated_at), 'dd/LL/yyyy hh:mm a')}
-                                        &nbsp;&nbsp;&nbsp; Created by{' '}
-                                        {userInfo.full_name == docData.doc_creator_full_name ? 'me' : docData.doc_creator_full_name}
-                                    </Typography>
-                                </Grid>
-                                <Grid item>
-                                    <Typography sx={{ pt: 1 }} variant="body2" style={{ color: 'rgb(155, 166, 178)', fontStyle: 'italic' }}>
-                                        Currently viewing{' : '}
-                                        {viewers.map((item, index) =>
-                                            index === viewers.length - 1 && viewers.length === 1
-                                                ? item.name
-                                                : index === viewers.length - 1
-                                                ? item.name
-                                                : item.name + ', '
-                                        )}
-                                    </Typography>
-                                </Grid>
+                )} */}
+                {/* <form> */}
+                {/* <TextField
+                    inputProps={{ style: { fontSize: 40, fontWeight: 600 } }}
+                    fullWidth
+                    id="standard-basic"
+                    className="title-text"
+                    value={docTitle}
+                    onChange={onTitleChange}
+                    onBlur={onTitleBlur}
+                    name="docTitle"
+                    label=""
+                    variant="standard"
+                /> */}
+                {/* {docData != null && (
+                    <>
+                        <Grid container direction="row" justifyContent="space-between" alignItems="center">
+                            <Grid item>
+                                <Typography sx={{ pt: 1 }} variant="body2" style={{ color: 'rgb(155, 166, 178)', fontStyle: 'italic' }}>
+                                    Last updated at{' '}
+                                    {docData.attachments != null && format(Date.parse(docData.updated_at), 'dd/LL/yyyy hh:mm a')}
+                                    &nbsp;&nbsp;&nbsp; Created by{' '}
+                                    {userInfo.full_name == docData.doc_creator_full_name ? 'me' : docData.doc_creator_full_name}
+                                </Typography>
                             </Grid>
-                        </>
-                    )}
+                            <Grid item>
+                                <Typography sx={{ pt: 1 }} variant="body2" style={{ color: 'rgb(155, 166, 178)', fontStyle: 'italic' }}>
+                                    Currently viewing{' : '}
+                                    {viewers.map((item, index) =>
+                                        index === viewers.length - 1 && viewers.length === 1
+                                            ? item.name
+                                            : index === viewers.length - 1
+                                            ? item.name
+                                            : item.name + ', '
+                                    )}
+                                </Typography>
+                            </Grid>
+                        </Grid>
+                    </>
+                )} */}
+                <br />
+                <br />
+                <br />
+                <br />
+                {docData != null && <>{docData.attachments != null && docData.attachments.length > 0 && <br />}</>}
 
-                    <div className="editor-container">
-                        <EditorToolbar toolbarId={'t1'} />
-                        {isQuillText == true ? (
-                            <ReactQuill
-                                ref={(el) => {
-                                    reactQuillRef = el;
-                                }}
-                                contentStyle={quillStyle}
-                                className="quill-editor"
-                                bounds=".editor-container"
-                                theme="bubble"
-                                onChange={onBodyChange}
-                                placeholder={'Write something here...'}
-                                formats={formats}
-                                modules={modules('t1')}
-                                scrollingContainer="html"
-                            />
-                        ) : (
-                            <ReactQuill
-                                ref={(el) => {
-                                    reactQuillRef = el;
-                                }}
-                                className="quill-editor"
-                                bounds=".editor-container"
-                                theme="bubble"
-                                value={docBody}
-                                onChange={onBodyChange}
-                                placeholder={'Write something here...'}
-                                formats={formats}
-                                modules={modules('t1')}
-                                scrollingContainer="html"
-                            />
-                        )}
-                        {/* <Fab sx={fabStyle} onClick={handleSubmit} aria-label="Save" color="primary">
+                <div className="editor-container">
+                    <EditorToolbar toolbarId={'t1'} />
+                    {isQuillText == true ? (
+                        <ReactQuill
+                            ref={(el) => {
+                                reactQuillRef = el;
+                            }}
+                            contentStyle={quillStyle}
+                            className="quill-editor"
+                            bounds=".editor-container"
+                            theme="bubble"
+                            onChange={onBodyChange}
+                            placeholder={'Write something here...'}
+                            formats={formats}
+                            modules={modules('t1')}
+                            scrollingContainer="html"
+                        />
+                    ) : (
+                        <ReactQuill
+                            ref={(el) => {
+                                reactQuillRef = el;
+                            }}
+                            className="quill-editor"
+                            bounds=".editor-container"
+                            theme="bubble"
+                            value={docBody}
+                            onChange={onBodyChange}
+                            placeholder={'Write something here...'}
+                            formats={formats}
+                            modules={modules('t1')}
+                            scrollingContainer="html"
+                        />
+                    )}
+                    {/* <Fab sx={fabStyle} onClick={handleSubmit} aria-label="Save" color="primary">
                             <IconDeviceFloppy />
                         </Fab> */}
-                    </div>
-                </form>
+                </div>
+                {/* </form> */}
             </MainCard>
 
             <ContextMenuEditor

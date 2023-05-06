@@ -53,6 +53,18 @@ const ProfileSection = () => {
     const [notification, setNotification] = useState(false);
     const [selectedIndex, setSelectedIndex] = useState(-1);
     const [open, setOpen] = useState(false);
+
+    const [isDocPage, setIsDocPage] = useState(false);
+    let currentUrl = location.pathname;
+    const urlArr = currentUrl.split('/');
+    useEffect(() => {
+        if (urlArr[1] == 'document') {
+            setIsDocPage(true);
+        } else {
+            setIsDocPage(false);
+        }
+    });
+
     /**
      * anchorRef is used on different componets and specifying one type leads to other components throwing an error
      * */
@@ -95,6 +107,7 @@ const ProfileSection = () => {
             <Chip
                 sx={{
                     height: '48px',
+                    marginTop: isDocPage ? '-60px' : '-5px',
                     alignItems: 'center',
                     borderRadius: '27px',
                     transition: 'all .2s ease-in-out',
@@ -148,6 +161,7 @@ const ProfileSection = () => {
                 onClick={handleToggle}
                 color="primary"
             />
+
             <Popper
                 placement="bottom-end"
                 open={open}

@@ -26,19 +26,26 @@ import {
     Toolbar
 } from '@mui/material';
 import Tooltip from '@mui/material/Tooltip';
+import { format } from 'date-fns';
 // assets
 import { IconAdjustmentsHorizontal, IconSearch, IconX } from '@tabler/icons';
 import { shouldForwardProp } from '@mui/system';
-
+import IconPdf from 'ui-component/custom-icon/IconPdf';
+import IconXls from 'ui-component/custom-icon/IconXls';
+import IconDocx from 'ui-component/custom-icon/IconDocx';
+import IconPptx from 'ui-component/custom-icon/IconPptx';
+import IconImg from 'ui-component/custom-icon/IconImg';
+import IconGif from 'ui-component/custom-icon/IconGif';
 import DeleteIcon from '@mui/icons-material/Delete';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import { updateDocumentName, updateDocumentTitle } from 'store/features/collection/collectionSlice';
 import ConfirmationDialog from 'layout/components/confirmationDialog';
-import { documentUpdate, documentDetails } from 'store/features/document/documentActions';
+import { documentUpdate, documentDetails, documentFileDelete, documentUpdateOnEditorLeave } from 'store/features/document/documentActions';
 import { collectionList } from 'store/features/collection/collectionActions';
 import ShareDialog from 'layout/components/shareDialog';
 import API from 'helpers/jwt.interceptor';
 import { SET_LOADER } from 'store/actions';
+import ContextMenuDocumentFile from 'layout/components/contextMenuDocumentFile';
 // ==============================|| Buttons ||============================== //
 import {
     updateDoc,
@@ -56,9 +63,14 @@ const ButtonSection = () => {
     const dispatch = useDispatch();
     const location = useLocation();
     const { userInfo, userToken } = useSelector((state) => state.auth);
+    const { viewers } = useSelector((state) => state.header);
     const { doc_id, doc, upload_show, share_show, publish_show, unpublish_show, delete_show } = useSelector((state) => state.header);
+    const docData = useSelector((state) => state.document.data);
     const navigate = useNavigate();
     const [sharelink, setShareLnk] = useState('');
+    const [docTitle, setDocTitle] = useState('');
+    const [isDocPage, setIsDocPage] = useState(false);
+    const [selectedFile, setSelectedFile] = useState(null);
 
     //////////////////////////////// share dialog ///////////////////
     const [openShareDialog, setOpenShareDialog] = useState(false);
@@ -168,14 +180,18 @@ const ButtonSection = () => {
         }
 
         if (urlArr[1] == 'document') {
+            setIsDocPage(true);
             dispatch(updateUploadButton({ isUploadShow: true }));
+            setDocTitle(doc.doc_title);
+        } else {
+            setIsDocPage(false);
         }
 
         return () => {
             //dispatch(resetStateHeader());
         };
         // }, [doc, publish_show, unpublish_show, delete_show]);
-    }, [doc, navigate, userToken]);
+    }, [doc, docData, navigate, userToken]);
 
     const handleFileChange = async (e) => {
         const documents = e.target.files;
@@ -202,11 +218,67 @@ const ButtonSection = () => {
         // }
     };
 
+    const onTitleChange = (e) => {
+        setDocTitle(e.target.value);
+        dispatch(updateDocumentTitle({ document_key: doc.doc_key, doc_title: e.target.value }));
+    };
+
+    const onTitleBlur = (e) => {
+        dispatch(
+            documentUpdateOnEditorLeave({
+                url: 'document/update-doc/' + doc.doc_key,
+                navigate,
+                data: {
+                    doc_title: e.target.value
+                },
+                extraData: {}
+            })
+        );
+    };
+
+    //////////////////////////// file context menu //////////////////////////////
+
+    const [anchorEl, setAnchorEl] = useState(null);
+    const openContextMenu = Boolean(anchorEl);
+    const handleContextMenuClick = (event, item) => {
+        setAnchorEl(event.currentTarget);
+        setSelectedFile(item);
+    };
+    const handleContextMenuFileClose = () => {
+        setAnchorEl(null);
+    };
+
+    const handleOpenFileClick = (values) => {
+        window.open(values.file, '_blank', 'noreferrer');
+    };
+
+    //////////////////////////////// file delete confirmation /////////
+    const [openFileConfirmation, setOpenFileConfirmation] = useState(false);
+
+    const handleClickOpenFileConfirmation = () => {
+        setOpenFileConfirmation(true);
+    };
+
+    const handleCloseFileConfirmation = () => {
+        setOpenFileConfirmation(false);
+    };
+    const handleFileConfirmationDialogOk = (values) => {
+        dispatch(
+            documentFileDelete({
+                url: 'document/delete-attachment/' + values.id
+            })
+        );
+        setTimeout(() => {
+            dispatch(documentDetails({ url: `document/${doc.doc_key}` }));
+        }, 500);
+        setOpenFileConfirmation(false);
+    };
+
     return (
         <>
             {/* <Box sx={{ display: { xs: 'block', md: 'none' } }}></Box> */}
 
-            <Box sx={{ display: { xs: 'block', md: 'block' } }}>
+            {/* <Box sx={{ display: { xs: 'block', md: 'block' } }}>
                 <Stack direction="row" spacing={1} sx={{ mr: 4 }}>
                     {upload_show && (
                         <Tooltip title="Upload File">
@@ -221,10 +293,7 @@ const ButtonSection = () => {
                                 <UploadFileIcon fontSize="inherit" />
                             </IconButton>
 
-                            {/* <IconButton color="primary" size="large" aria-label="delete">
-                                <UploadFileIcon fontSize="inherit" />
-                                <input hidden accept="image/*" multiple type="file" />
-                            </IconButton> */}
+                           
                         </Tooltip>
                     )}
                     {share_show && (
@@ -255,7 +324,181 @@ const ButtonSection = () => {
                         </Button>
                     )}
                 </Stack>
-            </Box>
+            </Box> */}
+
+            <Grid sx={{ mt: 2, ml: 3 }} container direction="row" justifyContent="space-between" alignItems="center">
+                <Grid item xs={12} md={7}>
+                    {isDocPage == true ? (
+                        <form>
+                            <TextField
+                                inputProps={{ style: { fontSize: 40, fontWeight: 600, border: 'none' } }}
+                                fullWidth
+                                id="doc-title"
+                                className="title-text"
+                                value={docTitle || ''}
+                                onChange={onTitleChange}
+                                onBlur={onTitleBlur}
+                                name="docTitle"
+                                label=""
+                                variant="standard"
+                            />
+                        </form>
+                    ) : (
+                        <div style={{ marginTop: '50px' }}></div>
+                    )}
+                </Grid>
+                <Grid item xs={12} md={5}>
+                    <Box sx={{ display: { xs: 'block', md: 'block' }, mt: 1 }}>
+                        <Stack direction="row" spacing={1} sx={{ mr: 4 }}>
+                            {upload_show && (
+                                <Tooltip title="Upload File">
+                                    <IconButton color="primary" aria-label="upload document" component="label">
+                                        <input
+                                            onChange={handleFileChange}
+                                            hidden
+                                            accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.jpg,.jpeg,.png,.gif"
+                                            multiple
+                                            type="file"
+                                        />
+                                        <UploadFileIcon fontSize="inherit" />
+                                    </IconButton>
+
+                                    {/* <IconButton color="primary" size="large" aria-label="delete">
+                                <UploadFileIcon fontSize="inherit" />
+                                <input hidden accept="image/*" multiple type="file" />
+                            </IconButton> */}
+                                </Tooltip>
+                            )}
+                            {share_show && (
+                                <Button onClick={handleClickOpenShareDialog} variant="outlined" size="md">
+                                    Share
+                                </Button>
+                            )}
+
+                            {publish_show && (
+                                <Button onClick={() => handleDocPublish(2)} variant="outlined" size="md">
+                                    Publish
+                                </Button>
+                            )}
+                            {unpublish_show && (
+                                <Button onClick={() => handleDocPublish(1)} variant="outlined" size="md">
+                                    Unpublish
+                                </Button>
+                            )}
+                            {delete_show && (
+                                <Button
+                                    onClick={handleClickOpenConfirmation}
+                                    variant="outlined"
+                                    size="md"
+                                    color="error"
+                                    startIcon={<DeleteIcon />}
+                                >
+                                    Delete
+                                </Button>
+                            )}
+                        </Stack>
+                    </Box>
+                </Grid>
+                <Grid item xs={12}>
+                    <Divider sx={{ borderBottomWidth: 'medium', borderColor: '#a9a9a9' }} />
+                    {/* {isDocPage == true ? (
+                        <Divider sx={{ borderBottomWidth: 'medium', borderColor: '#a9a9a9' }} />
+                    ) : (
+                        <Divider sx={{ borderBottomWidth: 'medium', borderColor: '#a9a9a9', mt: 2 }} />
+                    )} */}
+
+                    {docData != null && isDocPage && (
+                        <>
+                            <Grid container direction="row" justifyContent="space-between" alignItems="center">
+                                <Grid item>
+                                    <Typography sx={{ pt: 1 }} variant="body2" style={{ color: 'rgb(155, 166, 178)', fontStyle: 'italic' }}>
+                                        Last updated at{' '}
+                                        {docData.attachments != null && format(Date.parse(docData.updated_at), 'dd/LL/yyyy hh:mm a')}
+                                        &nbsp;&nbsp;&nbsp; Created by{' '}
+                                        {userInfo.full_name == docData.doc_creator_full_name ? 'me' : docData.doc_creator_full_name}
+                                    </Typography>
+                                </Grid>
+                                <Grid item>
+                                    <Typography sx={{ pt: 1 }} variant="body2" style={{ color: 'rgb(155, 166, 178)', fontStyle: 'italic' }}>
+                                        Currently viewing{' : '}
+                                        {viewers.map((item, index) =>
+                                            index === viewers.length - 1 && viewers.length === 1
+                                                ? item.name
+                                                : index === viewers.length - 1
+                                                ? item.name
+                                                : item.name + ', '
+                                        )}
+                                    </Typography>
+                                </Grid>
+                            </Grid>
+
+                            <Box sx={{ m: 1 }} style={{ float: 'right' }}>
+                                <Stack direction="row" spacing={1}>
+                                    {docData.attachments != null &&
+                                        docData.attachments.length > 0 &&
+                                        docData.attachments.map((item, index) => (
+                                            <IconButton
+                                                onClick={(event) => handleContextMenuClick(event, item)}
+                                                key={item.id}
+                                                color="primary"
+                                                aria-label="upload document"
+                                                component="label"
+                                            >
+                                                {(() => {
+                                                    switch (item.file_extension) {
+                                                        case '.pdf':
+                                                            return <IconPdf fontSize="inherit" />;
+                                                        case '.xls':
+                                                            return <IconXls fontSize="inherit" />;
+                                                        case '.xlsx':
+                                                            return <IconXls fontSize="inherit" />;
+                                                        case '.doc':
+                                                            return <IconDocx fontSize="inherit" />;
+                                                        case '.docx':
+                                                            return <IconDocx fontSize="inherit" />;
+                                                        case '.ppt':
+                                                            return <IconPptx fontSize="inherit" />;
+                                                        case '.pptx':
+                                                            return <IconPptx fontSize="inherit" />;
+                                                        case '.jpg':
+                                                            return <IconImg fontSize="inherit" />;
+                                                        case '.jpeg':
+                                                            return <IconImg fontSize="inherit" />;
+                                                        case '.png':
+                                                            return <IconImg fontSize="inherit" />;
+                                                        case '.gif':
+                                                            return <IconGif fontSize="inherit" />;
+                                                        default:
+                                                            return <DescriptionIcon fontSize="inherit" />;
+                                                    }
+                                                })()}
+                                            </IconButton>
+                                        ))}
+                                </Stack>
+                            </Box>
+                        </>
+                    )}
+                </Grid>
+            </Grid>
+
+            <ContextMenuDocumentFile
+                anchorEl={anchorEl}
+                open={openContextMenu}
+                data={selectedFile}
+                handleClose={handleContextMenuFileClose}
+                handleOpenFileClick={(values) => handleOpenFileClick(values)}
+                handleDeleteClick={handleClickOpenFileConfirmation}
+            />
+            <ConfirmationDialog
+                title="Delete File"
+                description="Are you sure? File will be deleted."
+                open={openFileConfirmation}
+                data={selectedFile}
+                handleClose={handleCloseFileConfirmation}
+                handleOk={(values) => handleFileConfirmationDialogOk(values)}
+                okButtonText="Delete"
+                closeButtonText="Close"
+            />
 
             <ConfirmationDialog
                 title="Delete Document"
@@ -266,6 +509,7 @@ const ButtonSection = () => {
                 okButtonText="Delete"
                 closeButtonText="Close"
             />
+
             <ShareDialog link={sharelink} open={openShareDialog} handleClose={handleCloseShareDialog} />
         </>
     );

@@ -1,17 +1,3 @@
-.ql-container.ql-bubble:not(.ql-disabled) a:hover::before {
-    cursor: pointer;
-}
-
-/* .ql-container.ql-bubble:not(.ql-disabled) a {
-    position: fixed !important;
-} */
-
-.ql-container.ql-bubble:not(.ql-disabled) a::before {
-    background-color: #121926 !important;
-    border-radius: 5px !important;
-    /* transform: translate(-17%, 92%) !important; */
-}
-
 .MuiDialogTitle-root {
     font-size: 1.75rem !important;
 }
@@ -235,6 +221,16 @@ ol {
     transition: opacity 200ms ease-in-out 0s;
 } */
 
-.image-actions__toolbar {
-    font: 0px Arial, Helvetica, sans-serif !important;
+.css-18u0rgu-MuiInputBase-root-MuiInput-root:hover:not(.Mui-disabled, .Mui-error):before {
+    border-bottom: 0px solid #364152 !important;
+    border: none !important;
+   
+}
+
+.css-18u0rgu-MuiInputBase-root-MuiInput-root:before {   
+    content: none !important;
+}
+
+.css-18u0rgu-MuiInputBase-root-MuiInput-root:after {   
+    content: none !important;
 }
