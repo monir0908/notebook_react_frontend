@@ -851,10 +851,10 @@ const Document = () => {
                         </Grid>
                     </>
                 )} */}
+                {/* <br />
                 <br />
                 <br />
-                <br />
-                <br />
+                <br /> */}
                 {docData != null && <>{docData.attachments != null && docData.attachments.length > 0 && <br />}</>}
 
                 <div className="editor-container">

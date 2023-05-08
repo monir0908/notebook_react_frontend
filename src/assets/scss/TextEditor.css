@@ -209,3 +209,7 @@
 /* .ql-container {
     z-index: 1101;
 } */
+
+.ql-tooltip {
+    z-index: 1101;
+}

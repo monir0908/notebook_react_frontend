@@ -224,13 +224,39 @@ ol {
 .css-18u0rgu-MuiInputBase-root-MuiInput-root:hover:not(.Mui-disabled, .Mui-error):before {
     border-bottom: 0px solid #364152 !important;
     border: none !important;
-   
 }
 
-.css-18u0rgu-MuiInputBase-root-MuiInput-root:before {   
+.css-18u0rgu-MuiInputBase-root-MuiInput-root:before {
     content: none !important;
 }
 
-.css-18u0rgu-MuiInputBase-root-MuiInput-root:after {   
+.css-18u0rgu-MuiInputBase-root-MuiInput-root:after {
     content: none !important;
+}
+
+button#header-button-share {
+    min-width: 54px !important;
+}
+
+button#header-button-share > span {
+    margin-right: 0px !important;
+    margin-left: 0px !important;
+}
+
+label#header-button-upload {
+    min-width: 54px !important;
+}
+
+label#header-button-upload > span {
+    margin-right: 0px !important;
+    margin-left: 0px !important;
+}
+
+button#header-button-delete {
+    min-width: 54px !important;
+}
+
+button#header-button-delete > span {
+    margin-right: 0px !important;
+    margin-left: 0px !important;
 }
