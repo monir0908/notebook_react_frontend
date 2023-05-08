@@ -77,7 +77,7 @@ const Header = ({ handleLeftDrawerToggle }) => {
             {/* notification & profile */}
             {/* <NotificationSection /> */}
             <ButtonSection />
-            <ProfileSection />
+            {/* <ProfileSection /> */}
         </>
     );
 };

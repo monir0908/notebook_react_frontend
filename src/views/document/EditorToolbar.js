@@ -2,8 +2,8 @@ import React from 'react';
 import { Quill } from 'react-quill';
 import QuillCursors from 'quill-cursors';
 import { ImageDrop } from 'quill-image-drop-module';
-import { ImageActions } from '@xeger/quill-image-actions';
-import { ImageFormats } from '@xeger/quill-image-formats';
+import { ImageActions } from '@saiful/quill-image-actions';
+import { ImageFormats } from '@saiful/quill-image-formats';
 
 // xeger
 const fontSizeArr = ['16px', '18px', '22px', '26px'];

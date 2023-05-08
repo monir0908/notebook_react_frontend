@@ -107,7 +107,8 @@ const ProfileSection = () => {
             <Chip
                 sx={{
                     height: '48px',
-                    marginTop: isDocPage ? '-60px' : '-5px',
+                    float: 'right',
+                    marginTop: isDocPage ? '5px' : '-10px',
                     alignItems: 'center',
                     borderRadius: '27px',
                     transition: 'all .2s ease-in-out',

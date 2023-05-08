@@ -46,6 +46,7 @@ import ShareDialog from 'layout/components/shareDialog';
 import API from 'helpers/jwt.interceptor';
 import { SET_LOADER } from 'store/actions';
 import ContextMenuDocumentFile from 'layout/components/contextMenuDocumentFile';
+import ProfileSection from '../ProfileSection';
 // ==============================|| Buttons ||============================== //
 import {
     updateDoc,
@@ -326,8 +327,8 @@ const ButtonSection = () => {
                 </Stack>
             </Box> */}
 
-            <Grid sx={{ mt: 2, ml: 3 }} container direction="row" justifyContent="space-between" alignItems="center">
-                <Grid item xs={12} md={7}>
+            <Grid sx={{ mt: 2, ml: 3 }} container direction="row" justifyContent="space-between" alignItems="flex-start">
+                <Grid item xs={12} md={6}>
                     {isDocPage == true ? (
                         <form>
                             <TextField
@@ -347,7 +348,7 @@ const ButtonSection = () => {
                         <div style={{ marginTop: '50px' }}></div>
                     )}
                 </Grid>
-                <Grid item xs={12} md={5}>
+                <Grid item xs={12} md={4}>
                     <Box sx={{ display: { xs: 'block', md: 'block' }, mt: 1 }}>
                         <Stack direction="row" spacing={1} sx={{ mr: 4 }}>
                             {upload_show && (
@@ -398,6 +399,9 @@ const ButtonSection = () => {
                             )}
                         </Stack>
                     </Box>
+                </Grid>
+                <Grid item xs={12} md={2}>
+                    <ProfileSection />
                 </Grid>
                 <Grid item xs={12}>
                     <Divider sx={{ borderBottomWidth: 'medium', borderColor: '#a9a9a9' }} />
@@ -480,6 +484,12 @@ const ButtonSection = () => {
                     )}
                 </Grid>
             </Grid>
+
+            {/* <Grid sx={{ mt: 2, ml: 3 }} container direction="row" justifyContent="space-between" alignItems="center">
+                <Grid item md={12}>
+                    <Divider sx={{ borderBottomWidth: 'medium', borderColor: '#a9a9a9' }} />
+                </Grid>
+            </Grid> */}
 
             <ContextMenuDocumentFile
                 anchorEl={anchorEl}
