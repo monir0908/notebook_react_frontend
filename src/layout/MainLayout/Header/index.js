@@ -34,7 +34,7 @@ const Header = ({ handleLeftDrawerToggle }) => {
                 sx={{
                     width: 275,
                     height: 73,
-                    marginTop: isDocPage ? '-60px' : '0px',
+                    marginTop: isDocPage ? '-50px' : '0px',
                     marginLeft: '-23px',
                     paddingLeft: '14px',
                     display: 'flex',

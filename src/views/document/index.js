@@ -122,6 +122,23 @@ const Document = () => {
         if (reactQuillRef == null) return;
         if (typeof reactQuillRef.getEditor !== 'function') return;
         quillRef = reactQuillRef.getEditor();
+        const tooltipEl = document.querySelector('.ql-tooltip');
+        tooltipEl.style.zIndex = 1101;
+        window.addEventListener('scroll', function () {
+            const selection = quillRef.getSelection();
+            if (selection) {
+                const bounds = quillRef.getBounds(selection.index);
+                const editorEl = quillRef.container;
+                const editorBounds = editorEl.getBoundingClientRect();
+                const top = editorBounds.top + bounds.bottom;
+                const tooltipEl = document.querySelector('.ql-tooltip');
+                if (top > 170) {
+                    tooltipEl.style.zIndex = 1101;
+                } else {
+                    tooltipEl.style.zIndex = '';
+                }
+            }
+        });
 
         // quillRef.on('editor-change', function (eventName, ...args) {
         //     if (eventName === 'text-change') {
@@ -143,6 +160,10 @@ const Document = () => {
         // });
 
         const quillContainer = quillRef.container;
+
+        quillContainer.addEventListener('scroll', (event) => {
+            console.log(quillContainer.scrollY);
+        });
 
         quillContainer.addEventListener('mouseover', (event) => {
             const targetElement = event.target;
@@ -767,50 +788,54 @@ const Document = () => {
         <>
             <MainCard title="" onMouseLeave={(ev) => handleMouseLeave(ev)}>
                 {/* {docData != null && (
-                    <Box sx={{ m: 1 }} style={{ float: 'right' }}>
-                        <Stack direction="row" spacing={1}>
-                            {docData.attachments != null &&
-                                docData.attachments.length > 0 &&
-                                docData.attachments.map((item, index) => (
-                                    <IconButton
-                                        onClick={(event) => handleContextMenuClick(event, item)}
-                                        key={item.id}
-                                        color="primary"
-                                        aria-label="upload document"
-                                        component="label"
-                                    >
-                                        {(() => {
-                                            switch (item.file_extension) {
-                                                case '.pdf':
-                                                    return <IconPdf fontSize="inherit" />;
-                                                case '.xls':
-                                                    return <IconXls fontSize="inherit" />;
-                                                case '.xlsx':
-                                                    return <IconXls fontSize="inherit" />;
-                                                case '.doc':
-                                                    return <IconDocx fontSize="inherit" />;
-                                                case '.docx':
-                                                    return <IconDocx fontSize="inherit" />;
-                                                case '.ppt':
-                                                    return <IconPptx fontSize="inherit" />;
-                                                case '.pptx':
-                                                    return <IconPptx fontSize="inherit" />;
-                                                case '.jpg':
-                                                    return <IconImg fontSize="inherit" />;
-                                                case '.jpeg':
-                                                    return <IconImg fontSize="inherit" />;
-                                                case '.png':
-                                                    return <IconImg fontSize="inherit" />;
-                                                case '.gif':
-                                                    return <IconGif fontSize="inherit" />;
-                                                default:
-                                                    return <DescriptionIcon fontSize="inherit" />;
-                                            }
-                                        })()}
-                                    </IconButton>
-                                ))}
-                        </Stack>
-                    </Box>
+                    <Grid container direction="row" justifyContent="flex-end" alignItems="center">
+                        <Grid item>
+                            <Box style={{ float: 'right' }}>
+                                <Stack direction="row" spacing={1}>
+                                    {docData.attachments != null &&
+                                        docData.attachments.length > 0 &&
+                                        docData.attachments.map((item, index) => (
+                                            <IconButton
+                                                onClick={(event) => handleContextMenuClick(event, item)}
+                                                key={item.id}
+                                                color="primary"
+                                                aria-label="upload document"
+                                                component="label"
+                                            >
+                                                {(() => {
+                                                    switch (item.file_extension) {
+                                                        case '.pdf':
+                                                            return <IconPdf fontSize="inherit" />;
+                                                        case '.xls':
+                                                            return <IconXls fontSize="inherit" />;
+                                                        case '.xlsx':
+                                                            return <IconXls fontSize="inherit" />;
+                                                        case '.doc':
+                                                            return <IconDocx fontSize="inherit" />;
+                                                        case '.docx':
+                                                            return <IconDocx fontSize="inherit" />;
+                                                        case '.ppt':
+                                                            return <IconPptx fontSize="inherit" />;
+                                                        case '.pptx':
+                                                            return <IconPptx fontSize="inherit" />;
+                                                        case '.jpg':
+                                                            return <IconImg fontSize="inherit" />;
+                                                        case '.jpeg':
+                                                            return <IconImg fontSize="inherit" />;
+                                                        case '.png':
+                                                            return <IconImg fontSize="inherit" />;
+                                                        case '.gif':
+                                                            return <IconGif fontSize="inherit" />;
+                                                        default:
+                                                            return <DescriptionIcon fontSize="inherit" />;
+                                                    }
+                                                })()}
+                                            </IconButton>
+                                        ))}
+                                </Stack>
+                            </Box>
+                        </Grid>
+                    </Grid>
                 )} */}
                 {/* <form> */}
                 {/* <TextField

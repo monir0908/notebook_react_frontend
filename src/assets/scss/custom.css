@@ -221,7 +221,7 @@ ol {
     transition: opacity 200ms ease-in-out 0s;
 } */
 
-.css-18u0rgu-MuiInputBase-root-MuiInput-root:hover:not(.Mui-disabled, .Mui-error):before {
+/* .css-18u0rgu-MuiInputBase-root-MuiInput-root:hover:not(.Mui-disabled, .Mui-error):before {
     border-bottom: 0px solid #364152 !important;
     border: none !important;
 }
@@ -232,7 +232,7 @@ ol {
 
 .css-18u0rgu-MuiInputBase-root-MuiInput-root:after {
     content: none !important;
-}
+} */
 
 button#header-button-share {
     min-width: 54px !important;

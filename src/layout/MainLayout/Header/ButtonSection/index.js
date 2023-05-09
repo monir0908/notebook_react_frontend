@@ -328,12 +328,16 @@ const ButtonSection = () => {
                 </Stack>
             </Box> */}
 
-            <Grid sx={{ mt: 2, ml: 3 }} container direction="row" justifyContent="space-between" alignItems="flex-start">
+            <Grid sx={{ mt: 1, ml: 3 }} container direction="row" justifyContent="space-between" alignItems="flex-start">
                 <Grid item xs={12} md={7}>
                     {isDocPage == true ? (
                         <form>
                             <TextField
-                                inputProps={{ style: { fontSize: 32, fontWeight: 600, border: 'none' } }}
+                                InputProps={{
+                                    disableUnderline: true,
+                                    style: { fontSize: 32, fontWeight: 600, border: 'none' }
+                                }}
+                                // inputProps={{ style: { fontSize: 32, fontWeight: 600, border: 'none' } }}
                                 fullWidth
                                 id="doc-title"
                                 className="title-text"
