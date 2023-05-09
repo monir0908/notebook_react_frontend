@@ -27,6 +27,7 @@
         "material-ui-popup-state": "^4.0.1",
         "prop-types": "^15.8.1",
         "quill-cursors": "^4.0.2",
+        "quill-image-actions-align": "^1.0.0",
         "quill-image-drop-module": "^1.0.3",
         "react": "^18.2.0",
         "react-apexcharts": "^1.4.0",

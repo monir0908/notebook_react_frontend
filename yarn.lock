@@ -8369,6 +8369,14 @@
     "lodash.clonedeep" "^4.5.0"
     "lodash.isequal" "^4.5.0"
 
+"quill-image-actions-align@^1.0.0":
+  "integrity" "sha512-ZII1XdorBcaFbTQLHn/ZoINsLv7qkFz6JahbhFqJHidAkmUy5hRH5YiY3klaUml9v6HrB/KMv+t7lmW7E3bzjQ=="
+  "resolved" "https://registry.npmjs.org/quill-image-actions-align/-/quill-image-actions-align-1.0.0.tgz"
+  "version" "1.0.0"
+  dependencies:
+    "core-js" "^3.0"
+    "deepmerge" "^4.2"
+
 "quill-image-drop-module@^1.0.3":
   "integrity" "sha512-HP0Y2kb3nQk1QbRKZzEe1j3mArRQerN5B/U/MlXrOnxmhy3m/xYmVv0YoE13vWnGnBOIcoXGJ/9fi7l6AwsP8Q=="
   "resolved" "https://registry.npmjs.org/quill-image-drop-module/-/quill-image-drop-module-1.0.3.tgz"

@@ -2,7 +2,7 @@ import React from 'react';
 import { Quill } from 'react-quill';
 import QuillCursors from 'quill-cursors';
 import { ImageDrop } from 'quill-image-drop-module';
-import { ImageActions } from '@xeger/quill-image-actions';
+import { ImageActions } from 'quill-image-actions-align';
 import { ImageFormats } from '@xeger/quill-image-formats';
 
 // xeger
