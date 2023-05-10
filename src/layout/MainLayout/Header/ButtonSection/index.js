@@ -39,6 +39,8 @@ import IconGif from 'ui-component/custom-icon/IconGif';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ShareIcon from '@mui/icons-material/Share';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import PublishedWithChangesIcon from '@mui/icons-material/PublishedWithChanges';
+import UnpublishedIcon from '@mui/icons-material/Unpublished';
 import { updateDocumentName, updateDocumentTitle } from 'store/features/collection/collectionSlice';
 import ConfirmationDialog from 'layout/components/confirmationDialog';
 import { documentUpdate, documentDetails, documentFileDelete, documentUpdateOnEditorLeave } from 'store/features/document/documentActions';
@@ -358,13 +360,7 @@ const ButtonSection = () => {
                         <Stack direction="row" justifyContent="flex-end" spacing={2}>
                             {upload_show && (
                                 <Tooltip title="Upload File">
-                                    <Button
-                                        variant="outlined"
-                                        id="header-button-upload"
-                                        startIcon={<CloudUploadIcon />}
-                                        size="sm"
-                                        component="label"
-                                    >
+                                    <Button variant="outlined" id="header-button-upload" startIcon={<CloudUploadIcon />} component="label">
                                         <input
                                             onChange={handleFileChange}
                                             hidden
@@ -397,7 +393,6 @@ const ButtonSection = () => {
                                         onClick={handleClickOpenShareDialog}
                                         variant="outlined"
                                         id="header-button-share"
-                                        size="sm"
                                         startIcon={<ShareIcon />}
                                     ></Button>
                                 </Tooltip>
@@ -407,23 +402,43 @@ const ButtonSection = () => {
                             )}
 
                             {publish_show && (
-                                <Button onClick={() => handleDocPublish(2)} variant="outlined" size="md">
-                                    Publish
-                                </Button>
+                                <Tooltip title="Publish">
+                                    <Button
+                                        sx={{ mr: 3 }}
+                                        onClick={() => handleDocPublish(2)}
+                                        variant="outlined"
+                                        id="header-button-publish"
+                                        startIcon={<PublishedWithChangesIcon />}
+                                    ></Button>
+                                </Tooltip>
+
+                                // <Button onClick={() => handleDocPublish(2)} variant="outlined" size="md">
+                                //     Publish
+                                // </Button>
                             )}
                             {unpublish_show && (
-                                <Button onClick={() => handleDocPublish(1)} variant="outlined" size="md">
-                                    Unpublish
-                                </Button>
+                                <Tooltip title="Unpublish">
+                                    <Button
+                                        sx={{ mr: 3 }}
+                                        onClick={() => handleDocPublish(1)}
+                                        variant="outlined"
+                                        id="header-button-unpublish"
+                                        startIcon={<UnpublishedIcon />}
+                                    ></Button>
+                                </Tooltip>
+
+                                // <Button onClick={() => handleDocPublish(1)} variant="outlined" size="md">
+                                //     Unpublish
+                                // </Button>
                             )}
                             {delete_show && (
                                 <Tooltip title="Delete Document">
                                     <Button
                                         sx={{ mr: 3 }}
+                                        style={{ maxWidth: '30px', maxHeight: '30px' }}
                                         onClick={handleClickOpenConfirmation}
                                         variant="outlined"
                                         id="header-button-delete"
-                                        size="sm"
                                         color="error"
                                         startIcon={<DeleteIcon />}
                                     ></Button>
@@ -471,7 +486,7 @@ const ButtonSection = () => {
                                 </Grid>
                             </Grid>
 
-                            <Box sx={{ m: 1 }} style={{ float: 'right' }}>
+                            <Box sx={{ mt: 1 }} style={{ float: 'right', marginRight: '-7px' }}>
                                 <Stack direction="row" spacing={1}>
                                     {docData.attachments != null &&
                                         docData.attachments.length > 0 &&

@@ -250,7 +250,7 @@ const Document = () => {
                                     hoverDiv.style.left = '5px';
                                 }
                             } else {
-                                hoverDiv.style.left = '-8px';
+                                hoverDiv.style.left = '-10px';
                             }
 
                             quillContainer.appendChild(hoverDiv);
