@@ -356,12 +356,6 @@ const Document = () => {
             if (selectedElement) selectedElement.removeAttribute('draggable');
         });
 
-        const removePointerDivs = () => {
-            quillContainer.querySelectorAll('.pointer-div').forEach((div) => {
-                div.remove();
-            });
-        };
-
         quillContainer.addEventListener('dragover', (event) => {
             event.preventDefault();
             const targetElement = event.target;
@@ -377,22 +371,26 @@ const Document = () => {
                     targetElement.tagName === 'LI' ||
                     targetElement.tagName === 'P'
                 ) {
+                    // quillContainer.querySelectorAll('.pointer-div').forEach((div) => {
+                    //     div.remove();
+                    // });
+
                     if (targetElement.tagName == 'LI' || selectedElement.tagName == 'LI') {
                         if (targetElement.tagName == selectedElement.tagName) {
-                            removePointerDivs();
+                            quillContainer.querySelectorAll('.pointer-div').forEach((div) => {
+                                div.remove();
+                            });
                             pointerDiv(targetElement);
                         } else {
                             return;
                         }
                     } else {
-                        removePointerDivs();
+                        quillContainer.querySelectorAll('.pointer-div').forEach((div) => {
+                            div.remove();
+                        });
                         pointerDiv(targetElement);
                     }
-                } else {
-                    removePointerDivs();
                 }
-            } else {
-                removePointerDivs();
             }
         });
 
@@ -401,7 +399,6 @@ const Document = () => {
             quillContainer.querySelectorAll('.hover-div').forEach((div) => {
                 div.remove(); // Remove the hover-div only if its data-block-id is not equal to targetId
             });
-
             const targetElement = event.target;
             // console.log(targetElement);
             // console.log(targetElement.parentNode);
@@ -443,6 +440,12 @@ const Document = () => {
                         const range = document.createRange();
                         range.selectNodeContents(selectedElement);
                         selection.addRange(range);
+
+                        // show pointerDiv
+                        quillContainer.querySelectorAll('.pointer-div').forEach((div) => {
+                            div.remove();
+                        });
+                        pointerDiv(targetElement);
                     } else {
                         return;
                     }
@@ -466,6 +469,12 @@ const Document = () => {
                     const range = document.createRange();
                     range.selectNodeContents(selectedElement);
                     selection.addRange(range);
+
+                    // show pointerDiv
+                    quillContainer.querySelectorAll('.pointer-div').forEach((div) => {
+                        div.remove();
+                    });
+                    pointerDiv(targetElement);
                 }
             }
         });
@@ -485,9 +494,9 @@ const Document = () => {
             pointerDiv.style.marginTop = '1px';
             pointerDiv.style.marginBottom = '1px';
             const boundingRect = targetElement.getBoundingClientRect();
-            //console.log(boundingRect);
+            console.log(boundingRect);
             const containerBoundingRect = quillContainer.getBoundingClientRect();
-            //console.log(containerBoundingRect);
+            console.log(containerBoundingRect);
             pointerDiv.style.top = `${boundingRect.top - containerBoundingRect.top}px`;
             quillContainer.appendChild(pointerDiv);
         };
