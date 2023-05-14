@@ -138,12 +138,6 @@ export const QuillToolbar = (props) => {
             {props.toolbarId !== undefined && (
                 <div id={props.toolbarId}>
                     <span className="ql-formats">
-                        <button className="ql-bold" />
-                        <button className="ql-italic" />
-                        <button className="ql-underline" />
-                        <button className="ql-strike" />
-                    </span>
-                    <span className="ql-formats">
                         <select className="ql-font" defaultValue={'arial'}>
                             <option value="arial"> Arial </option>
                             <option value="comic-sans">Comic Sans</option>
@@ -165,6 +159,16 @@ export const QuillToolbar = (props) => {
                         </select>
                     </span>
                     <span className="ql-formats">
+                        <button className="ql-bold" />
+                        <button className="ql-italic" />
+                        <button className="ql-underline" />
+                        <button className="ql-strike" />
+                    </span>
+                    <span className="ql-formats">
+                        <select className="ql-color" />
+                        <select className="ql-background" />
+                    </span>
+                    <span className="ql-formats">
                         <button className="ql-list" value="ordered" />
                         <button className="ql-list" value="bullet" />
                     </span>
@@ -174,10 +178,7 @@ export const QuillToolbar = (props) => {
                         <button className="ql-align" value="right" />
                         <button className="ql-align" value="justify" />
                     </span>
-                    <span className="ql-formats">
-                        <select className="ql-color" />
-                        <select className="ql-background" />
-                    </span>
+
                     <span className="ql-formats">
                         <button className="ql-link" />
                         <button className="ql-image" />

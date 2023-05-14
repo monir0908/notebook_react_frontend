@@ -36,7 +36,9 @@ export default function componentStyleOverrides(theme) {
         MuiCardContent: {
             styleOverrides: {
                 root: {
-                    padding: '24px'
+                    padding: '24px',
+                    paddingTop: '0px',
+                    boarder: 'none'
                 }
             }
         },

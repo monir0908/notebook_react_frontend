@@ -282,64 +282,15 @@ const ButtonSection = () => {
         <>
             {/* <Box sx={{ display: { xs: 'block', md: 'none' } }}></Box> */}
 
-            {/* <Box sx={{ display: { xs: 'block', md: 'block' } }}>
-                <Stack direction="row" spacing={1} sx={{ mr: 4 }}>
-                    {upload_show && (
-                        <Tooltip title="Upload File">
-                            <IconButton color="primary" aria-label="upload document" component="label">
-                                <input
-                                    onChange={handleFileChange}
-                                    hidden
-                                    accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.jpg,.jpeg,.png,.gif"
-                                    multiple
-                                    type="file"
-                                />
-                                <UploadFileIcon fontSize="inherit" />
-                            </IconButton>
-
-                           
-                        </Tooltip>
-                    )}
-                    {share_show && (
-                        <Button onClick={handleClickOpenShareDialog} variant="outlined" size="small">
-                            Share
-                        </Button>
-                    )}
-
-                    {publish_show && (
-                        <Button onClick={() => handleDocPublish(2)} variant="outlined" size="small">
-                            Publish
-                        </Button>
-                    )}
-                    {unpublish_show && (
-                        <Button onClick={() => handleDocPublish(1)} variant="outlined" size="small">
-                            Unpublish
-                        </Button>
-                    )}
-                    {delete_show && (
-                        <Button
-                            onClick={handleClickOpenConfirmation}
-                            variant="outlined"
-                            size="small"
-                            color="error"
-                            startIcon={<DeleteIcon />}
-                        >
-                            Delete
-                        </Button>
-                    )}
-                </Stack>
-            </Box> */}
-
             <Grid sx={{ mt: 1, ml: 3 }} container direction="row" justifyContent="space-between" alignItems="flex-start">
                 <Grid item xs={12} md={7}>
                     {isDocPage == true ? (
-                        <form>
+                        <form style={{ marginTop: '10px' }}>
                             <TextField
                                 InputProps={{
                                     disableUnderline: true,
-                                    style: { fontSize: 32, fontWeight: 600, border: 'none' }
+                                    style: { fontSize: 32, fontWeight: 600, border: 'none', padding: '0px 0px' }
                                 }}
-                                // inputProps={{ style: { fontSize: 32, fontWeight: 600, border: 'none' } }}
                                 fullWidth
                                 id="doc-title"
                                 className="title-text"
@@ -352,7 +303,7 @@ const ButtonSection = () => {
                             />
                         </form>
                     ) : (
-                        <div style={{ marginTop: '45px' }}></div>
+                        <div style={{ marginTop: '60px' }}></div>
                     )}
                 </Grid>
                 <Grid item xs={12} md={5}>
@@ -369,22 +320,6 @@ const ButtonSection = () => {
                                             type="file"
                                         />
                                     </Button>
-
-                                    {/* <IconButton color="primary" aria-label="upload document" component="label">
-                                        <input
-                                            onChange={handleFileChange}
-                                            hidden
-                                            accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.jpg,.jpeg,.png,.gif"
-                                            multiple
-                                            type="file"
-                                        />
-                                        <CloudUploadIcon fontSize="inherit" />
-                                    </IconButton> */}
-
-                                    {/* <IconButton color="primary" size="large" aria-label="delete">
-                                <UploadFileIcon fontSize="inherit" />
-                                <input hidden accept="image/*" multiple type="file" />
-                            </IconButton> */}
                                 </Tooltip>
                             )}
                             {share_show && (
@@ -396,9 +331,6 @@ const ButtonSection = () => {
                                         startIcon={<ShareIcon />}
                                     ></Button>
                                 </Tooltip>
-                                // <Button onClick={handleClickOpenShareDialog} variant="outlined" size="md">
-                                //     Share
-                                // </Button>
                             )}
 
                             {publish_show && (
@@ -411,10 +343,6 @@ const ButtonSection = () => {
                                         startIcon={<PublishedWithChangesIcon />}
                                     ></Button>
                                 </Tooltip>
-
-                                // <Button onClick={() => handleDocPublish(2)} variant="outlined" size="md">
-                                //     Publish
-                                // </Button>
                             )}
                             {unpublish_show && (
                                 <Tooltip title="Unpublish">
@@ -426,10 +354,6 @@ const ButtonSection = () => {
                                         startIcon={<UnpublishedIcon />}
                                     ></Button>
                                 </Tooltip>
-
-                                // <Button onClick={() => handleDocPublish(1)} variant="outlined" size="md">
-                                //     Unpublish
-                                // </Button>
                             )}
                             {delete_show && (
                                 <Tooltip title="Delete Document">
@@ -448,20 +372,12 @@ const ButtonSection = () => {
                             <ProfileSection />
                         </Stack>
                     </Box>
-                    {/* <ProfileSection /> */}
                 </Grid>
-                {/* <Grid item xs={12} md={2}>
-                    <ProfileSection />
-                </Grid> */}
-                <Grid item xs={12} sx={{ mt: 1 }}>
-                    <Divider sx={{ borderBottomWidth: 'medium', borderColor: '#a9a9a9' }} />
-                    {/* {isDocPage == true ? (
-                        <Divider sx={{ borderBottomWidth: 'medium', borderColor: '#a9a9a9' }} />
-                    ) : (
-                        <Divider sx={{ borderBottomWidth: 'medium', borderColor: '#a9a9a9', mt: 2 }} />
-                    )} */}
 
-                    {docData != null && isDocPage && (
+                <Grid item xs={12} sx={{ mt: 1 }}>
+                    <Divider style={{ marginTop: '-15px' }} sx={{ borderBottomWidth: 'medium', borderColor: '#a9a9a9' }} />
+
+                    {/* {docData != null && isDocPage && (
                         <>
                             <Grid container direction="row" justifyContent="space-between" alignItems="center">
                                 <Grid item>
@@ -531,15 +447,9 @@ const ButtonSection = () => {
                                 </Stack>
                             </Box>
                         </>
-                    )}
+                    )} */}
                 </Grid>
             </Grid>
-
-            {/* <Grid sx={{ mt: 2, ml: 3 }} container direction="row" justifyContent="space-between" alignItems="center">
-                <Grid item md={12}>
-                    <Divider sx={{ borderBottomWidth: 'medium', borderColor: '#a9a9a9' }} />
-                </Grid>
-            </Grid> */}
 
             <ContextMenuDocumentFile
                 anchorEl={anchorEl}

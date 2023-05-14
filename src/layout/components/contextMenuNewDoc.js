@@ -106,7 +106,7 @@ const ContextMenuNewDoc = (props) => {
                 {items.map((item) => (
                     <MenuItem key={item.id} onClick={() => props.handleItemClick(item)}>
                         <ListItemIcon>
-                            <IconNotebook fontSize="1rem" />
+                            <IconNotebook fontSize=".85rem" />
                         </ListItemIcon>
                         {item.collection_title}
                     </MenuItem>

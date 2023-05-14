@@ -16,8 +16,8 @@ const LogoSection = () => {
     const dispatch = useDispatch();
     return (
         <ButtonBase disableRipple onClick={() => dispatch({ type: MENU_OPEN, id: defaultId })} component={Link} to={config.defaultPath}>
-            <Logo />
-            <h1 style={{ color: '#4527a0' }}>NoteBook</h1>
+            {/* <Logo /> */}
+            <h1 style={{ color: '#4527a0', paddingLeft: '10px' }}>NoteBook</h1>
         </ButtonBase>
     );
 };

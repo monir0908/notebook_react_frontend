@@ -22,7 +22,7 @@ import Fab from '@mui/material/Fab';
 // assets
 import { IconDeviceFloppy } from '@tabler/icons';
 
-import { TextField, Button, Grid, Typography, Box, IconButton, Stack, useMediaQuery } from '@mui/material';
+import { AppBar, Divider, TextField, Button, Grid, Typography, Box, IconButton, Stack, useMediaQuery } from '@mui/material';
 import Tooltip from '@mui/material/Tooltip';
 import { useTheme } from '@mui/material/styles';
 // third party
@@ -39,16 +39,20 @@ import { SET_LOADER } from 'store/actions';
 import ContextMenuDocumentFile from 'layout/components/contextMenuDocumentFile';
 import ReactTimeAgo from 'react-time-ago';
 import ContextMenuEditor from 'layout/components/contextMenuEditor';
+
+import { updateViewers } from 'store/features/header/headerSlice';
+
 import IconPdf from 'ui-component/custom-icon/IconPdf';
 import IconXls from 'ui-component/custom-icon/IconXls';
 import IconDocx from 'ui-component/custom-icon/IconDocx';
 import IconPptx from 'ui-component/custom-icon/IconPptx';
 import IconImg from 'ui-component/custom-icon/IconImg';
 import IconGif from 'ui-component/custom-icon/IconGif';
-
-import { updateViewers } from 'store/features/header/headerSlice';
+import DeleteIcon from '@mui/icons-material/Delete';
+import ShareIcon from '@mui/icons-material/Share';
 
 const Document = () => {
+    const theme = useTheme();
     const dispatch = useDispatch();
     const { userInfo, userToken } = useSelector((state) => state.auth);
     const docData = useSelector((state) => state.document.data);
@@ -56,21 +60,15 @@ const Document = () => {
     const navigate = useNavigate();
     const { documentKey } = useParams();
     const [docObj, setDocObj] = useState(null);
-    const [docTitle, setDocTitle] = useState('');
     const [docBody, setDocBody] = useState('');
     const [progress, setProgress] = useState(0);
     const [isQuillText, setIsQuillText] = useState(true);
     const [selectedFile, setSelectedFile] = useState(null);
-    const [selection, setSelection] = useState(null);
-    const [content, setContent] = useState('');
-    const [isServerError, setIsServerError] = useState(false);
     let bodyText = '';
-    const side = 300;
-    const padding = 80;
-    const margin = 100;
+
     let selectedElement = null;
     let boundingRect = null;
-
+    let browserWidth = 0;
     const getDocumentDetails = async () => {
         const res = await API.get(`document/${documentKey}`);
         if (res) {
@@ -78,30 +76,10 @@ const Document = () => {
             setDocObj(doc);
             dispatch(updateDocId({ doc_id: doc.doc_key }));
             dispatch(updateDoc({ doc: doc }));
-
-            //setDocTitle(doc.doc_title);
             setDocBody(doc.doc_body);
             bodyText = doc.doc_body;
         }
     };
-
-    // const onTitleChange = (e) => {
-    //     setDocTitle(e.target.value);
-    //     dispatch(updateDocumentTitle({ document_key: documentKey, doc_title: e.target.value }));
-    // };
-
-    // const onTitleBlur = (e) => {
-    //     dispatch(
-    //         documentUpdateOnEditorLeave({
-    //             url: 'document/update-doc/' + docObj.doc_key,
-    //             navigate,
-    //             data: {
-    //                 doc_title: e.target.value
-    //             },
-    //             extraData: {}
-    //         })
-    //     );
-    // };
 
     const onBodyChange = (value) => {
         setDocBody(value);
@@ -111,6 +89,7 @@ const Document = () => {
     let quillRef = null;
     let reactQuillRef = null;
     let quillText;
+
     //let isLoadedOnce = true;
     //let isQuillText = true;
 
@@ -122,9 +101,16 @@ const Document = () => {
         if (reactQuillRef == null) return;
         if (typeof reactQuillRef.getEditor !== 'function') return;
         quillRef = reactQuillRef.getEditor();
+        const quillContainer = quillRef.container;
         const tooltipEl = document.querySelector('.ql-tooltip');
         tooltipEl.style.zIndex = 1101;
+        window.addEventListener('resize', function () {
+            browserWidth = window.innerWidth;
+        });
         window.addEventListener('scroll', function () {
+            quillContainer.querySelectorAll('.hover-div').forEach((div) => {
+                div.remove(); // Remove the hover-div only if its data-block-id is not equal to targetId
+            });
             const selection = quillRef.getSelection();
             if (selection) {
                 const bounds = quillRef.getBounds(selection.index);
@@ -132,34 +118,14 @@ const Document = () => {
                 const editorBounds = editorEl.getBoundingClientRect();
                 const top = editorBounds.top + bounds.bottom;
                 const tooltipEl = document.querySelector('.ql-tooltip');
-                if (top > 170) {
+                console.log(editorBounds.right);
+                if (top > 100 && top < 500) {
                     tooltipEl.style.zIndex = 1101;
                 } else {
                     tooltipEl.style.zIndex = '';
                 }
             }
         });
-
-        // quillRef.on('editor-change', function (eventName, ...args) {
-        //     if (eventName === 'text-change') {
-        //         if (isLoadedOnce) {
-        //             const range = quillRef.getSelection(true);
-        //             quillRef.setSelection(range.index, quillRef.getLength(), 'user');
-        //             isLoadedOnce = false;
-        //             // setTimeout(() => {
-        //             //     const selection = window.getSelection();
-        //             //     selection.removeAllRanges();
-        //             // }, 10);
-        //         }
-        //         console.log(eventName);
-        //         console.log(args[0]);
-        //     } else if (eventName === 'selection-change') {
-        //         console.log(eventName);
-        //         console.log(args[0]);
-        //     }
-        // });
-
-        const quillContainer = quillRef.container;
 
         quillContainer.addEventListener('scroll', (event) => {
             console.log(quillContainer.scrollY);
@@ -204,21 +170,8 @@ const Document = () => {
                             if (targetElement.tagName === 'H1' || targetElement.tagName === 'H2') {
                                 extraTop = 10;
                             }
-                            //const uuid = uuidv4();
-                            //hoverDiv.setAttribute('data-block-id', uuid);
-                            //targetElement.setAttribute('id', uuid);
-                            // const value = targetElement.getAttribute('id');
-                            // if (value) {
-                            //     hoverDiv.setAttribute('data-block-id', value);
-                            // } else {
-                            //     //targetElement.setAttribute('id', uuid);
-                            // }
-                            hoverDiv.style.cursor = 'grab';
 
-                            // targetElement.style.userSelect = 'none';
-                            // targetElement.querySelectorAll('*').forEach((el) => {
-                            //     el.style.userSelect = 'none';
-                            // });
+                            hoverDiv.style.cursor = 'grab';
 
                             const containerBoundingRect = quillContainer.getBoundingClientRect();
                             hoverDiv.style.top = `${boundingRect.top - containerBoundingRect.top - 2 + extraTop}px`;
@@ -268,12 +221,6 @@ const Document = () => {
             ) {
                 targetElement.classList.remove('hand-cursor'); // remove the CSS class
                 targetElement.removeAttribute('draggable');
-                //const targetId = targetElement.getAttribute('id');
-                // quillContainer.querySelectorAll('.hover-div').forEach((div) => {
-                //     if (div.dataset.blockId !== targetId) {
-                //         div.remove(); // Remove the hover-div only if its data-block-id is not equal to targetId
-                //     }
-                // });
 
                 quillContainer.querySelectorAll('.pointer-div').forEach((div) => {
                     div.remove(); // Remove the hover-div only if its data-block-id is not equal to targetId
@@ -326,21 +273,6 @@ const Document = () => {
                     }
 
                     event.dataTransfer.setDragImage(selectedElement, 0, 0);
-                    //event.dataTransfer.setDragImage('https://www.google.com/intl/en_ALL/mapfiles/closedhand.cur', -10, -10);
-                    // document.body.style.cursor = 'grabbing';
-                });
-
-                // targetElement.addEventListener('drag', (event) => {
-                //     event.dataTransfer.cursor = '-webkit-grabbing';
-                //     event.dataTransfer.cursor = 'grabbing';
-                //     selectedElement.style.cursor = 'grabbing';
-                //     targetElement.style.cursor = 'grabbing'; // <-- Add this line
-                //     console.log(event);
-                // });
-
-                targetElement.addEventListener('dragend', (event) => {
-                    // Reset the cursor style to its default value
-                    targetElement.style.cursor = 'default';
                 });
             }
         };
@@ -403,9 +335,6 @@ const Document = () => {
             });
 
             const targetElement = event.target;
-            // console.log(targetElement);
-            // console.log(targetElement.parentNode);
-            // console.log(targetElement.nextSibling);
 
             // Check if the dropped element is an image
             if (event.dataTransfer.files && event.dataTransfer.files.length > 0) {
@@ -485,9 +414,9 @@ const Document = () => {
             pointerDiv.style.marginTop = '1px';
             pointerDiv.style.marginBottom = '1px';
             const boundingRect = targetElement.getBoundingClientRect();
-            //console.log(boundingRect);
+
             const containerBoundingRect = quillContainer.getBoundingClientRect();
-            //console.log(containerBoundingRect);
+
             pointerDiv.style.top = `${boundingRect.top - containerBoundingRect.top}px`;
             quillContainer.appendChild(pointerDiv);
         };
@@ -563,12 +492,6 @@ const Document = () => {
 
         dispatch({ type: SET_LOADER, loader: true });
         provider.once('synced', () => {
-            // let quillObj = JSON.stringify(ydoc);
-            // if (JSON.parse(quillObj).quill) {
-            //     quillText = JSON.parse(quillObj).quill;
-            // }
-            // console.log(quillText);
-
             if (ytext._length > 0) {
                 setIsQuillText(true); //Loading from Ydoc
             } else {
@@ -607,20 +530,6 @@ const Document = () => {
             }
         }, 2 * 1000);
 
-        // provider.awareness.on('change', ({ added, removed, updated }) => {
-        //     const users = [];
-        //     for (const [clientId, state] of provider.awareness.getStates()) {
-        //         const user = state.user;
-        //         console.log('ws connected: ', provider.wsconnected);
-        //         // let quillObj = JSON.stringify(ydoc);
-        //         // if (JSON.parse(quillObj).quill) {
-        //         //     quillText = JSON.parse(quillObj).quill;
-        //         // }
-        //         // console.log(user, quillText);
-        //         users.push(user);
-        //     }
-        // });
-
         provider.awareness.setLocalStateField('user', {
             name: userInfo.first_name,
             color: getRamndomColors()
@@ -628,7 +537,6 @@ const Document = () => {
 
         return () => {
             clearInterval(checkWebSocketConnection);
-            // Clean up Yjs document
             provider.disconnect();
             ydoc.destroy();
 
@@ -684,12 +592,6 @@ const Document = () => {
         setEditorAnchorEl(false);
         setRange(null);
         setContext(null);
-
-        // if (selection) {
-        //     // quillRef.deleteText(selection.index, 1);
-        //     // setMenuPosition(null);
-        //     quillRef.focus();
-        // }
     };
 
     const handleEditorOnEnter = (values) => {
@@ -722,44 +624,6 @@ const Document = () => {
         handleEditorContextMenuClose();
     };
 
-    //////////////////////////// file context menu //////////////////////////////
-
-    const [anchorEl, setAnchorEl] = useState(null);
-    const openContextMenu = Boolean(anchorEl);
-    const handleContextMenuClick = (event, item) => {
-        setAnchorEl(event.currentTarget);
-        setSelectedFile(item);
-    };
-    const handleContextMenuFileClose = () => {
-        setAnchorEl(null);
-    };
-
-    const handleOpenFileClick = (values) => {
-        window.open(values.file, '_blank', 'noreferrer');
-    };
-
-    //////////////////////////////// file delete confirmation /////////
-    const [openConfirmation, setOpenConfirmation] = useState(false);
-
-    const handleClickOpenConfirmation = () => {
-        setOpenConfirmation(true);
-    };
-
-    const handleCloseConfirmation = () => {
-        setOpenConfirmation(false);
-    };
-    const handleConfirmationDialogOk = (values) => {
-        dispatch(
-            documentFileDelete({
-                url: 'document/delete-attachment/' + values.id
-            })
-        );
-        setTimeout(() => {
-            dispatch(documentDetails({ url: `document/${documentKey}` }));
-        }, 500);
-        setOpenConfirmation(false);
-    };
-
     //////////////////////////////// sever error dialog /////////
     const [openErrorDialog, setOpenErrorDialog] = useState(false);
 
@@ -780,104 +644,47 @@ const Document = () => {
         color: 'rgb(0, 0, 0)'
     };
 
+    //////////////////////////// file context menu //////////////////////////////
+
+    const [anchorEl, setAnchorEl] = useState(null);
+    const openContextMenu = Boolean(anchorEl);
+    const handleContextMenuClick = (event, item) => {
+        setAnchorEl(event.currentTarget);
+        setSelectedFile(item);
+    };
+    const handleContextMenuFileClose = () => {
+        setAnchorEl(null);
+    };
+
+    const handleOpenFileClick = (values) => {
+        window.open(values.file, '_blank', 'noreferrer');
+    };
+
+    //////////////////////////////// file delete confirmation /////////
+    const [openFileConfirmation, setOpenFileConfirmation] = useState(false);
+
+    const handleClickOpenFileConfirmation = () => {
+        setOpenFileConfirmation(true);
+    };
+
+    const handleCloseFileConfirmation = () => {
+        setOpenFileConfirmation(false);
+    };
+    const handleFileConfirmationDialogOk = (values) => {
+        dispatch(
+            documentFileDelete({
+                url: 'document/delete-attachment/' + values.id
+            })
+        );
+        setTimeout(() => {
+            dispatch(documentDetails({ url: `document/${docData.doc_key}` }));
+        }, 500);
+        setOpenFileConfirmation(false);
+    };
+
     return (
         <>
-            <MainCard title="" onMouseLeave={(ev) => handleMouseLeave(ev)}>
-                {/* {docData != null && (
-                    <Grid container direction="row" justifyContent="flex-end" alignItems="center">
-                        <Grid item>
-                            <Box style={{ float: 'right' }}>
-                                <Stack direction="row" spacing={1}>
-                                    {docData.attachments != null &&
-                                        docData.attachments.length > 0 &&
-                                        docData.attachments.map((item, index) => (
-                                            <IconButton
-                                                onClick={(event) => handleContextMenuClick(event, item)}
-                                                key={item.id}
-                                                color="primary"
-                                                aria-label="upload document"
-                                                component="label"
-                                            >
-                                                {(() => {
-                                                    switch (item.file_extension) {
-                                                        case '.pdf':
-                                                            return <IconPdf fontSize="inherit" />;
-                                                        case '.xls':
-                                                            return <IconXls fontSize="inherit" />;
-                                                        case '.xlsx':
-                                                            return <IconXls fontSize="inherit" />;
-                                                        case '.doc':
-                                                            return <IconDocx fontSize="inherit" />;
-                                                        case '.docx':
-                                                            return <IconDocx fontSize="inherit" />;
-                                                        case '.ppt':
-                                                            return <IconPptx fontSize="inherit" />;
-                                                        case '.pptx':
-                                                            return <IconPptx fontSize="inherit" />;
-                                                        case '.jpg':
-                                                            return <IconImg fontSize="inherit" />;
-                                                        case '.jpeg':
-                                                            return <IconImg fontSize="inherit" />;
-                                                        case '.png':
-                                                            return <IconImg fontSize="inherit" />;
-                                                        case '.gif':
-                                                            return <IconGif fontSize="inherit" />;
-                                                        default:
-                                                            return <DescriptionIcon fontSize="inherit" />;
-                                                    }
-                                                })()}
-                                            </IconButton>
-                                        ))}
-                                </Stack>
-                            </Box>
-                        </Grid>
-                    </Grid>
-                )} */}
-                {/* <form> */}
-                {/* <TextField
-                    inputProps={{ style: { fontSize: 40, fontWeight: 600 } }}
-                    fullWidth
-                    id="standard-basic"
-                    className="title-text"
-                    value={docTitle}
-                    onChange={onTitleChange}
-                    onBlur={onTitleBlur}
-                    name="docTitle"
-                    label=""
-                    variant="standard"
-                /> */}
-                {/* {docData != null && (
-                    <>
-                        <Grid container direction="row" justifyContent="space-between" alignItems="center">
-                            <Grid item>
-                                <Typography sx={{ pt: 1 }} variant="body2" style={{ color: 'rgb(155, 166, 178)', fontStyle: 'italic' }}>
-                                    Last updated at{' '}
-                                    {docData.attachments != null && format(Date.parse(docData.updated_at), 'dd/LL/yyyy hh:mm a')}
-                                    &nbsp;&nbsp;&nbsp; Created by{' '}
-                                    {userInfo.full_name == docData.doc_creator_full_name ? 'me' : docData.doc_creator_full_name}
-                                </Typography>
-                            </Grid>
-                            <Grid item>
-                                <Typography sx={{ pt: 1 }} variant="body2" style={{ color: 'rgb(155, 166, 178)', fontStyle: 'italic' }}>
-                                    Currently viewing{' : '}
-                                    {viewers.map((item, index) =>
-                                        index === viewers.length - 1 && viewers.length === 1
-                                            ? item.name
-                                            : index === viewers.length - 1
-                                            ? item.name
-                                            : item.name + ', '
-                                    )}
-                                </Typography>
-                            </Grid>
-                        </Grid>
-                    </>
-                )} */}
-                {/* <br />
-                <br />
-                <br />
-                <br /> */}
-                {docData != null && <>{docData.attachments != null && docData.attachments.length > 0 && <br />}</>}
-
+            <MainCard sx={{ paddingTop: '0px' }} title="" onMouseLeave={(ev) => handleMouseLeave(ev)}>
                 <div className="editor-container">
                     <EditorToolbar toolbarId={'t1'} />
                     {isQuillText == true ? (
@@ -911,11 +718,130 @@ const Document = () => {
                             scrollingContainer="html"
                         />
                     )}
-                    {/* <Fab sx={fabStyle} onClick={handleSubmit} aria-label="Save" color="primary">
-                            <IconDeviceFloppy />
-                        </Fab> */}
                 </div>
-                {/* </form> */}
+                <Divider sx={{ borderBottomWidth: 'medium', borderColor: '#a9a9a9' }} />
+                <br />
+                <br />
+                {docData != null && <>{docData.attachments != null && docData.attachments.length > 0 && <br />}</>}
+                {/* <Divider sx={{ borderBottomWidth: 'medium', borderColor: '#a9a9a9' }} /> */}
+                <Grid
+                    style={{
+                        backgroundColor: 'white',
+                        top: 'auto',
+                        bottom: 0
+                    }}
+                    position="fixed"
+                    container
+                >
+                    <Grid item xs={12} sm={12} md={12} lg={12} sx={{ my: 1 }}>
+                        {/* <Divider sx={{ borderBottomWidth: 'medium', borderColor: '#a9a9a9' }} /> */}
+
+                        {docData != null && (
+                            <>
+                                <Box sx={{ mt: 1 }}>
+                                    <Stack direction="row" spacing={1}>
+                                        {docData.attachments != null &&
+                                            docData.attachments.length > 0 &&
+                                            docData.attachments.map((item, index) => (
+                                                <IconButton
+                                                    onClick={(event) => handleContextMenuClick(event, item)}
+                                                    key={item.id}
+                                                    color="primary"
+                                                    aria-label="upload document"
+                                                    component="label"
+                                                >
+                                                    {(() => {
+                                                        switch (item.file_extension) {
+                                                            case '.pdf':
+                                                                return <IconPdf fontSize="inherit" />;
+                                                            case '.xls':
+                                                                return <IconXls fontSize="inherit" />;
+                                                            case '.xlsx':
+                                                                return <IconXls fontSize="inherit" />;
+                                                            case '.doc':
+                                                                return <IconDocx fontSize="inherit" />;
+                                                            case '.docx':
+                                                                return <IconDocx fontSize="inherit" />;
+                                                            case '.ppt':
+                                                                return <IconPptx fontSize="inherit" />;
+                                                            case '.pptx':
+                                                                return <IconPptx fontSize="inherit" />;
+                                                            case '.jpg':
+                                                                return <IconImg fontSize="inherit" />;
+                                                            case '.jpeg':
+                                                                return <IconImg fontSize="inherit" />;
+                                                            case '.png':
+                                                                return <IconImg fontSize="inherit" />;
+                                                            case '.gif':
+                                                                return <IconGif fontSize="inherit" />;
+                                                            default:
+                                                                return <DescriptionIcon fontSize="inherit" />;
+                                                        }
+                                                    })()}
+                                                </IconButton>
+                                            ))}
+                                    </Stack>
+                                </Box>
+
+                                <Grid container direction="row" justifyContent="flex-start" alignItems="center">
+                                    <Grid item xs={12} sm={4} md={3} lg={2}>
+                                        <Typography
+                                            sx={{ pt: 1 }}
+                                            variant="body2"
+                                            style={{ color: 'rgb(155, 166, 178)', fontStyle: 'italic' }}
+                                        >
+                                            Last updated at{' '}
+                                            {docData.attachments != null && format(Date.parse(docData.updated_at), 'dd/LL/yyyy hh:mm a')}
+                                        </Typography>
+                                    </Grid>
+                                    <Grid item xs={12} sm={4} md={2} lg={1}>
+                                        <Typography
+                                            sx={{ pt: 1 }}
+                                            variant="body2"
+                                            style={{ color: 'rgb(155, 166, 178)', fontStyle: 'italic' }}
+                                        >
+                                            Created by{' '}
+                                            {userInfo.full_name == docData.doc_creator_full_name ? 'me' : docData.doc_creator_full_name}{' '}
+                                        </Typography>
+                                    </Grid>
+                                    <Grid item xs={12} sm={4} md={7} lg={7}>
+                                        <Typography
+                                            sx={{ pt: 1 }}
+                                            variant="body2"
+                                            style={{ color: 'rgb(155, 166, 178)', fontStyle: 'italic' }}
+                                        >
+                                            Currently viewing{' : '}
+                                            {viewers.map((item, index) =>
+                                                index === viewers.length - 1 && viewers.length === 1
+                                                    ? item.name
+                                                    : index === viewers.length - 1
+                                                    ? item.name
+                                                    : item.name + ', '
+                                            )}
+                                        </Typography>
+                                    </Grid>
+
+                                    {/* <Grid item>
+                                        <Typography
+                                            sx={{ pt: 1, float: 'right', marginRight: browserWidth > 480 ? '320px' : '0px' }}
+                                            variant="body2"
+                                            style={{ color: 'rgb(155, 166, 178)', fontStyle: 'italic' }}
+                                        >
+                                            Currently viewing{' : '}
+                                            {viewers.map((item, index) =>
+                                                index === viewers.length - 1 && viewers.length === 1
+                                                    ? item.name
+                                                    : index === viewers.length - 1
+                                                    ? item.name
+                                                    : item.name + ', '
+                                            )}
+                                        </Typography>
+                                    </Grid> */}
+                                </Grid>
+                            </>
+                        )}
+                    </Grid>
+                </Grid>
             </MainCard>
 
             <ContextMenuEditor
@@ -932,7 +858,17 @@ const Document = () => {
                 data={selectedFile}
                 handleClose={handleContextMenuFileClose}
                 handleOpenFileClick={(values) => handleOpenFileClick(values)}
-                handleDeleteClick={handleClickOpenConfirmation}
+                handleDeleteClick={handleClickOpenFileConfirmation}
+            />
+            <ConfirmationDialog
+                title="Delete File"
+                description="Are you sure? File will be deleted."
+                open={openFileConfirmation}
+                data={selectedFile}
+                handleClose={handleCloseFileConfirmation}
+                handleOk={(values) => handleFileConfirmationDialogOk(values)}
+                okButtonText="Delete"
+                closeButtonText="Close"
             />
 
             <ErrorDialog
@@ -944,19 +880,8 @@ const Document = () => {
                 okButtonText="Refresh"
                 closeButtonText="Home"
             />
-            <ConfirmationDialog
-                title="Delete File"
-                description="Are you sure? File will be deleted."
-                open={openConfirmation}
-                data={selectedFile}
-                handleClose={handleCloseConfirmation}
-                handleOk={(values) => handleConfirmationDialogOk(values)}
-                okButtonText="Delete"
-                closeButtonText="Close"
-            />
 
             <LoadingBar color="#8800ff" progress={progress} onLoaderFinished={() => setProgress(0)} />
-            {/* <BlockUIEditor blocking={editorLoader} title="Server Error" /> */}
         </>
     );
 };

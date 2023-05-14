@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React, { useState, useEffect } from 'react';
 // material-ui
 import { useTheme } from '@mui/material/styles';
-import { Avatar, Box, ButtonBase } from '@mui/material';
+import { Avatar, Stack, Item, Box, ButtonBase } from '@mui/material';
 
 // project imports
 import LogoSection from '../LogoSection';
@@ -34,9 +34,9 @@ const Header = ({ handleLeftDrawerToggle }) => {
                 sx={{
                     width: 275,
                     height: 73,
-                    marginTop: isDocPage ? '-50px' : '0px',
+                    // marginTop: isDocPage ? '-5px' : '0px',
                     marginLeft: '-23px',
-                    paddingLeft: '14px',
+                    paddingLeft: '15px',
                     display: 'flex',
                     background: 'linear-gradient(to bottom, white, #eef2f6 )',
                     [theme.breakpoints.down('md')]: {
@@ -44,29 +44,31 @@ const Header = ({ handleLeftDrawerToggle }) => {
                     }
                 }}
             >
-                <Box component="span" sx={{ display: { xs: 'none', md: 'block' }, flexGrow: 1, pr: 1 }}>
-                    <LogoSection />
-                </Box>
-                <ButtonBase sx={{ borderRadius: '12px', overflow: 'hidden', pr: 2, marginLeft: '19px' }}>
-                    <Avatar
-                        variant="rounded"
-                        sx={{
-                            ...theme.typography.commonAvatar,
-                            ...theme.typography.mediumAvatar,
-                            transition: 'all .2s ease-in-out',
-                            background: theme.palette.secondary.light,
-                            color: theme.palette.secondary.dark,
-                            '&:hover': {
-                                background: theme.palette.secondary.dark,
-                                color: theme.palette.secondary.light
-                            }
-                        }}
-                        onClick={handleLeftDrawerToggle}
-                        color="inherit"
-                    >
-                        <IconMenu2 stroke={1.5} size="1.3rem" />
-                    </Avatar>
-                </ButtonBase>
+                <Stack direction="row" spacing={6}>
+                    <Box component="span" sx={{ display: { xs: 'none', md: 'block' }, flexGrow: 1, pr: 1 }}>
+                        <LogoSection />
+                    </Box>
+                    <ButtonBase sx={{ borderRadius: '12px', overflow: 'hidden', pr: 1, marginLeft: '25px' }}>
+                        <Avatar
+                            variant="rounded"
+                            sx={{
+                                ...theme.typography.commonAvatar,
+                                ...theme.typography.mediumAvatar,
+                                transition: 'all .2s ease-in-out',
+                                background: theme.palette.secondary.light,
+                                color: theme.palette.secondary.dark,
+                                '&:hover': {
+                                    background: theme.palette.secondary.dark,
+                                    color: theme.palette.secondary.light
+                                }
+                            }}
+                            onClick={handleLeftDrawerToggle}
+                            color="inherit"
+                        >
+                            <IconMenu2 stroke={1.5} size="1.3rem" />
+                        </Avatar>
+                    </ButtonBase>
+                </Stack>
             </Box>
 
             {/* header search */}
