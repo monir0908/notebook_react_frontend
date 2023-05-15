@@ -84,6 +84,9 @@ Quill.register('modules/imageFormats', ImageFormats);
 // Modules object for setting up the Quill editor
 export const modules = (props) => ({
     cursors: {
+        hideDelayMs: 5000,
+        hideSpeedMs: 0,
+        selectionChangeSource: null,
         transformOnTextChange: true
     },
     toolbar: {

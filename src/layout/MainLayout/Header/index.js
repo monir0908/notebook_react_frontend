@@ -44,11 +44,11 @@ const Header = ({ handleLeftDrawerToggle }) => {
                     }
                 }}
             >
-                <Stack direction="row" spacing={6}>
+                <Stack direction="row" spacing={4}>
                     <Box component="span" sx={{ display: { xs: 'none', md: 'block' }, flexGrow: 1, pr: 1 }}>
                         <LogoSection />
                     </Box>
-                    <ButtonBase sx={{ borderRadius: '12px', overflow: 'hidden', pr: 1, marginLeft: '25px' }}>
+                    <ButtonBase sx={{ borderRadius: '12px', overflow: 'hidden', paddingRight: '24px', marginLeft: '5px' }}>
                         <Avatar
                             variant="rounded"
                             sx={{

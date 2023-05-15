@@ -172,25 +172,29 @@
 
 .ql-cursor .ql-cursor-caret-container {
     cursor: text;
-    margin-left: -14px !important;
+    margin-left: 0px !important;
     padding: 0 0px !important;
 }
 
 .ql-cursor .ql-cursor-flag {
-    line-height: 7px !important;
+    line-height: 20px !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    padding: 1px;
+    z-index: 1100 !important;
 }
 
-.ql-cursor .ql-cursor-flag .ql-cursor-name {
-    margin-left: -10px !important;
-}
+/* .ql-cursor .ql-cursor-flag .ql-cursor-name {
+    margin-left: 0px !important;
+} */
 
 .ql-editor.ql-blank::before {
     left: 15px !important;
 }
 
-.ql-container.ql-bubble:not(.ql-disabled) a:hover::before {
+/* .ql-container.ql-bubble:not(.ql-disabled) a:hover::before {
     cursor: pointer;
-}
+} */
 
 /* .ql-container.ql-bubble:not(.ql-disabled) a {
     position: fixed !important;

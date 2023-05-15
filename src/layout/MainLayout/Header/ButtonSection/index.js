@@ -184,9 +184,9 @@ const ButtonSection = () => {
         }
 
         if (urlArr[1] == 'document') {
+            setDocTitle(doc.doc_title);
             setIsDocPage(true);
             dispatch(updateUploadButton({ isUploadShow: true }));
-            setDocTitle(doc.doc_title);
         } else {
             setIsDocPage(false);
         }
@@ -228,6 +228,7 @@ const ButtonSection = () => {
     };
 
     const onTitleBlur = (e) => {
+        setDocTitle(e.target.value);
         dispatch(
             documentUpdateOnEditorLeave({
                 url: 'document/update-doc/' + doc.doc_key,
@@ -284,7 +285,7 @@ const ButtonSection = () => {
 
             <Grid sx={{ mt: 1, ml: 3 }} container direction="row" justifyContent="space-between" alignItems="flex-start">
                 <Grid item xs={12} md={7}>
-                    {isDocPage == true ? (
+                    {isDocPage ? (
                         <form style={{ marginTop: '10px' }}>
                             <TextField
                                 InputProps={{
@@ -294,7 +295,7 @@ const ButtonSection = () => {
                                 fullWidth
                                 id="doc-title"
                                 className="title-text"
-                                value={docTitle || ''}
+                                value={docTitle}
                                 onChange={onTitleChange}
                                 onBlur={onTitleBlur}
                                 name="docTitle"

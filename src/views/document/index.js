@@ -114,7 +114,7 @@ const Document = () => {
                 const editorBounds = editorEl.getBoundingClientRect();
                 const top = editorBounds.top + bounds.bottom;
                 const tooltipEl = document.querySelector('.ql-tooltip');
-                console.log(editorBounds.right);
+
                 if (top > 100 && top < 500) {
                     tooltipEl.style.zIndex = 1101;
                 } else {
@@ -123,9 +123,9 @@ const Document = () => {
             }
         });
 
-        // quillContainer.addEventListener('scroll', (event) => {
-        //     console.log(quillContainer.scrollY);
-        // });
+        quillContainer.addEventListener('scroll', (event) => {
+            console.log(quillContainer.scrollY);
+        });
 
         quillContainer.addEventListener('mouseover', (event) => {
             const targetElement = event.target;
@@ -718,12 +718,11 @@ const Document = () => {
                         />
                     )}
                 </div>
-                <Divider sx={{ borderBottomWidth: 'medium', borderColor: '#a9a9a9' }} />
-                <br />
-                <br />
+                {/* <Divider sx={{ borderBottomWidth: 'medium', borderColor: '#a9a9a9' }} /> */}
+
                 {docData != null && <>{docData.attachments != null && docData.attachments.length > 0 && <br />}</>}
                 {/* <Divider sx={{ borderBottomWidth: 'medium', borderColor: '#a9a9a9' }} /> */}
-                <Grid
+                {/* <Grid
                     style={{
                         backgroundColor: 'white',
                         top: 'auto',
@@ -732,114 +731,88 @@ const Document = () => {
                     position="fixed"
                     container
                 >
-                    <Grid item xs={12} sm={12} md={12} lg={12} sx={{ my: 1 }}>
-                        {/* <Divider sx={{ borderBottomWidth: 'medium', borderColor: '#a9a9a9' }} /> */}
-
-                        {docData != null && (
-                            <>
-                                <Box sx={{ mt: 1 }}>
-                                    <Stack direction="row" spacing={1}>
-                                        {docData.attachments != null &&
-                                            docData.attachments.length > 0 &&
-                                            docData.attachments.map((item, index) => (
-                                                <IconButton
-                                                    onClick={(event) => handleContextMenuClick(event, item)}
-                                                    key={item.id}
-                                                    color="primary"
-                                                    aria-label="upload document"
-                                                    component="label"
-                                                >
-                                                    {(() => {
-                                                        switch (item.file_extension) {
-                                                            case '.pdf':
-                                                                return <IconPdf fontSize="inherit" />;
-                                                            case '.xls':
-                                                                return <IconXls fontSize="inherit" />;
-                                                            case '.xlsx':
-                                                                return <IconXls fontSize="inherit" />;
-                                                            case '.doc':
-                                                                return <IconDocx fontSize="inherit" />;
-                                                            case '.docx':
-                                                                return <IconDocx fontSize="inherit" />;
-                                                            case '.ppt':
-                                                                return <IconPptx fontSize="inherit" />;
-                                                            case '.pptx':
-                                                                return <IconPptx fontSize="inherit" />;
-                                                            case '.jpg':
-                                                                return <IconImg fontSize="inherit" />;
-                                                            case '.jpeg':
-                                                                return <IconImg fontSize="inherit" />;
-                                                            case '.png':
-                                                                return <IconImg fontSize="inherit" />;
-                                                            case '.gif':
-                                                                return <IconGif fontSize="inherit" />;
-                                                            default:
-                                                                return <DescriptionIcon fontSize="inherit" />;
-                                                        }
-                                                    })()}
-                                                </IconButton>
-                                            ))}
-                                    </Stack>
-                                </Box>
-
-                                <Grid container direction="row" justifyContent="flex-start" alignItems="center">
-                                    <Grid item xs={12} sm={4} md={3} lg={2}>
-                                        <Typography
-                                            sx={{ pt: 1 }}
-                                            variant="body2"
-                                            style={{ color: 'rgb(155, 166, 178)', fontStyle: 'italic' }}
-                                        >
-                                            Last updated at{' '}
-                                            {docData.attachments != null && format(Date.parse(docData.updated_at), 'dd/LL/yyyy hh:mm a')}
-                                        </Typography>
-                                    </Grid>
-                                    <Grid item xs={12} sm={4} md={2} lg={1}>
-                                        <Typography
-                                            sx={{ pt: 1 }}
-                                            variant="body2"
-                                            style={{ color: 'rgb(155, 166, 178)', fontStyle: 'italic' }}
-                                        >
-                                            Created by{' '}
-                                            {userInfo.full_name == docData.doc_creator_full_name ? 'me' : docData.doc_creator_full_name}{' '}
-                                        </Typography>
-                                    </Grid>
-                                    <Grid item xs={12} sm={4} md={7} lg={7}>
-                                        <Typography
-                                            sx={{ pt: 1 }}
-                                            variant="body2"
-                                            style={{ color: 'rgb(155, 166, 178)', fontStyle: 'italic' }}
-                                        >
-                                            Currently viewing{' : '}
-                                            {viewers.map((item, index) =>
-                                                index === viewers.length - 1 && viewers.length === 1
-                                                    ? item.name
-                                                    : index === viewers.length - 1
-                                                    ? item.name
-                                                    : item.name + ', '
-                                            )}
-                                        </Typography>
-                                    </Grid>
-
-                                    {/* <Grid item>
-                                        <Typography
-                                            sx={{ pt: 1, float: 'right', marginRight: browserWidth > 480 ? '320px' : '0px' }}
-                                            variant="body2"
-                                            style={{ color: 'rgb(155, 166, 178)', fontStyle: 'italic' }}
-                                        >
-                                            Currently viewing{' : '}
-                                            {viewers.map((item, index) =>
-                                                index === viewers.length - 1 && viewers.length === 1
-                                                    ? item.name
-                                                    : index === viewers.length - 1
-                                                    ? item.name
-                                                    : item.name + ', '
-                                            )}
-                                        </Typography>
-                                    </Grid> */}
+                    <Grid item xs={12} sm={12} md={12} lg={12} sx={{ my: 1 }}> */}
+                <Divider sx={{ borderBottomWidth: 'medium', borderColor: '#a9a9a9' }} />
+                <Grid container sx={{ my: 1 }}>
+                    {docData != null && (
+                        <>
+                            <Box sx={{ mt: 1 }}>
+                                <Stack direction="row" spacing={1}>
+                                    {docData.attachments != null &&
+                                        docData.attachments.length > 0 &&
+                                        docData.attachments.map((item, index) => (
+                                            <IconButton
+                                                onClick={(event) => handleContextMenuClick(event, item)}
+                                                key={item.id}
+                                                color="primary"
+                                                aria-label="upload document"
+                                                component="label"
+                                            >
+                                                {(() => {
+                                                    switch (item.file_extension) {
+                                                        case '.pdf':
+                                                            return <IconPdf fontSize="inherit" />;
+                                                        case '.xls':
+                                                            return <IconXls fontSize="inherit" />;
+                                                        case '.xlsx':
+                                                            return <IconXls fontSize="inherit" />;
+                                                        case '.doc':
+                                                            return <IconDocx fontSize="inherit" />;
+                                                        case '.docx':
+                                                            return <IconDocx fontSize="inherit" />;
+                                                        case '.ppt':
+                                                            return <IconPptx fontSize="inherit" />;
+                                                        case '.pptx':
+                                                            return <IconPptx fontSize="inherit" />;
+                                                        case '.jpg':
+                                                            return <IconImg fontSize="inherit" />;
+                                                        case '.jpeg':
+                                                            return <IconImg fontSize="inherit" />;
+                                                        case '.png':
+                                                            return <IconImg fontSize="inherit" />;
+                                                        case '.gif':
+                                                            return <IconGif fontSize="inherit" />;
+                                                        default:
+                                                            return <DescriptionIcon fontSize="inherit" />;
+                                                    }
+                                                })()}
+                                            </IconButton>
+                                        ))}
+                                </Stack>
+                            </Box>
+                            <Grid container direction="row" display={'flex'}>
+                                <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
+                                    <Typography sx={{ pt: 1 }} variant="body2" style={{ color: 'rgb(155, 166, 178)', fontStyle: 'italic' }}>
+                                        Last updated at{' '}
+                                        {docData.attachments != null && format(Date.parse(docData.updated_at), 'dd/LL/yyyy hh:mm a')}
+                                        &nbsp;&nbsp;&nbsp; Created by{' '}
+                                        {userInfo.full_name == docData.doc_creator_full_name ? 'me' : docData.doc_creator_full_name}
+                                    </Typography>
                                 </Grid>
-                            </>
-                        )}
-                    </Grid>
+                                <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
+                                    <Typography
+                                        sx={{ pt: 1 }}
+                                        variant="body2"
+                                        style={{
+                                            display: 'flex',
+                                            justifyContent: 'flex-end',
+                                            color: 'rgb(155, 166, 178)',
+                                            fontStyle: 'italic'
+                                        }}
+                                    >
+                                        Currently viewing{' : '}
+                                        {viewers.map((item, index) =>
+                                            index === viewers.length - 1 && viewers.length === 1
+                                                ? item.name
+                                                : index === viewers.length - 1
+                                                ? item.name
+                                                : item.name + ', '
+                                        )}
+                                    </Typography>
+                                </Grid>
+                            </Grid>
+                        </>
+                    )}
                 </Grid>
             </MainCard>
 

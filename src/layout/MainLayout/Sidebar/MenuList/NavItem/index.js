@@ -101,10 +101,14 @@ const NavItem = ({ item, level }) => {
         listItemProps = { component: 'a', href: item.url, target: itemTarget };
     }
 
-    const itemHandler = (id) => {
+    const itemHandler = (e, id) => {
+        e.preventDefault();
+
         dispatch({ type: MENU_OPEN, id });
         if (matchesSM) dispatch({ type: SET_MENU, opened: false });
         if (item.dynamic) {
+            //e.stopPropagation();
+            console.log(e);
             dispatch(updateDoc({ doc: item }));
             dispatch(updateDocId({ doc_id: item.doc_key }));
         } else {
@@ -176,7 +180,7 @@ const NavItem = ({ item, level }) => {
         dispatch(updatePublishButton({ isPublishShow: false }));
         dispatch(updateUnpublishButton({ isUnpublishShow: true }));
         dispatch(updateShareButton({ isShareShow: true }));
-        console.log(values);
+
         dispatch(
             documentUpdate({
                 url: 'document/update-status/' + values.doc_key,
@@ -234,7 +238,7 @@ const NavItem = ({ item, level }) => {
                     pl: `${level * 24}px`
                 }}
                 selected={customization.isOpen.findIndex((id) => id === item.id) > -1}
-                onClick={() => itemHandler(item.id)}
+                // onClick={(e) => itemHandler(e, item.id)}
             >
                 <ListItemIcon sx={{ my: 'auto', minWidth: !item?.icon ? 18 : 36 }}>{itemIcon}</ListItemIcon>
                 <ListItemText
