@@ -307,7 +307,7 @@ const ButtonSection = () => {
                     )}
                 </Grid>
                 <Grid item xs={12} md={5}>
-                    <Box sx={{ display: { xs: 'block', md: 'block' }, mt: 1 }}>
+                    <Box sx={{ display: { xs: 'block', md: 'block' } }}>
                         <Stack direction="row" justifyContent="flex-end" spacing={2}>
                             {upload_show && (
                                 <Tooltip title="Upload File">

@@ -108,7 +108,7 @@ const ProfileSection = () => {
                 sx={{
                     height: '48px',
                     float: 'right',
-                    marginTop: isDocPage ? '5px' : '-10px',
+                    marginTop: '-5px',
                     alignItems: 'center',
                     borderRadius: '27px',
                     transition: 'all .2s ease-in-out',

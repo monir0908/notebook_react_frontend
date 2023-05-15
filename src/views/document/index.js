@@ -102,11 +102,7 @@ const Document = () => {
         if (typeof reactQuillRef.getEditor !== 'function') return;
         quillRef = reactQuillRef.getEditor();
         const quillContainer = quillRef.container;
-        const tooltipEl = document.querySelector('.ql-tooltip');
-        tooltipEl.style.zIndex = 1101;
-        window.addEventListener('resize', function () {
-            browserWidth = window.innerWidth;
-        });
+
         window.addEventListener('scroll', function () {
             quillContainer.querySelectorAll('.hover-div').forEach((div) => {
                 div.remove(); // Remove the hover-div only if its data-block-id is not equal to targetId
@@ -127,9 +123,9 @@ const Document = () => {
             }
         });
 
-        quillContainer.addEventListener('scroll', (event) => {
-            console.log(quillContainer.scrollY);
-        });
+        // quillContainer.addEventListener('scroll', (event) => {
+        //     console.log(quillContainer.scrollY);
+        // });
 
         quillContainer.addEventListener('mouseover', (event) => {
             const targetElement = event.target;
@@ -230,6 +226,9 @@ const Document = () => {
 
         let pressTimer;
         quillContainer.addEventListener('mousedown', (event) => {
+            const tooltipEl = document.querySelector('.ql-tooltip');
+            tooltipEl.style.zIndex = 1101;
+
             let userAgentString = navigator.userAgent;
             let firefoxAgent = userAgentString.indexOf('Firefox') > -1;
             if (!firefoxAgent) {
@@ -684,7 +683,7 @@ const Document = () => {
 
     return (
         <>
-            <MainCard sx={{ paddingTop: '0px' }} title="" onMouseLeave={(ev) => handleMouseLeave(ev)}>
+            <MainCard sx={{ paddingTop: '0px', overflow: 'visible' }} title="" onMouseLeave={(ev) => handleMouseLeave(ev)}>
                 <div className="editor-container">
                     <EditorToolbar toolbarId={'t1'} />
                     {isQuillText == true ? (
