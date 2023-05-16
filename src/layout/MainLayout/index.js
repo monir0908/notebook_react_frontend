@@ -66,6 +66,8 @@ const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(({
 const MainLayout = () => {
     const theme = useTheme();
     const matchDownMd = useMediaQuery(theme.breakpoints.down('md'));
+    // const matchDownMd = useMediaQuery(theme.breakpoints.down('md'));
+
     // Handle left drawer
     const leftDrawerOpened = useSelector((state) => state.customization.opened);
     const loader = useSelector((state) => state.customization.loader);
@@ -78,27 +80,33 @@ const MainLayout = () => {
         <>
             <Box sx={{ display: 'flex' }}>
                 <CssBaseline />
-                {/* header */}
-                <AppBar
-                    enableColorOnDark
-                    position="fixed"
-                    color="inherit"
-                    elevation={0}
-                    sx={{
-                        bgcolor: theme.palette.background.default,
-                        transition: leftDrawerOpened ? theme.transitions.create('width') : 'none'
-                    }}
-                >
-                    <Toolbar>
-                        <Header handleLeftDrawerToggle={handleLeftDrawerToggle} />
-                    </Toolbar>
-                </AppBar>
 
                 {/* drawer */}
                 <Sidebar drawerOpen={!matchDownMd ? leftDrawerOpened : !leftDrawerOpened} drawerToggle={handleLeftDrawerToggle} />
 
                 {/* main content */}
                 <Main theme={theme} open={leftDrawerOpened}>
+                    {/* header */}
+                    <AppBar
+                        enableColorOnDark
+                        position="fixed"
+                        color="inherit"
+                        elevation={0}
+                        sx={{
+                            bgcolor: theme.palette.background.default,
+                            transition: leftDrawerOpened ? theme.transitions.create('width') : 'none'
+                        }}
+                    >
+                        <Toolbar
+                            sx={{
+                                paddingTop: 0,
+                                borderBottom: '2px solid  #a9a9a9'
+                            }}
+                        >
+                            <Header handleLeftDrawerToggle={handleLeftDrawerToggle} />
+                        </Toolbar>
+                    </AppBar>
+
                     <Breadcrumbs separator={IconChevronRight} navigation={navigation} icon title rightAlign />
                     <Outlet />
                 </Main>

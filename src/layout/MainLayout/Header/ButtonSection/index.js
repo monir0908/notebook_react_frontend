@@ -284,172 +284,105 @@ const ButtonSection = () => {
             {/* <Box sx={{ display: { xs: 'block', md: 'none' } }}></Box> */}
 
             <Grid sx={{ mt: 1, ml: 3 }} container direction="row" justifyContent="space-between" alignItems="flex-start">
-                <Grid item xs={12} md={7}>
-                    {isDocPage ? (
-                        <form style={{ marginTop: '10px' }}>
-                            <TextField
-                                InputProps={{
-                                    disableUnderline: true,
-                                    style: { fontSize: 32, fontWeight: 600, border: 'none', padding: '0px 0px' }
-                                }}
-                                fullWidth
-                                id="doc-title"
-                                className="title-text"
-                                value={docTitle}
-                                onChange={onTitleChange}
-                                onBlur={onTitleBlur}
-                                name="docTitle"
-                                label=""
-                                variant="standard"
-                            />
-                        </form>
-                    ) : (
-                        <div style={{ marginTop: '60px' }}></div>
-                    )}
-                </Grid>
-                <Grid item xs={12} md={5}>
-                    <Box sx={{ display: { xs: 'block', md: 'block' } }}>
-                        <Stack direction="row" justifyContent="flex-end" spacing={2}>
-                            {upload_show && (
-                                <Tooltip title="Upload File">
-                                    <Button variant="outlined" id="header-button-upload" startIcon={<CloudUploadIcon />} component="label">
-                                        <input
-                                            onChange={handleFileChange}
-                                            hidden
-                                            accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.jpg,.jpeg,.png,.gif"
-                                            multiple
-                                            type="file"
-                                        />
-                                    </Button>
-                                </Tooltip>
-                            )}
-                            {share_show && (
-                                <Tooltip title="Share Link">
-                                    <Button
-                                        onClick={handleClickOpenShareDialog}
-                                        variant="outlined"
-                                        id="header-button-share"
-                                        startIcon={<ShareIcon />}
-                                    ></Button>
-                                </Tooltip>
-                            )}
-
-                            {publish_show && (
-                                <Tooltip title="Publish">
-                                    <Button
-                                        sx={{ mr: 3 }}
-                                        onClick={() => handleDocPublish(2)}
-                                        variant="outlined"
-                                        id="header-button-publish"
-                                        startIcon={<PublishedWithChangesIcon />}
-                                    ></Button>
-                                </Tooltip>
-                            )}
-                            {unpublish_show && (
-                                <Tooltip title="Unpublish">
-                                    <Button
-                                        sx={{ mr: 3 }}
-                                        onClick={() => handleDocPublish(1)}
-                                        variant="outlined"
-                                        id="header-button-unpublish"
-                                        startIcon={<UnpublishedIcon />}
-                                    ></Button>
-                                </Tooltip>
-                            )}
-                            {delete_show && (
-                                <Tooltip title="Delete Document">
-                                    <Button
-                                        sx={{ mr: 3 }}
-                                        style={{ maxWidth: '30px', maxHeight: '30px' }}
-                                        onClick={handleClickOpenConfirmation}
-                                        variant="outlined"
-                                        id="header-button-delete"
-                                        color="error"
-                                        startIcon={<DeleteIcon />}
-                                    ></Button>
-                                </Tooltip>
-                            )}
-
-                            <ProfileSection />
-                        </Stack>
-                    </Box>
-                </Grid>
-
-                <Grid item xs={12} sx={{ mt: 1 }}>
-                    <Divider style={{ marginTop: '-15px' }} sx={{ borderBottomWidth: 'medium', borderColor: '#a9a9a9' }} />
-
-                    {/* {docData != null && isDocPage && (
-                        <>
-                            <Grid container direction="row" justifyContent="space-between" alignItems="center">
-                                <Grid item>
-                                    <Typography sx={{ pt: 1 }} variant="body2" style={{ color: 'rgb(155, 166, 178)', fontStyle: 'italic' }}>
-                                        Last updated at{' '}
-                                        {docData.attachments != null && format(Date.parse(docData.updated_at), 'dd/LL/yyyy hh:mm a')}
-                                        &nbsp;&nbsp;&nbsp; Created by{' '}
-                                        {userInfo.full_name == docData.doc_creator_full_name ? 'me' : docData.doc_creator_full_name}
-                                    </Typography>
-                                </Grid>
-                                <Grid item>
-                                    <Typography sx={{ pt: 1 }} variant="body2" style={{ color: 'rgb(155, 166, 178)', fontStyle: 'italic' }}>
-                                        Currently viewing{' : '}
-                                        {viewers.map((item, index) =>
-                                            index === viewers.length - 1 && viewers.length === 1
-                                                ? item.name
-                                                : index === viewers.length - 1
-                                                ? item.name
-                                                : item.name + ', '
-                                        )}
-                                    </Typography>
-                                </Grid>
-                            </Grid>
-
-                            <Box sx={{ mt: 1 }} style={{ float: 'right', marginRight: '-7px' }}>
-                                <Stack direction="row" spacing={1}>
-                                    {docData.attachments != null &&
-                                        docData.attachments.length > 0 &&
-                                        docData.attachments.map((item, index) => (
-                                            <IconButton
-                                                onClick={(event) => handleContextMenuClick(event, item)}
-                                                key={item.id}
-                                                color="primary"
-                                                aria-label="upload document"
+                {isDocPage ? (
+                    <>
+                        <Grid item xs={12} md={7} mt={0.5}>
+                            <form style={{ marginTop: '3px' }}>
+                                <TextField
+                                    margin="none"
+                                    InputProps={{
+                                        disableUnderline: true,
+                                        style: { fontSize: 32, fontWeight: 600, border: 'none', padding: '0px 0px' }
+                                    }}
+                                    fullWidth
+                                    id="doc-title"
+                                    className="title-text"
+                                    value={docTitle}
+                                    onChange={onTitleChange}
+                                    onBlur={onTitleBlur}
+                                    name="docTitle"
+                                    label=""
+                                    variant="standard"
+                                />
+                            </form>
+                        </Grid>
+                        <Grid item xs={12} md={5}>
+                            <Box sx={{ display: { xs: 'block', md: 'block' } }}>
+                                <Stack direction="row" justifyContent="flex-end" spacing={2}>
+                                    {upload_show && (
+                                        <Tooltip title="Upload File">
+                                            <Button
+                                                variant="outlined"
+                                                id="header-button-upload"
+                                                startIcon={<CloudUploadIcon />}
                                                 component="label"
                                             >
-                                                {(() => {
-                                                    switch (item.file_extension) {
-                                                        case '.pdf':
-                                                            return <IconPdf fontSize="inherit" />;
-                                                        case '.xls':
-                                                            return <IconXls fontSize="inherit" />;
-                                                        case '.xlsx':
-                                                            return <IconXls fontSize="inherit" />;
-                                                        case '.doc':
-                                                            return <IconDocx fontSize="inherit" />;
-                                                        case '.docx':
-                                                            return <IconDocx fontSize="inherit" />;
-                                                        case '.ppt':
-                                                            return <IconPptx fontSize="inherit" />;
-                                                        case '.pptx':
-                                                            return <IconPptx fontSize="inherit" />;
-                                                        case '.jpg':
-                                                            return <IconImg fontSize="inherit" />;
-                                                        case '.jpeg':
-                                                            return <IconImg fontSize="inherit" />;
-                                                        case '.png':
-                                                            return <IconImg fontSize="inherit" />;
-                                                        case '.gif':
-                                                            return <IconGif fontSize="inherit" />;
-                                                        default:
-                                                            return <DescriptionIcon fontSize="inherit" />;
-                                                    }
-                                                })()}
-                                            </IconButton>
-                                        ))}
+                                                <input
+                                                    onChange={handleFileChange}
+                                                    hidden
+                                                    accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.jpg,.jpeg,.png,.gif"
+                                                    multiple
+                                                    type="file"
+                                                />
+                                            </Button>
+                                        </Tooltip>
+                                    )}
+                                    {share_show && (
+                                        <Tooltip title="Share Link">
+                                            <Button
+                                                onClick={handleClickOpenShareDialog}
+                                                variant="outlined"
+                                                id="header-button-share"
+                                                startIcon={<ShareIcon />}
+                                            ></Button>
+                                        </Tooltip>
+                                    )}
+
+                                    {publish_show && (
+                                        <Tooltip title="Publish">
+                                            <Button
+                                                sx={{ mr: 3 }}
+                                                onClick={() => handleDocPublish(2)}
+                                                variant="outlined"
+                                                id="header-button-publish"
+                                                startIcon={<PublishedWithChangesIcon />}
+                                            ></Button>
+                                        </Tooltip>
+                                    )}
+                                    {unpublish_show && (
+                                        <Tooltip title="Unpublish">
+                                            <Button
+                                                sx={{ mr: 3 }}
+                                                onClick={() => handleDocPublish(1)}
+                                                variant="outlined"
+                                                id="header-button-unpublish"
+                                                startIcon={<UnpublishedIcon />}
+                                            ></Button>
+                                        </Tooltip>
+                                    )}
+                                    {delete_show && (
+                                        <Tooltip title="Delete Document">
+                                            <Button
+                                                sx={{ mr: 3 }}
+                                                style={{ maxWidth: '30px', maxHeight: '30px' }}
+                                                onClick={handleClickOpenConfirmation}
+                                                variant="outlined"
+                                                id="header-button-delete"
+                                                color="error"
+                                                startIcon={<DeleteIcon />}
+                                            ></Button>
+                                        </Tooltip>
+                                    )}
+                                    <ProfileSection />
                                 </Stack>
                             </Box>
-                        </>
-                    )} */}
-                </Grid>
+                        </Grid>
+                    </>
+                ) : (
+                    <Grid item xs={12} md={12}>
+                        <ProfileSection />
+                    </Grid>
+                )}
             </Grid>
 
             <ContextMenuDocumentFile

@@ -18,7 +18,8 @@ export default function componentStyleOverrides(theme) {
                     backgroundImage: 'none'
                 },
                 rounded: {
-                    borderRadius: `${theme?.customization?.borderRadius}px`
+                    // removing global border radius
+                    // borderRadius: `${theme?.customization?.borderRadius}px`
                 }
             }
         },

@@ -32,23 +32,33 @@ const Header = ({ handleLeftDrawerToggle }) => {
             {/* logo & toggler button */}
             <Box
                 sx={{
-                    width: 275,
+                    width: 340,
                     height: 73,
                     // marginTop: isDocPage ? '-5px' : '0px',
                     marginLeft: '-23px',
                     paddingLeft: '15px',
                     display: 'flex',
-                    background: 'linear-gradient(to bottom, white, #eef2f6 )',
+                    // background: 'linear-gradient(to bottom, white, #eef2f6 )',
                     [theme.breakpoints.down('md')]: {
                         width: 'auto'
                     }
                 }}
             >
                 <Stack direction="row" spacing={4}>
-                    <Box component="span" sx={{ display: { xs: 'none', md: 'block' }, flexGrow: 1, pr: 1 }}>
+                    {/* <Box component="span" sx={{ display: { xs: 'block', sm: 'block', md: 'block', lg: 'none', xl: 'none' }, flexGrow: 1, pr: 1 }}>
                         <LogoSection />
-                    </Box>
-                    <ButtonBase sx={{ borderRadius: '12px', overflow: 'hidden', paddingRight: '24px', marginLeft: '5px' }}>
+                    </Box> */}
+                    <ButtonBase
+                        sx={{
+                            display: { xs: 'block', sm: 'block', md: 'block', lg: 'none', xl: 'none' },
+                            flexGrow: 1,
+                            pr: 1,
+                            borderRadius: '12px',
+                            overflow: 'hidden',
+                            paddingRight: '24px',
+                            marginLeft: '5px'
+                        }}
+                    >
                         <Avatar
                             variant="rounded"
                             sx={{

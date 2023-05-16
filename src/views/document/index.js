@@ -399,30 +399,26 @@ const Document = () => {
         });
 
         const pointerDiv = (targetElement) => {
-            const pointerDiv = document.createElement('div');
+            const pointerDiv = document.createElement('hr');
             pointerDiv.classList.add('pointer-div');
             pointerDiv.style.position = 'absolute';
             pointerDiv.style.zIndex = 999;
             pointerDiv.style.pointerEvents = 'none';
-            pointerDiv.style.backgroundColor = 'rgb(35,131,226,0.43)';
             pointerDiv.style.left = '14px';
-            pointerDiv.style.right = '0px';
-            pointerDiv.style.bottom = '-4px';
             pointerDiv.style.width = '70%';
-            pointerDiv.style.height = '3px';
-            pointerDiv.style.marginTop = '1px';
-            pointerDiv.style.marginBottom = '1px';
+            pointerDiv.style.borderTop = '3px solid rgb(35,131,226,0.43)';
+            pointerDiv.style.borderBottom = '3px solid rgb(35,131,226,0.43)';
             const boundingRect = targetElement.getBoundingClientRect();
-
             const containerBoundingRect = quillContainer.getBoundingClientRect();
-
-            pointerDiv.style.top = `${boundingRect.top - containerBoundingRect.top}px`;
+            pointerDiv.style.top = `${boundingRect.top - 8 - containerBoundingRect.top}px`;
+            pointerDiv.style.bottom = `${boundingRect.bottom + containerBoundingRect.bottom}px`;
             quillContainer.appendChild(pointerDiv);
         };
 
         const getDropPosition = (clientY, targetElement) => {
             const boundingRect = targetElement.getBoundingClientRect();
             const dropPosition = (clientY - boundingRect.top) / boundingRect.height;
+
             if (dropPosition <= 1) {
                 return 'before';
             } else {
@@ -683,7 +679,12 @@ const Document = () => {
 
     return (
         <>
-            <MainCard sx={{ paddingTop: '0px', overflow: 'visible' }} title="" onMouseLeave={(ev) => handleMouseLeave(ev)}>
+            <MainCard
+                contentSX={{ borderRadius: '0px', marginTop: { xs: '44px', sm: '44px', md: '0px', lg: '0px', xl: '0px' } }}
+                sx={{ paddingTop: '0px', overflow: 'visible' }}
+                title=""
+                onMouseLeave={(ev) => handleMouseLeave(ev)}
+            >
                 <div className="editor-container">
                     <EditorToolbar toolbarId={'t1'} />
                     {isQuillText == true ? (

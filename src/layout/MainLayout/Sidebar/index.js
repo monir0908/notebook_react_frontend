@@ -39,9 +39,7 @@ const Sidebar = ({ drawerOpen, drawerToggle, window }) => {
     const drawer = (
         <>
             <Box sx={{ display: { xs: 'block', md: 'none' } }}>
-                <Box sx={{ display: 'flex', p: 2, mx: 'auto' }}>
-                    <LogoSection />
-                </Box>
+                <Box sx={{ display: 'flex', p: 2, mx: 'auto' }}>{/* <LogoSection /> */}</Box>
             </Box>
             <BrowserView>
                 <PerfectScrollbar
@@ -82,7 +80,7 @@ const Sidebar = ({ drawerOpen, drawerToggle, window }) => {
                         color: theme.palette.text.primary,
                         borderRight: 'none',
                         [theme.breakpoints.up('md')]: {
-                            top: '88px'
+                            top: '0px'
                         }
                     }
                 }}
