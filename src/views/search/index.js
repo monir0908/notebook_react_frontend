@@ -110,9 +110,9 @@ const Search = () => {
 
     return (
         <>
-            <MainCard sx={{ marginTop: '4px' }} title="">
+            <MainCard sx={{}} title="">
                 <Grid container direction="row" justifyContent="center" alignItems="center">
-                    <Grid item>
+                    <Grid item mt={2}>
                         <Box>
                             <OutlineInputStyle
                                 id="input-search-header"

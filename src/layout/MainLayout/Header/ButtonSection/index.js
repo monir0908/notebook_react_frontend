@@ -286,13 +286,13 @@ const ButtonSection = () => {
             <Grid sx={{ mt: 1, ml: 3 }} container direction="row" justifyContent="space-between" alignItems="flex-start">
                 {isDocPage ? (
                     <>
-                        <Grid item xs={12} md={7} mt={0.5}>
-                            <form style={{ marginTop: '3px' }}>
+                        <Grid item xs={12} md={7}>
+                            <form style={{}}>
                                 <TextField
                                     margin="none"
                                     InputProps={{
                                         disableUnderline: true,
-                                        style: { fontSize: 32, fontWeight: 600, border: 'none', padding: '0px 0px' }
+                                        style: { fontSize: 32, fontWeight: 600 }
                                     }}
                                     fullWidth
                                     id="doc-title"
@@ -303,11 +303,16 @@ const ButtonSection = () => {
                                     name="docTitle"
                                     label=""
                                     variant="standard"
+                                    sx={{
+                                        input: {
+                                            padding: 0
+                                        }
+                                    }}
                                 />
                             </form>
                         </Grid>
                         <Grid item xs={12} md={5}>
-                            <Box sx={{ display: { xs: 'block', md: 'block' } }}>
+                            <Box sx={{ marginBottom: 1, display: { xs: 'block', md: 'block' } }}>
                                 <Stack direction="row" justifyContent="flex-end" spacing={2}>
                                     {upload_show && (
                                         <Tooltip title="Upload File">
@@ -316,6 +321,7 @@ const ButtonSection = () => {
                                                 id="header-button-upload"
                                                 startIcon={<CloudUploadIcon />}
                                                 component="label"
+                                                // sx={{ mb: 0.5 }}
                                             >
                                                 <input
                                                     onChange={handleFileChange}

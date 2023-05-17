@@ -123,10 +123,6 @@ const Document = () => {
             }
         });
 
-        quillContainer.addEventListener('scroll', (event) => {
-            console.log(quillContainer.scrollY);
-        });
-
         quillContainer.addEventListener('mouseover', (event) => {
             const targetElement = event.target;
             const fromElement = event.fromElement;
@@ -143,8 +139,14 @@ const Document = () => {
             ) {
                 switch (targetElement.innerText) {
                     case '\n':
+                        quillContainer.querySelectorAll('.hover-div').forEach((div) => {
+                            div.remove();
+                        });
                         break;
                     case ' ':
+                        quillContainer.querySelectorAll('.hover-div').forEach((div) => {
+                            div.remove();
+                        });
                         break;
 
                     default:
@@ -296,7 +298,6 @@ const Document = () => {
         quillContainer.addEventListener('dragover', (event) => {
             event.preventDefault();
             const targetElement = event.target;
-
             if (event.dataTransfer.types.includes('text/html')) {
                 if (
                     targetElement.tagName === 'H1' ||
@@ -306,18 +307,19 @@ const Document = () => {
                     targetElement.tagName === 'H5' ||
                     targetElement.tagName === 'H6' ||
                     targetElement.tagName === 'LI' ||
-                    targetElement.tagName === 'P'
+                    targetElement.tagName === 'P' ||
+                    targetElement.tagName === 'UL'
                 ) {
                     if (targetElement.tagName == 'LI' || selectedElement.tagName == 'LI') {
                         if (targetElement.tagName == selectedElement.tagName) {
                             removePointerDivs();
-                            pointerDiv(targetElement);
+                            pointerDiv(event.clientY, targetElement);
                         } else {
                             return;
                         }
                     } else {
                         removePointerDivs();
-                        pointerDiv(targetElement);
+                        pointerDiv(event.clientY, targetElement);
                     }
                 } else {
                     removePointerDivs();
@@ -398,7 +400,7 @@ const Document = () => {
             }
         });
 
-        const pointerDiv = (targetElement) => {
+        const pointerDiv = (clientY, targetElement) => {
             const pointerDiv = document.createElement('hr');
             pointerDiv.classList.add('pointer-div');
             pointerDiv.style.position = 'absolute';
@@ -407,22 +409,35 @@ const Document = () => {
             pointerDiv.style.left = '14px';
             pointerDiv.style.width = '70%';
             pointerDiv.style.borderTop = '3px solid rgb(35,131,226,0.43)';
-            pointerDiv.style.borderBottom = '3px solid rgb(35,131,226,0.43)';
-            const boundingRect = targetElement.getBoundingClientRect();
             const containerBoundingRect = quillContainer.getBoundingClientRect();
-            pointerDiv.style.top = `${boundingRect.top - 8 - containerBoundingRect.top}px`;
-            pointerDiv.style.bottom = `${boundingRect.bottom + containerBoundingRect.bottom}px`;
-            quillContainer.appendChild(pointerDiv);
+            console.log('selectedElement.previousSibling', selectedElement.previousSibling);
+            console.log('selectedElement.nextSibling', selectedElement.nextSibling);
+
+            if (targetElement != selectedElement) {
+                if (targetElement.getBoundingClientRect().top + targetElement.getBoundingClientRect().height / 2 < clientY) {
+                    pointerDiv.style.top = `${
+                        targetElement.getBoundingClientRect().top -
+                        8 -
+                        containerBoundingRect.top +
+                        targetElement.getBoundingClientRect().height
+                    }px`;
+                } else {
+                    pointerDiv.style.top = `${targetElement.getBoundingClientRect().top - 8 - containerBoundingRect.top}px`;
+                }
+                quillContainer.appendChild(pointerDiv);
+            }
+
+            // selectedElement.nextSibling.getBoundingClientRect().top + selectedElement.nextSibling.getBoundingClientRect().height / 2 >
+            //     clientY;
+
+            //  clientY < selectedElement.getBoundingClientRect().top
         };
 
         const getDropPosition = (clientY, targetElement) => {
-            const boundingRect = targetElement.getBoundingClientRect();
-            const dropPosition = (clientY - boundingRect.top) / boundingRect.height;
-
-            if (dropPosition <= 1) {
-                return 'before';
-            } else {
+            if (targetElement.getBoundingClientRect().top + targetElement.getBoundingClientRect().height / 2 < clientY) {
                 return 'after';
+            } else {
+                return 'before';
             }
         };
 
@@ -456,6 +471,14 @@ const Document = () => {
     };
 
     const handleMouseLeave = (ev) => {
+        if (reactQuillRef == null) return;
+        if (typeof reactQuillRef.getEditor !== 'function') return;
+        quillRef = reactQuillRef.getEditor();
+        const quillContainer = quillRef.container;
+        quillContainer.querySelectorAll('.hover-div').forEach((div) => {
+            div.remove();
+        });
+
         if (ev) {
             dispatch(
                 documentUpdateOnEditorLeave({
@@ -539,6 +562,8 @@ const Document = () => {
             quillContainer.querySelectorAll('.hover-div').forEach((div) => {
                 div.remove(); // Remove the hover-div only if its data-block-id is not equal to targetId
             });
+            const tooltipEl = document.querySelector('.ql-tooltip');
+            if (tooltipEl) tooltipEl.style.zIndex = '';
         };
     }, [navigate, userToken, documentKey]);
 
@@ -733,8 +758,8 @@ const Document = () => {
                     container
                 >
                     <Grid item xs={12} sm={12} md={12} lg={12} sx={{ my: 1 }}> */}
-                <Divider sx={{ borderBottomWidth: 'medium', borderColor: '#a9a9a9' }} />
-                <Grid container sx={{ my: 1 }}>
+                {/* <Divider sx={{ borderBottomWidth: 'medium', borderColor: '#a9a9a9' }} /> */}
+                <Grid container sx={{ py: 1, borderTop: '1px solid #DAE1E9' }}>
                     {docData != null && (
                         <>
                             <Box sx={{ mt: 1 }}>

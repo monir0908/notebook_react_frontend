@@ -238,7 +238,7 @@ button#header-button-share {
     min-width: 40px !important;
     padding: 0px !important;
     max-height: 40px !important;
-    margin-top: 7px;
+    margin-top: 4px;
 }
 
 button#header-button-share > span {
@@ -250,7 +250,7 @@ label#header-button-upload {
     min-width: 40px !important;
     padding: 0px !important;
     max-height: 40px !important;
-    margin-top: 7px;
+    margin-top: 4px;
 }
 
 label#header-button-upload > span {
@@ -262,7 +262,7 @@ button#header-button-delete {
     min-width: 40px !important;
     padding: 0px !important;
     max-height: 40px !important;
-    margin-top: 7px;
+    margin-top: 4px;
 }
 
 button#header-button-delete > span {
@@ -274,7 +274,7 @@ button#header-button-publish {
     min-width: 40px !important;
     padding: 0px !important;
     max-height: 40px !important;
-    margin-top: 7px;
+    margin-top: 4px;
 }
 
 button#header-button-publish > span {
@@ -286,7 +286,7 @@ button#header-button-unpublish {
     min-width: 40px !important;
     padding: 0px !important;
     max-height: 40px !important;
-    margin-top: 7px;
+    margin-top: 4px;
 }
 
 button#header-button-unpublish > span {

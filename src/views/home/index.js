@@ -108,9 +108,9 @@ const Home = () => {
 
     return (
         <>
-            <MainCard sx={{ marginTop: '4px' }} title="">
+            <MainCard sx={{}} title="">
                 <Grid sx={{ mb: 3 }} container direction="row" justifyContent="space-between" alignItems="center">
-                    <Grid item>
+                    <Grid item mt={2}>
                         <Box>
                             <OutlineInputStyle
                                 id="input-search-header"

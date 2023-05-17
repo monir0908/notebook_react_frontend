@@ -100,7 +100,7 @@ const MainLayout = () => {
                         <Toolbar
                             sx={{
                                 paddingTop: 0,
-                                borderBottom: '2px solid  #a9a9a9'
+                                borderBottom: '.5px solid  #DAE1E9'
                             }}
                         >
                             <Header handleLeftDrawerToggle={handleLeftDrawerToggle} />
