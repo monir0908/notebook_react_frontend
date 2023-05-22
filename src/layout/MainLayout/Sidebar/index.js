@@ -38,9 +38,9 @@ const Sidebar = ({ drawerOpen, drawerToggle, window }) => {
 
     const drawer = (
         <>
-            <Box sx={{ display: { xs: 'block', md: 'none' } }}>
-                <Box sx={{ display: 'flex', p: 2, mx: 'auto' }}>{/* <LogoSection /> */}</Box>
-            </Box>
+            {/* <Box sx={{ display: { xs: 'block', md: 'none' } }}>
+                <Box sx={{ display: 'flex', p: 2, mx: 'auto' }}><LogoSection /></Box>
+            </Box> */}
             <BrowserView>
                 <PerfectScrollbar
                     component="div"
@@ -76,7 +76,7 @@ const Sidebar = ({ drawerOpen, drawerToggle, window }) => {
                 onClose={drawerToggle}
                 sx={{
                     '& .MuiDrawer-paper': {
-                        width: drawerWidth,
+                        width: 'auto',
                         background: '#eef2f6', //theme.palette.background.default,
                         color: theme.palette.text.primary,
                         borderRight: 'none',

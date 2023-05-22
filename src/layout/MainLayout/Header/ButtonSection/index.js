@@ -283,35 +283,33 @@ const ButtonSection = () => {
         <>
             {/* <Box sx={{ display: { xs: 'block', md: 'none' } }}></Box> */}
 
-            <Grid sx={{ mt: 1, ml: 3 }} container direction="row" justifyContent="space-between" alignItems="flex-start">
+            <Grid sx={{ mt: 1 }} container direction="row" justifyContent="space-between" alignItems="flex-start">
                 {isDocPage ? (
                     <>
-                        <Grid item xs={12} md={7}>
-                            <form style={{}}>
-                                <TextField
-                                    margin="none"
-                                    InputProps={{
-                                        disableUnderline: true,
-                                        style: { fontSize: 32, fontWeight: 600 }
-                                    }}
-                                    fullWidth
-                                    id="doc-title"
-                                    className="title-text"
-                                    value={docTitle}
-                                    onChange={onTitleChange}
-                                    onBlur={onTitleBlur}
-                                    name="docTitle"
-                                    label=""
-                                    variant="standard"
-                                    sx={{
-                                        input: {
-                                            padding: 0
-                                        }
-                                    }}
-                                />
-                            </form>
+                        <Grid item xs={12} sm={7} md={7} lg={7} xl={7}>
+                            <TextField
+                                margin="none"
+                                InputProps={{
+                                    disableUnderline: true,
+                                    style: { fontSize: 32, fontWeight: 600 }
+                                }}
+                                fullWidth
+                                id="doc-title"
+                                className="title-text"
+                                value={docTitle}
+                                onChange={onTitleChange}
+                                onBlur={onTitleBlur}
+                                name="docTitle"
+                                label=""
+                                variant="standard"
+                                sx={{
+                                    input: {
+                                        padding: 0
+                                    }
+                                }}
+                            />
                         </Grid>
-                        <Grid item xs={12} md={5}>
+                        <Grid item xs={12} sm={5} md={5} lg={5} xl={5}>
                             <Box sx={{ marginBottom: 1, display: { xs: 'block', md: 'block' } }}>
                                 <Stack direction="row" justifyContent="flex-end" spacing={2}>
                                     {upload_show && (

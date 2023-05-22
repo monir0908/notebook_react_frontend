@@ -59,7 +59,8 @@
     min-height: 80vh;
     padding: 0px 5px !important;
     margin-left: 10px;
-    line-height: 1.63 !important;
+    /* line-height: 1.63 !important; */
+    line-height: 30px !important; /*need fixed line height for proper alignment 6.icon relative to the text*/
     tab-size: 2 !important;
     /* margin-top: 25px; */
 }
@@ -162,26 +163,32 @@
 
 .ql-bubble .ql-editor h1 {
     font-size: 32px !important;
+    padding: '3px 0px';
 }
 
 .ql-bubble .ql-editor h2 {
     font-size: 24px !important;
+    padding: '3px 0px';
 }
 
 .ql-bubble .ql-editor h3 {
     font-size: 18.72px !important;
+    padding: '3px 0px';
 }
 
 .ql-bubble .ql-editor h4 {
     font-size: 16px !important;
+    padding: '3px 0px';
 }
 
 .ql-bubble .ql-editor h5 {
     font-size: 15px !important;
+    padding: '3px 0px';
 }
 
 .ql-bubble .ql-editor h6 {
     font-size: 10.72px !important;
+    padding: '3px 0px';
 }
 
 .ql-cursor .ql-cursor-caret-container {
@@ -223,6 +230,11 @@
 .image-actions__toolbar {
     font: 0px Arial, Helvetica, sans-serif !important;
 }
+
+ .quill .quill-editor .ql-container .ql-bubble .ql-editor > p {
+     padding-left: '2px !important';
+     padding-right: '2px !important';
+ }
 
 /* .ql-container {
     z-index: 1101;

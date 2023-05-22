@@ -124,8 +124,12 @@ const Document = () => {
         });
 
         quillContainer.addEventListener('mouseover', (event) => {
+            console.log('mouseover event', event);
+            const containerBoundingRect = quillContainer.getBoundingClientRect();
             const targetElement = event.target;
+            const hoverDiv = document.createElement('div');
             const fromElement = event.fromElement;
+            console.log('mouseover targetElement.tagName', targetElement.tagName);
 
             if (
                 targetElement.tagName === 'H1' ||
@@ -137,22 +141,27 @@ const Document = () => {
                 targetElement.tagName === 'LI' ||
                 targetElement.tagName === 'P'
             ) {
-                switch (targetElement.innerText) {
-                    case '\n':
+                targetElement.addEventListener('mouseenter', (ev) => {
+                    console.log('mouseenter targetElement.tagName', targetElement.tagName);
+                    console.log('mouseenter event', ev);
+                    console.log('targetElement.innerText', targetElement.innerText);
+                    // targetElement.style.border = '1px solid red';
+                    if (targetElement.innerText == '\n') {
                         quillContainer.querySelectorAll('.hover-div').forEach((div) => {
                             div.remove();
                         });
-                        break;
-                    case ' ':
+                    } else if (targetElement.innerText == ' ') {
                         quillContainer.querySelectorAll('.hover-div').forEach((div) => {
                             div.remove();
                         });
-                        break;
-
-                    default:
+                    } else if (targetElement.innerText == '&#xFEFF;') {
+                        quillContainer.querySelectorAll('.hover-div').forEach((div) => {
+                            div.remove();
+                        });
+                    } else if (targetElement.innerText) {
+                        console.log('m inside');
                         if (targetElement.querySelector('img') == null) {
                             selectedElement = targetElement;
-                            const hoverDiv = document.createElement('div');
                             hoverDiv.classList.add('hover-div');
                             if (targetElement.tagName === 'SPAN') {
                                 boundingRect = fromElement.getBoundingClientRect();
@@ -165,14 +174,115 @@ const Document = () => {
                             });
                             let extraTop = 0;
 
-                            if (targetElement.tagName === 'H1' || targetElement.tagName === 'H2') {
-                                extraTop = 10;
+                            if (targetElement.tagName === 'H1') {
+                                extraTop = -4;
+                                hoverDiv.style.top = `${boundingRect.top - containerBoundingRect.top + extraTop}px`;
+                            } else if (targetElement.tagName === 'H2') {
+                                extraTop = -1;
+                                hoverDiv.style.top = `${boundingRect.top - containerBoundingRect.top + extraTop}px`;
+                            } else if (targetElement.tagName === 'H3') {
+                                extraTop = 0;
+                                hoverDiv.style.top = `${boundingRect.top - containerBoundingRect.top + extraTop}px`;
+                            } else if (targetElement.tagName === 'LI') {
+                                let adjustIconHeight = 0;
+                                let childNodes = targetElement.childNodes;
+                                if (childNodes) {
+                                    // console.log('childNodes', childNodes);
+                                    if (childNodes[0].tagName == 'SPAN') {
+                                        console.log('m if');
+                                        console.log('childNodes[0].tagName', childNodes[0].tagName);
+                                        console.log('childNodes[0].style.fontSize', childNodes[0].style.fontSize);
+
+                                        if (childNodes[0].style.fontSize == '16px') {
+                                            adjustIconHeight = 1;
+                                        } else if (childNodes[0].style.fontSize == '18px') {
+                                            adjustIconHeight = 0;
+                                        } else if (childNodes[0].style.fontSize == '22px') {
+                                            adjustIconHeight = -1;
+                                        }
+                                        if (childNodes[0].style.fontSize == '26px') {
+                                            adjustIconHeight = -3;
+                                        }
+                                    } else {
+                                        console.log('m else');
+                                        console.log('targetElement.clientHeight', targetElement.clientHeight);
+                                        console.log('clientHeight modulo', ev.target.clientHeight % 30);
+
+                                        if (ev.target.clientHeight % 30 == 0) {
+                                            adjustIconHeight = 1;
+                                            console.log('16px');
+                                        } else if (ev.target.clientHeight % 30 == 1) {
+                                            adjustIconHeight = 1;
+                                            console.log('18px');
+                                        } else if (ev.target.clientHeight % 30 == 2) {
+                                            adjustIconHeight = 3;
+                                            console.log('22px');
+                                        } else if (ev.target.clientHeight == 33 && ev.target.clientHeight % 30 == 3) {
+                                            console.log('26');
+                                            adjustIconHeight = 4;
+                                        } else if (ev.target.clientHeight > 33 && ev.target.clientHeight % 30 == 3) {
+                                            console.log('26');
+                                            adjustIconHeight = 4.5;
+                                        } else if (ev.target.clientHeight % 30 > 3) {
+                                            console.log('26');
+                                            adjustIconHeight = 2;
+                                        }
+                                    }
+                                }
+                                hoverDiv.style.top = `${
+                                    ev.target.getBoundingClientRect().top - containerBoundingRect.top + adjustIconHeight
+                                }px`;
+
+                                console.log('final adjustIconHeight', adjustIconHeight);
+                            } else if (targetElement.tagName === 'P') {
+                                let adjustIconHeight = 0;
+
+                                let childNodes = targetElement.childNodes;
+                                if (childNodes) {
+                                    if (childNodes[0].tagName == 'SPAN') {
+                                        console.log('m if');
+
+                                        console.log('targetElement.clientHeight', targetElement.clientHeight);
+
+                                        if (childNodes[0].style.fontSize == '16px') {
+                                            adjustIconHeight = 0;
+                                        } else if (childNodes[0].style.fontSize == '18px') {
+                                            adjustIconHeight = 6;
+                                        } else if (childNodes[0].style.fontSize == '22px') {
+                                            adjustIconHeight = 6;
+                                        }
+                                        if (childNodes[0].style.fontSize == '26px') {
+                                            adjustIconHeight = 3;
+                                        }
+                                    } else {
+                                        console.log('m else');
+                                        console.log('targetElement.clientHeight', targetElement.clientHeight);
+                                        console.log('clientHeight modulo', ev.target.clientHeight % 32);
+
+                                        if (ev.target.clientHeight == 32) {
+                                            adjustIconHeight = 3;
+                                        } else if (ev.target.clientHeight > 32 && ev.target.clientHeight % 32 == 0) {
+                                            adjustIconHeight = 7;
+                                        } else if (ev.target.clientHeight % 32 == 1) {
+                                            adjustIconHeight = 4;
+                                        } else if (ev.target.clientHeight % 32 == 2) {
+                                            adjustIconHeight = 4;
+                                        } else if (ev.target.clientHeight % 32 == 3) {
+                                            adjustIconHeight = 4;
+                                        } else if (ev.target.clientHeight == 36 && ev.target.clientHeight % 32 == 4) {
+                                            adjustIconHeight = 6;
+                                        } else if (ev.target.clientHeight > 36 && ev.target.clientHeight % 32 == 4) {
+                                            adjustIconHeight = 5;
+                                        } else if (ev.target.clientHeight % 32 > 4) {
+                                            adjustIconHeight = 4;
+                                        }
+                                    }
+                                }
+
+                                hoverDiv.style.top = `${boundingRect.top - containerBoundingRect.top + adjustIconHeight}px`;
                             }
 
                             hoverDiv.style.cursor = 'grab';
-
-                            const containerBoundingRect = quillContainer.getBoundingClientRect();
-                            hoverDiv.style.top = `${boundingRect.top - containerBoundingRect.top - 2 + extraTop}px`;
 
                             if (targetElement.tagName === 'LI') {
                                 //targetElement.parentNode.setAttribute('data-block-id', uuid);
@@ -199,14 +309,16 @@ const Document = () => {
 
                             quillContainer.appendChild(hoverDiv);
                         }
-
-                        break;
-                }
+                    }
+                });
             }
         });
 
         quillContainer.addEventListener('mouseout', (event) => {
             const targetElement = event.target;
+            console.log('mouseout event', event);
+            console.log('mouseout  targetElement.tagName', targetElement.tagName);
+
             if (
                 targetElement.tagName === 'H1' ||
                 targetElement.tagName === 'H2' ||
@@ -215,7 +327,8 @@ const Document = () => {
                 targetElement.tagName === 'H5' ||
                 targetElement.tagName === 'H6' ||
                 targetElement.tagName === 'LI' ||
-                targetElement.tagName === 'P'
+                targetElement.tagName === 'EM' ||
+                targetElement.tagName === 'STRONG'
             ) {
                 targetElement.classList.remove('hand-cursor'); // remove the CSS class
                 targetElement.removeAttribute('draggable');
@@ -329,6 +442,10 @@ const Document = () => {
             }
         });
 
+        quillContainer.addEventListener('dragenter', (event) => {
+            event.preventDefault();
+        });
+
         quillContainer.addEventListener('drop', (event) => {
             event.preventDefault();
             quillContainer.querySelectorAll('.hover-div').forEach((div) => {
@@ -410,8 +527,6 @@ const Document = () => {
             pointerDiv.style.width = '70%';
             pointerDiv.style.borderTop = '3px solid rgb(35,131,226,0.43)';
             const containerBoundingRect = quillContainer.getBoundingClientRect();
-            console.log('selectedElement.previousSibling', selectedElement.previousSibling);
-            console.log('selectedElement.nextSibling', selectedElement.nextSibling);
 
             if (targetElement != selectedElement) {
                 if (targetElement.getBoundingClientRect().top + targetElement.getBoundingClientRect().height / 2 < clientY) {
@@ -706,7 +821,7 @@ const Document = () => {
         <>
             <MainCard
                 contentSX={{ borderRadius: '0px', marginTop: { xs: '44px', sm: '44px', md: '0px', lg: '0px', xl: '0px' } }}
-                sx={{ paddingTop: '0px', overflow: 'visible' }}
+                sx={{ paddingTop: '0px', overflow: 'visible', border: 'none' }}
                 title=""
                 onMouseLeave={(ev) => handleMouseLeave(ev)}
             >
