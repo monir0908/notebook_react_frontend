@@ -32,7 +32,7 @@ const Header = ({ handleLeftDrawerToggle }) => {
             {/* logo & toggler button */}
             <Box
                 sx={{
-                    width: 340,
+                    width: { xs: 284, sm: 323, md: 323, lg: 300, xl: 300 },
                     height: 73,
                     // marginTop: isDocPage ? '-5px' : '0px',
                     marginLeft: '-23px',
@@ -83,8 +83,8 @@ const Header = ({ handleLeftDrawerToggle }) => {
 
             {/* header search */}
             {/* <SearchSection /> */}
-            <Box sx={{ flexGrow: 1 }} />
-            <Box sx={{ flexGrow: 1 }} />
+            {/* <Box sx={{ flexGrow: 1 }} />
+            <Box sx={{ flexGrow: 1 }} /> */}
 
             {/* notification & profile */}
             {/* <NotificationSection /> */}

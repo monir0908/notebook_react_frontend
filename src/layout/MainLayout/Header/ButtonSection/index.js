@@ -282,7 +282,6 @@ const ButtonSection = () => {
     return (
         <>
             {/* <Box sx={{ display: { xs: 'block', md: 'none' } }}></Box> */}
-
             <Grid sx={{ mt: 1 }} container direction="row" justifyContent="space-between" alignItems="flex-start">
                 {isDocPage ? (
                     <>
@@ -304,7 +303,9 @@ const ButtonSection = () => {
                                 variant="standard"
                                 sx={{
                                     input: {
-                                        padding: 0
+                                        ml: { xs: 0, sm: 0, md: 5, lg: 4, xl: '36px' },
+                                        padding: 0,
+                                        textOverflow: 'ellipsis'
                                     }
                                 }}
                             />

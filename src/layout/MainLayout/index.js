@@ -85,7 +85,7 @@ const MainLayout = () => {
                 <Sidebar drawerOpen={!matchDownMd ? leftDrawerOpened : !leftDrawerOpened} drawerToggle={handleLeftDrawerToggle} />
 
                 {/* main content */}
-                <Main theme={theme} open={leftDrawerOpened}>
+                <Main theme={theme} open={leftDrawerOpened} sx={{ backgroundColor: '#fff' }}>
                     {/* header */}
                     <AppBar
                         enableColorOnDark

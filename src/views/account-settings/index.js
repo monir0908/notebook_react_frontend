@@ -116,7 +116,7 @@ const AccountSettings = () => {
     return (
         <>
             {userInfo != null && (
-                <MainCard title="Account Settings">
+                <MainCard sx={{ border: 'none' }} title="Account Settings">
                     <Grid container spacing={gridSpacing}>
                         <Grid item md={12}>
                             <Card

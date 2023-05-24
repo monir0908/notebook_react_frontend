@@ -59,8 +59,9 @@
     min-height: 80vh;
     padding: 0px 5px !important;
     margin-left: 10px;
-    /* line-height: 1.63 !important; */
-    line-height: 30px !important; /*need fixed line height for proper alignment 6.icon relative to the text*/
+    /* line-height: 1.13 !important; */
+    /*need fixed line height for proper alignment 6.icon relative to the text*/
+    line-height: 30px !important;
     tab-size: 2 !important;
     /* margin-top: 25px; */
 }

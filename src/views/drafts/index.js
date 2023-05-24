@@ -80,7 +80,7 @@ const Drafts = () => {
     }, [collectionSelected, time]);
     return (
         <>
-            <MainCard title="">
+            <MainCard sx={{ border: 'none' }} title="">
                 <Typography sx={{ p: 2 }} variant="h1" component="h2">
                     Drafts
                 </Typography>

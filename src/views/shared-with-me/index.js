@@ -41,7 +41,7 @@ const SharedWithMe = () => {
     };
     return (
         <>
-            <MainCard title="">
+            <MainCard sx={{ border: 'none' }} title="">
                 <Typography sx={{ p: 2 }} variant="h1">
                     Shared With Me
                 </Typography>
