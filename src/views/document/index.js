@@ -1,10 +1,11 @@
 // material-ui
 import React, { useState, useEffect } from 'react';
-import { v4 as uuidv4 } from 'uuid';
 import LoadingBar from 'react-top-loading-bar';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { documentDetails, documentFileDelete } from 'store/features/document/documentActions';
+import { collectionList } from 'store/features/collection/collectionActions';
+
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
 import API from 'helpers/jwt.interceptor';
@@ -18,12 +19,8 @@ import EditorToolbar, { modules, formats } from './EditorToolbar';
 import 'react-quill/dist/quill.snow.css';
 import 'react-quill/dist/quill.bubble.css';
 import { colors } from 'ui-component/colors';
-import Fab from '@mui/material/Fab';
 // assets
-import { IconDeviceFloppy } from '@tabler/icons';
-
-import { AppBar, Divider, TextField, Button, Grid, Typography, Box, IconButton, Stack, useMediaQuery } from '@mui/material';
-import Tooltip from '@mui/material/Tooltip';
+import { TextField, Grid, Typography, Box, IconButton, Stack } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 // third party
 import { format } from 'date-fns';
@@ -32,31 +29,22 @@ import DescriptionIcon from '@mui/icons-material/Description';
 import { updateDocumentTitle } from 'store/features/collection/collectionSlice';
 import ConfirmationDialog from 'layout/components/confirmationDialog';
 import ErrorDialog from 'layout/components/errorDialog';
-import { documentUpdate, documentUpdateOnEditorLeave } from 'store/features/document/documentActions';
-import { collectionList } from 'store/features/collection/collectionActions';
+import { documentUpdateOnEditorLeave } from 'store/features/document/documentActions';
 import { updateDoc, updateDocId } from 'store/features/header/headerSlice';
 import { SET_LOADER } from 'store/actions';
 import ContextMenuDocumentFile from 'layout/components/contextMenuDocumentFile';
-import ReactTimeAgo from 'react-time-ago';
 import ContextMenuEditor from 'layout/components/contextMenuEditor';
-
 import { updateViewers } from 'store/features/header/headerSlice';
-
 import IconPdf from 'ui-component/custom-icon/IconPdf';
 import IconXls from 'ui-component/custom-icon/IconXls';
 import IconDocx from 'ui-component/custom-icon/IconDocx';
 import IconPptx from 'ui-component/custom-icon/IconPptx';
 import IconImg from 'ui-component/custom-icon/IconImg';
 import IconGif from 'ui-component/custom-icon/IconGif';
-import DeleteIcon from '@mui/icons-material/Delete';
-import ShareIcon from '@mui/icons-material/Share';
-
-let img = document.createElement('img');
-img.src = 'https://www.google.com/intl/en_ALL/mapfiles/closedhand.cur';
 
 const Document = () => {
-    const theme = useTheme();
     const dispatch = useDispatch();
+    const { doc } = useSelector((state) => state.header);
     const { userInfo, userToken } = useSelector((state) => state.auth);
     const docData = useSelector((state) => state.document.data);
     const { viewers } = useSelector((state) => state.header);
@@ -67,11 +55,14 @@ const Document = () => {
     const [progress, setProgress] = useState(0);
     const [isQuillText, setIsQuillText] = useState(true);
     const [selectedFile, setSelectedFile] = useState(null);
+    const [docTitle, setDocTitle] = useState('');
+    const [isDocPage, setIsDocPage] = useState(false);
+    let currentUrl = location.pathname;
+    const urlArr = currentUrl.split('/');
     let bodyText = '';
 
     let selectedElement = null;
     let boundingRect = null;
-    let browserWidth = 0;
     const getDocumentDetails = async () => {
         const res = await API.get(`document/${documentKey}`);
         if (res) {
@@ -91,10 +82,6 @@ const Document = () => {
 
     let quillRef = null;
     let reactQuillRef = null;
-    let quillText;
-
-    //let isLoadedOnce = true;
-    //let isQuillText = true;
 
     const getRamndomColors = () => {
         return colors[Math.floor(Math.random() * colors.length)];
@@ -127,13 +114,11 @@ const Document = () => {
         });
 
         quillContainer.addEventListener('mouseover', (event) => {
-            // console.log('mouseover event', event);
             const containerBoundingRect = quillContainer.getBoundingClientRect();
             const targetElement = event.target;
             const hoverDiv = document.createElement('div');
+            hoverDiv.style.left = -10;
             const fromElement = event.fromElement;
-            // console.log('mouseover targetElement.tagName', targetElement.tagName);
-
             if (
                 targetElement.tagName === 'H1' ||
                 targetElement.tagName === 'H2' ||
@@ -145,10 +130,6 @@ const Document = () => {
                 targetElement.tagName === 'P'
             ) {
                 targetElement.addEventListener('mouseenter', (ev) => {
-                    // console.log('mouseenter targetElement.tagName', targetElement.tagName);
-                    // console.log('mouseenter event', ev);
-                    // console.log('targetElement.innerText', targetElement.innerText);
-                    // targetElement.style.border = '1px solid red';
                     if (targetElement.innerText == '\n') {
                         quillContainer.querySelectorAll('.hover-div').forEach((div) => {
                             div.remove();
@@ -162,7 +143,6 @@ const Document = () => {
                             div.remove();
                         });
                     } else if (targetElement.innerText) {
-                        // console.log('m inside');
                         if (targetElement.querySelector('img') == null) {
                             selectedElement = targetElement;
                             hoverDiv.classList.add('hover-div');
@@ -178,117 +158,22 @@ const Document = () => {
                             let extraTop = 0;
 
                             if (targetElement.tagName === 'H1') {
-                                extraTop = -4;
+                                extraTop = 12;
                                 hoverDiv.style.top = `${boundingRect.top - containerBoundingRect.top + extraTop}px`;
                             } else if (targetElement.tagName === 'H2') {
-                                extraTop = -2;
+                                extraTop = 8;
                                 hoverDiv.style.top = `${boundingRect.top - containerBoundingRect.top + extraTop}px`;
                             } else if (targetElement.tagName === 'H3') {
-                                extraTop = 0;
+                                extraTop = 6;
                                 hoverDiv.style.top = `${boundingRect.top - containerBoundingRect.top + extraTop}px`;
                             } else if (targetElement.tagName === 'LI') {
-                                let adjustIconHeight = 0;
-                                let childNodes = targetElement.childNodes;
-                                if (childNodes) {
-                                    // console.log('childNodes', childNodes);
-                                    if (childNodes[0].tagName == 'SPAN') {
-                                        // console.log('m if');
-                                        // console.log('childNodes[0].tagName', childNodes[0].tagName);
-                                        // console.log('childNodes[0].style.fontSize', childNodes[0].style.fontSize);
-
-                                        if (childNodes[0].style.fontSize == '16px') {
-                                            adjustIconHeight = 1;
-                                        } else if (childNodes[0].style.fontSize == '18px') {
-                                            adjustIconHeight = 0;
-                                        } else if (childNodes[0].style.fontSize == '22px') {
-                                            adjustIconHeight = -1;
-                                        }
-                                        if (childNodes[0].style.fontSize == '26px') {
-                                            adjustIconHeight = -3;
-                                        }
-                                    } else {
-                                        // console.log('m else');
-                                        // console.log('targetElement.clientHeight', targetElement.clientHeight);
-                                        // console.log('clientHeight modulo', ev.target.clientHeight % 30);
-
-                                        if (ev.target.clientHeight % 30 == 0) {
-                                            adjustIconHeight = 1;
-                                            // console.log('16px');
-                                        } else if (ev.target.clientHeight % 30 == 1) {
-                                            adjustIconHeight = 1;
-                                            // console.log('18px');
-                                        } else if (ev.target.clientHeight % 30 == 2) {
-                                            adjustIconHeight = 3;
-                                            // console.log('22px');
-                                        } else if (ev.target.clientHeight == 33 && ev.target.clientHeight % 30 == 3) {
-                                            // console.log('26');
-                                            adjustIconHeight = 4;
-                                        } else if (ev.target.clientHeight > 33 && ev.target.clientHeight % 30 == 3) {
-                                            // console.log('26');
-                                            adjustIconHeight = 4.5;
-                                        } else if (ev.target.clientHeight % 30 > 3) {
-                                            // console.log('26');
-                                            adjustIconHeight = 2;
-                                        }
-                                    }
-                                }
-                                hoverDiv.style.top = `${
-                                    ev.target.getBoundingClientRect().top - containerBoundingRect.top + adjustIconHeight
-                                }px`;
-
-                                // console.log('final adjustIconHeight', adjustIconHeight);
-                            } else if (targetElement.tagName === 'P') {
-                                let adjustIconHeight = 0;
-
-                                let childNodes = targetElement.childNodes;
-                                if (childNodes) {
-                                    if (childNodes[0].tagName == 'SPAN') {
-                                        // console.log('m if');
-
-                                        // console.log('targetElement.clientHeight', targetElement.clientHeight);
-
-                                        if (childNodes[0].style.fontSize == '16px') {
-                                            adjustIconHeight = 0;
-                                        } else if (childNodes[0].style.fontSize == '18px') {
-                                            adjustIconHeight = 2;
-                                        } else if (childNodes[0].style.fontSize == '22px') {
-                                            adjustIconHeight = 6;
-                                        }
-                                        if (childNodes[0].style.fontSize == '26px') {
-                                            adjustIconHeight = 3;
-                                        }
-                                    } else {
-                                        // console.log('m else');
-                                        // console.log('targetElement.clientHeight', targetElement.clientHeight);
-                                        // console.log('clientHeight modulo', ev.target.clientHeight % 32);
-
-                                        if (ev.target.clientHeight == 32) {
-                                            adjustIconHeight = 3;
-                                        } else if (ev.target.clientHeight > 32 && ev.target.clientHeight % 32 == 0) {
-                                            adjustIconHeight = 5;
-                                        } else if (ev.target.clientHeight % 32 == 1) {
-                                            adjustIconHeight = 4;
-                                        } else if (ev.target.clientHeight % 32 == 2) {
-                                            adjustIconHeight = 4;
-                                        } else if (ev.target.clientHeight % 32 == 3) {
-                                            adjustIconHeight = 4;
-                                        } else if (ev.target.clientHeight == 36 && ev.target.clientHeight % 32 == 4) {
-                                            adjustIconHeight = 6;
-                                        } else if (ev.target.clientHeight > 36 && ev.target.clientHeight % 32 == 4) {
-                                            adjustIconHeight = 5;
-                                        } else if (ev.target.clientHeight % 32 > 4) {
-                                            adjustIconHeight = 3.5;
-                                        }
-                                    }
-                                }
-
-                                hoverDiv.style.top = `${boundingRect.top - containerBoundingRect.top + adjustIconHeight}px`;
+                                extraTop = 7;
+                                hoverDiv.style.top = `${boundingRect.top - containerBoundingRect.top + extraTop}px`;
                             }
 
                             hoverDiv.style.cursor = 'grab';
 
                             if (targetElement.tagName === 'LI') {
-                                //targetElement.parentNode.setAttribute('data-block-id', uuid);
                                 if (targetElement.classList.contains('ql-indent-1')) {
                                     hoverDiv.style.left = '20px';
                                 } else if (targetElement.classList.contains('ql-indent-2')) {
@@ -319,9 +204,6 @@ const Document = () => {
 
         quillContainer.addEventListener('mouseout', (event) => {
             const targetElement = event.target;
-            // console.log('mouseout event', event);
-            // console.log('mouseout  targetElement.tagName', targetElement.tagName);
-
             if (
                 targetElement.tagName === 'H1' ||
                 targetElement.tagName === 'H2' ||
@@ -335,7 +217,6 @@ const Document = () => {
             ) {
                 targetElement.classList.remove('hand-cursor'); // remove the CSS class
                 targetElement.removeAttribute('draggable');
-
                 quillContainer.querySelectorAll('.pointer-div').forEach((div) => {
                     div.remove(); // Remove the hover-div only if its data-block-id is not equal to targetId
                 });
@@ -366,7 +247,6 @@ const Document = () => {
                 // Do something on mousedown of hover-div with data-block-id=1
                 targetElement.style.cursor = 'grabbing';
                 targetElement.setAttribute('draggable', 'true');
-                //selectedElement.setAttribute('draggable', 'true');
 
                 const selection = window.getSelection();
                 selection.removeAllRanges();
@@ -391,18 +271,6 @@ const Document = () => {
 
                     event.dataTransfer.setDragImage(selectedElement, 0, 0);
                 });
-
-                // targetElement.addEventListener('mousemove', (event, node) => {
-                //     console.log('mousemove event', event);
-
-                //     event.dataTransfer.setDragImage(img, 0, 0);
-
-                //     const dt = event.dataTransfer;
-                //     dt.addElement(node);
-                //     quillContainer.appendChild(img);
-
-                //     console.log('mousemove targetElement.style.cursor', targetElement.style.cursor);
-                // });
             }
         };
 
@@ -538,7 +406,7 @@ const Document = () => {
             pointerDiv.style.position = 'absolute';
             pointerDiv.style.zIndex = 999;
             pointerDiv.style.pointerEvents = 'none';
-            pointerDiv.style.left = '14px';
+            pointerDiv.style.left = '10px';
             pointerDiv.style.width = '70%';
             pointerDiv.style.borderTop = '3px solid rgb(35,131,226,0.43)';
             const containerBoundingRect = quillContainer.getBoundingClientRect();
@@ -588,7 +456,6 @@ const Document = () => {
                         left: editorBounds.left + bounds.left + 10
                     });
                     handleEditorContextMenuPress();
-                    //  quillRef.focus();
                 }
             }
         );
@@ -704,12 +571,18 @@ const Document = () => {
         };
     }, [docBody, selectedElement]);
 
-    useEffect(() => {}, [docData]);
+    useEffect(() => {
+        if (urlArr[1] == 'document') {
+            setDocTitle(doc.doc_title);
+            setIsDocPage(true);
+        } else {
+            setIsDocPage(false);
+        }
+    }, [doc]);
 
     const handleSubmit = async () => {
         try {
             const res = await API.patch(`document/update-doc/${documentKey}`, {
-                // doc_title: docTitle,
                 doc_body: docBody ?? bodyText
             });
             if (res.data.state == 'success') {
@@ -720,19 +593,12 @@ const Document = () => {
         }
     };
 
-    const fabStyle = {
-        position: 'fixed',
-        bottom: 25,
-        right: 36
-    };
-
     //////////////////////////// editor context menu //////////////////////////////
 
     const [menuPosition, setMenuPosition] = useState(null);
     const [range, setRange] = useState(null);
     const [context, setContext] = useState(null);
     const [editorAnchorEl, setEditorAnchorEl] = useState(false);
-    const openEditorContextMenu = Boolean(editorAnchorEl);
     const handleEditorContextMenuPress = () => {
         setEditorAnchorEl(true);
     };
@@ -830,19 +696,97 @@ const Document = () => {
         setOpenFileConfirmation(false);
     };
 
+    const onTitleChange = (e) => {
+        setDocTitle(e.target.value);
+        dispatch(updateDocumentTitle({ document_key: doc.doc_key, doc_title: e.target.value }));
+    };
+
+    const onTitleBlur = (e) => {
+        setDocTitle(e.target.value);
+        dispatch(
+            documentUpdateOnEditorLeave({
+                url: 'document/update-doc/' + doc.doc_key,
+                navigate,
+                data: {
+                    doc_title: e.target.value
+                },
+                extraData: {}
+            })
+        );
+    };
+
     return (
         <>
+            {isDocPage ? (
+                <Grid
+                    container
+                    xs={12}
+                    sm={12}
+                    md={12}
+                    lg={12}
+                    xl={12}
+                    mt={{ xs: 2, sm: 2, md: 0.5, lg: 0.5, xl: 0.5 }}
+                    sx={{
+                        width: { xs: '100%', sm: '400px', md: '400px', lg: '1108px', xl: '1108px' }
+                    }}
+                >
+                    <TextField
+                        margin="none"
+                        InputProps={{
+                            disableUnderline: true,
+
+                            style: {}
+                        }}
+                        fullWidth
+                        id="doc-title"
+                        className="title-text"
+                        value={docTitle}
+                        onChange={onTitleChange}
+                        onBlur={onTitleBlur}
+                        name="docTitle"
+                        label=""
+                        variant="standard"
+                        sx={{
+                            input: {
+                                fontSize: { xs: '15px', sm: '28px', md: '32px', lg: '32px', xl: '32px' },
+                                fontWeight: 700,
+                                lineHeight: '45.76px',
+                                ml: { xs: 1.5, sm: 9, md: 1, lg: 3.5, xl: 8.5 },
+                                padding: 0,
+                                textOverflow: 'ellipsis'
+                            }
+                        }}
+                    />
+                </Grid>
+            ) : (
+                ''
+            )}
             <MainCard
                 contentSX={{
+                    margin: '0 auto',
                     padding: '0px !important',
                     borderRadius: '0px',
                     marginTop: { xs: '0px', sm: '0px', md: '0px', lg: '0px', xl: '0px' }
                 }}
-                sx={{ border: 'none', padding: '0px !important', paddingTop: '0px', overflow: 'visible' }}
+                sx={{
+                    margin: '0 auto',
+                    marginTop: 2,
+                    width: { xs: '100%', sm: '600px', md: '720px', lg: '1108px', xl: '1108px' },
+                    border: 'none',
+                    padding: '0px !important',
+                    paddingTop: '0px',
+                    overflow: 'visible'
+                }}
                 title=""
                 onMouseLeave={(ev) => handleMouseLeave(ev)}
             >
-                <Box className="editor-container" sx={{ padding: { xs: '0px 52px', sm: '0px 44px', md: '0px', lg: '0px', xl: '0px' } }}>
+                <Box
+                    className="editor-container"
+                    sx={{
+                        margin: '0 auto',
+                        width: { xs: '100%', sm: '100%', md: '720px', lg: '1108px', xl: '1108px' }
+                    }}
+                >
                     <EditorToolbar toolbarId={'t1'} />
                     {isQuillText == true ? (
                         <ReactQuill
@@ -876,102 +820,6 @@ const Document = () => {
                         />
                     )}
                 </Box>
-                {/* <Divider sx={{ borderBottomWidth: 'medium', borderColor: '#a9a9a9' }} /> */}
-
-                {docData != null && <>{docData.attachments != null && docData.attachments.length > 0 && <br />}</>}
-                {/* <Divider sx={{ borderBottomWidth: 'medium', borderColor: '#a9a9a9' }} /> */}
-                {/* <Grid
-                    style={{
-                        backgroundColor: 'white',
-                        top: 'auto',
-                        bottom: 0
-                    }}
-                    position="fixed"
-                    container
-                >
-                    <Grid item xs={12} sm={12} md={12} lg={12} sx={{ my: 1 }}> */}
-                {/* <Divider sx={{ borderBottomWidth: 'medium', borderColor: '#a9a9a9' }} /> */}
-                <Grid container sx={{ py: 1, borderTop: '1px solid #DAE1E9' }}>
-                    {docData != null && (
-                        <>
-                            <Box sx={{ mt: 1 }}>
-                                <Stack direction="row" spacing={1}>
-                                    {docData.attachments != null &&
-                                        docData.attachments.length > 0 &&
-                                        docData.attachments.map((item, index) => (
-                                            <IconButton
-                                                onClick={(event) => handleContextMenuClick(event, item)}
-                                                key={item.id}
-                                                color="primary"
-                                                aria-label="upload document"
-                                                component="label"
-                                            >
-                                                {(() => {
-                                                    switch (item.file_extension) {
-                                                        case '.pdf':
-                                                            return <IconPdf fontSize="inherit" />;
-                                                        case '.xls':
-                                                            return <IconXls fontSize="inherit" />;
-                                                        case '.xlsx':
-                                                            return <IconXls fontSize="inherit" />;
-                                                        case '.doc':
-                                                            return <IconDocx fontSize="inherit" />;
-                                                        case '.docx':
-                                                            return <IconDocx fontSize="inherit" />;
-                                                        case '.ppt':
-                                                            return <IconPptx fontSize="inherit" />;
-                                                        case '.pptx':
-                                                            return <IconPptx fontSize="inherit" />;
-                                                        case '.jpg':
-                                                            return <IconImg fontSize="inherit" />;
-                                                        case '.jpeg':
-                                                            return <IconImg fontSize="inherit" />;
-                                                        case '.png':
-                                                            return <IconImg fontSize="inherit" />;
-                                                        case '.gif':
-                                                            return <IconGif fontSize="inherit" />;
-                                                        default:
-                                                            return <DescriptionIcon fontSize="inherit" />;
-                                                    }
-                                                })()}
-                                            </IconButton>
-                                        ))}
-                                </Stack>
-                            </Box>
-                            <Grid container direction="row" display={'flex'}>
-                                <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
-                                    <Typography sx={{ pt: 1 }} variant="body2" style={{ color: 'rgb(155, 166, 178)', fontStyle: 'italic' }}>
-                                        Last updated at{' '}
-                                        {docData.attachments != null && format(Date.parse(docData.updated_at), 'dd/LL/yyyy hh:mm a')}
-                                        &nbsp;&nbsp;&nbsp; Created by{' '}
-                                        {userInfo.full_name == docData.doc_creator_full_name ? 'me' : docData.doc_creator_full_name}
-                                    </Typography>
-                                </Grid>
-                                <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
-                                    <Typography
-                                        sx={{ pt: 1 }}
-                                        variant="body2"
-                                        style={{
-                                            display: 'flex',
-                                            justifyContent: 'flex-end',
-                                            color: 'rgb(155, 166, 178)',
-                                            fontStyle: 'italic'
-                                        }}
-                                    >
-                                        Currently viewing{' : '}
-                                        {viewers.map((item, index) =>
-                                            index === viewers.length - 1 && viewers.length === 1
-                                                ? item.name
-                                                : index === viewers.length - 1
-                                                ? item.name
-                                                : item.name + ', '
-                                        )}
-                                    </Typography>
-                                </Grid>
-                            </Grid>
-                        </>
-                    )}
-                </Grid>
             </MainCard>
 
             <ContextMenuEditor

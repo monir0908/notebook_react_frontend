@@ -3,46 +3,13 @@ import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 // material-ui
-import { useTheme, styled } from '@mui/material/styles';
-import {
-    TextField,
-    Box,
-    Button,
-    Checkbox,
-    Divider,
-    FormControl,
-    FormControlLabel,
-    FormHelperText,
-    Grid,
-    IconButton,
-    InputAdornment,
-    InputLabel,
-    OutlinedInput,
-    Stack,
-    Typography,
-    useMediaQuery,
-    AppBar,
-    CssBaseline,
-    Toolbar
-} from '@mui/material';
+import { useTheme } from '@mui/material/styles';
+import { Box, Grid, IconButton, Stack, Typography, Button } from '@mui/material';
 import Tooltip from '@mui/material/Tooltip';
 import { format } from 'date-fns';
 // assets
-import { IconAdjustmentsHorizontal, IconSearch, IconX } from '@tabler/icons';
-import { shouldForwardProp } from '@mui/system';
-import IconPdf from 'ui-component/custom-icon/IconPdf';
-import IconXls from 'ui-component/custom-icon/IconXls';
-import IconDocx from 'ui-component/custom-icon/IconDocx';
-import IconPptx from 'ui-component/custom-icon/IconPptx';
-import IconImg from 'ui-component/custom-icon/IconImg';
-import IconGif from 'ui-component/custom-icon/IconGif';
-import DeleteIcon from '@mui/icons-material/Delete';
-import ShareIcon from '@mui/icons-material/Share';
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import PublishedWithChangesIcon from '@mui/icons-material/PublishedWithChanges';
-import UnpublishedIcon from '@mui/icons-material/Unpublished';
-import { updateDocumentName, updateDocumentTitle } from 'store/features/collection/collectionSlice';
 import ConfirmationDialog from 'layout/components/confirmationDialog';
+import AttachmentListDialog from 'layout/components/AttachmentListDialog';
 import { documentUpdate, documentDetails, documentFileDelete, documentUpdateOnEditorLeave } from 'store/features/document/documentActions';
 import { collectionList } from 'store/features/collection/collectionActions';
 import ShareDialog from 'layout/components/shareDialog';
@@ -50,17 +17,21 @@ import API from 'helpers/jwt.interceptor';
 import { SET_LOADER } from 'store/actions';
 import ContextMenuDocumentFile from 'layout/components/contextMenuDocumentFile';
 import ProfileSection from '../ProfileSection';
+import showDocIcon from 'assets/icons/svg/show-doc-icon.svg';
+import publishIcon from 'assets/icons/svg/publish-icon.svg';
+import deleteIcon from 'assets/icons/svg/delete-icon.svg';
+import ReactTimeAgo from 'react-time-ago';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 // ==============================|| Buttons ||============================== //
 import {
-    updateDoc,
-    updateDocId,
     updateShareButton,
     updatePublishButton,
     updateUnpublishButton,
     updateDeleteButton,
-    updateUploadButton,
-    resetStateHeader
+    updateUploadButton
 } from 'store/features/header/headerSlice';
+import SvgIconStyle from 'ui-component/SvgIconStyle';
+import PublishSettingDialog from 'layout/components/publishSettingDialog';
 
 const ButtonSection = () => {
     const theme = useTheme();
@@ -70,6 +41,10 @@ const ButtonSection = () => {
     const { viewers } = useSelector((state) => state.header);
     const { doc_id, doc, upload_show, share_show, publish_show, unpublish_show, delete_show } = useSelector((state) => state.header);
     const docData = useSelector((state) => state.document.data);
+    const docName = useSelector((state) => state.collection.docName);
+    let currentUrl = location.pathname;
+    let urlArr = currentUrl.split('/');
+
     const navigate = useNavigate();
     const [sharelink, setShareLnk] = useState('');
     const [docTitle, setDocTitle] = useState('');
@@ -157,10 +132,6 @@ const ButtonSection = () => {
     };
 
     useEffect(() => {
-        // getDocumentDetails();
-        let currentUrl = location.pathname;
-        const urlArr = currentUrl.split('/');
-
         if (userInfo.id == doc.doc_creator_id) {
             if (doc.doc_status == 1) {
                 dispatch(updatePublishButton({ isPublishShow: true }));
@@ -182,20 +153,22 @@ const ButtonSection = () => {
             dispatch(updateDeleteButton({ isDeleteShow: false }));
             dispatch(updateUploadButton({ isUploadShow: false }));
         }
+    }, [doc, docData, navigate, userToken]);
 
+    useEffect(() => {
         if (urlArr[1] == 'document') {
             setDocTitle(doc.doc_title);
             setIsDocPage(true);
-            dispatch(updateUploadButton({ isUploadShow: true }));
         } else {
             setIsDocPage(false);
         }
+    }, [doc, urlArr[1]]);
 
-        return () => {
-            //dispatch(resetStateHeader());
-        };
-        // }, [doc, publish_show, unpublish_show, delete_show]);
-    }, [doc, docData, navigate, userToken]);
+    useEffect(() => {
+        if (docName != '') {
+            setDocTitle(docName);
+        }
+    }, [docName, doc]);
 
     const handleFileChange = async (e) => {
         const documents = e.target.files;
@@ -217,28 +190,6 @@ const ButtonSection = () => {
             dispatch({ type: SET_LOADER, loader: false });
             toast.warn(res.data.message, { autoClose: 3000 });
         }
-        // if (images) {
-        //   dispatch(uploadProductImage(formData));
-        // }
-    };
-
-    const onTitleChange = (e) => {
-        setDocTitle(e.target.value);
-        dispatch(updateDocumentTitle({ document_key: doc.doc_key, doc_title: e.target.value }));
-    };
-
-    const onTitleBlur = (e) => {
-        setDocTitle(e.target.value);
-        dispatch(
-            documentUpdateOnEditorLeave({
-                url: 'document/update-doc/' + doc.doc_key,
-                navigate,
-                data: {
-                    doc_title: e.target.value
-                },
-                extraData: {}
-            })
-        );
     };
 
     //////////////////////////// file context menu //////////////////////////////
@@ -267,6 +218,7 @@ const ButtonSection = () => {
     const handleCloseFileConfirmation = () => {
         setOpenFileConfirmation(false);
     };
+
     const handleFileConfirmationDialogOk = (values) => {
         dispatch(
             documentFileDelete({
@@ -279,40 +231,62 @@ const ButtonSection = () => {
         setOpenFileConfirmation(false);
     };
 
+    //////////////////////////////// open attachment list dialog /////////
+    const [openAttachmentListDialog, setOpenAttachmentListDialog] = useState(false);
+    const handleOpenAttachmentListDialog = () => {
+        setOpenAttachmentListDialog(true);
+    };
+
+    const handleCloseAttachmentListDialog = () => {
+        setOpenAttachmentListDialog(false);
+    };
+
+    //////////////////////////////// Publish modal /////////
+    const [openPublishDialog, setOpenPublishDialog] = useState(false);
+
+    const handleClickPublishDialog = () => {
+        setOpenPublishDialog(true);
+    };
+
+    const handlePublishClose = () => {
+        setOpenPublishDialog(false);
+    };
+
     return (
         <>
-            {/* <Box sx={{ display: { xs: 'block', md: 'none' } }}></Box> */}
-            <Grid sx={{ mt: 1 }} container direction="row" justifyContent="space-between" alignItems="flex-start">
+            <Grid
+                sx={{ height: { xs: 75, sm: 45, md: 45, lg: 45, xl: 45 }, maxHeight: 'auto' }}
+                container
+                xs={12}
+                sm={12}
+                md={12}
+                lg={12}
+                xl={12}
+                direction="row"
+                justifyContent="space-between"
+                alignItems="center"
+            >
                 {isDocPage ? (
                     <>
-                        <Grid item xs={12} sm={7} md={7} lg={7} xl={7}>
-                            <TextField
-                                margin="none"
-                                InputProps={{
-                                    disableUnderline: true,
-                                    style: { fontSize: 32, fontWeight: 600 }
-                                }}
-                                fullWidth
-                                id="doc-title"
-                                className="title-text"
-                                value={docTitle}
-                                onChange={onTitleChange}
-                                onBlur={onTitleBlur}
-                                name="docTitle"
-                                label=""
-                                variant="standard"
-                                sx={{
-                                    input: {
-                                        ml: { xs: 0, sm: 0, md: 5, lg: 4, xl: '36px' },
-                                        padding: 0,
-                                        textOverflow: 'ellipsis'
-                                    }
-                                }}
-                            />
+                        <Grid item xs={12} sm={5} md={5} lg={5} xl={5} mt={{ xs: 1 }}>
+                            <Typography marginLeft={0.65} sx={{ fontSize: '15px', lineHeight: '21.45px', fontWeight: 400 }}>
+                                {docTitle}
+                            </Typography>
                         </Grid>
-                        <Grid item xs={12} sm={5} md={5} lg={5} xl={5}>
-                            <Box sx={{ marginBottom: 1, display: { xs: 'block', md: 'block' } }}>
-                                <Stack direction="row" justifyContent="flex-end" spacing={2}>
+                        <Grid item xs={12} sm={7} md={7} lg={7} xl={7}>
+                            <Box sx={{}}>
+                                <Stack
+                                    marginLeft={{ xs: 0.65 }}
+                                    direction="row"
+                                    justifyContent={{
+                                        xs: 'flex-start',
+                                        sm: 'flex-end',
+                                        md: 'flex-end',
+                                        lg: 'flex-end',
+                                        xl: 'flex-end'
+                                    }}
+                                >
+                                    {/* upload functionality below
                                     {upload_show && (
                                         <Tooltip title="Upload File">
                                             <Button
@@ -320,7 +294,6 @@ const ButtonSection = () => {
                                                 id="header-button-upload"
                                                 startIcon={<CloudUploadIcon />}
                                                 component="label"
-                                                // sx={{ mb: 0.5 }}
                                             >
                                                 <input
                                                     onChange={handleFileChange}
@@ -331,51 +304,105 @@ const ButtonSection = () => {
                                                 />
                                             </Button>
                                         </Tooltip>
-                                    )}
-                                    {share_show && (
-                                        <Tooltip title="Share Link">
-                                            <Button
-                                                onClick={handleClickOpenShareDialog}
-                                                variant="outlined"
-                                                id="header-button-share"
-                                                startIcon={<ShareIcon />}
-                                            ></Button>
-                                        </Tooltip>
-                                    )}
-
-                                    {publish_show && (
-                                        <Tooltip title="Publish">
-                                            <Button
-                                                sx={{ mr: 3 }}
-                                                onClick={() => handleDocPublish(2)}
-                                                variant="outlined"
-                                                id="header-button-publish"
-                                                startIcon={<PublishedWithChangesIcon />}
-                                            ></Button>
-                                        </Tooltip>
-                                    )}
-                                    {unpublish_show && (
-                                        <Tooltip title="Unpublish">
-                                            <Button
-                                                sx={{ mr: 3 }}
-                                                onClick={() => handleDocPublish(1)}
-                                                variant="outlined"
-                                                id="header-button-unpublish"
-                                                startIcon={<UnpublishedIcon />}
-                                            ></Button>
-                                        </Tooltip>
-                                    )}
+                                    )} */}
+                                    <Tooltip
+                                        sx={{
+                                            padding: '6px 8px !important',
+                                            backgroundColor: '#092625 !important'
+                                        }}
+                                        title={
+                                            <Typography
+                                                sx={{
+                                                    width: '217px !important',
+                                                    display: 'flex',
+                                                    justifyContent: 'center',
+                                                    alignItems: 'center',
+                                                    color: '#fff',
+                                                    fontStyle: 'normal',
+                                                    fontSize: '12px',
+                                                    lineHeight: '143%',
+                                                    fontWeight: 300
+                                                }}
+                                            >
+                                                Last updated at {docData && format(Date.parse(docData.updated_at), 'dd/LL/yyyy hh:mm a')}
+                                                &nbsp;&nbsp;&nbsp; Created by{' '}
+                                                {userInfo && userInfo.full_name == docData && docData.doc_creator_full_name
+                                                    ? 'me'
+                                                    : docData && docData.doc_creator_full_name}
+                                            </Typography>
+                                        }
+                                    >
+                                        <Typography
+                                            sx={{
+                                                display: 'flex',
+                                                justifyContent: 'center',
+                                                alignItems: 'center',
+                                                color: '#849392',
+                                                fontSize: '13px',
+                                                lineHeight: '15.51px',
+                                                fontWeight: 400
+                                            }}
+                                        >
+                                            {docData ? (
+                                                <>
+                                                    <span style={{ marginRight: '4px' }}>
+                                                        {'Edited'} {'  '}
+                                                    </span>
+                                                    <ReactTimeAgo date={Date.parse(docData && docData.updated_at)} locale="en-US" />
+                                                </>
+                                            ) : (
+                                                ''
+                                            )}
+                                        </Typography>
+                                    </Tooltip>
+                                    <Tooltip title="Attachment file">
+                                        <IconButton
+                                            onClick={handleOpenAttachmentListDialog}
+                                            sx={{
+                                                ml: 3.25,
+                                                '&:hover': {
+                                                    backgroundColor: 'unset !important'
+                                                },
+                                                padding: '0 !important'
+                                            }}
+                                            disableRipple
+                                            disableElevation
+                                        >
+                                            <SvgIconStyle src={showDocIcon} sx={{ color: '#092625', width: 16.67, height: 16.67 }} />
+                                        </IconButton>
+                                    </Tooltip>
+                                    <Tooltip title="Publish setting">
+                                        <IconButton
+                                            onClick={handleClickPublishDialog}
+                                            sx={{
+                                                ml: 1.5,
+                                                '&:hover': {
+                                                    backgroundColor: 'unset !important'
+                                                },
+                                                padding: '0 !important'
+                                            }}
+                                            disableRipple
+                                            disableElevation
+                                        >
+                                            <SvgIconStyle src={publishIcon} sx={{ color: '#092625', width: 16, height: 16 }} />
+                                        </IconButton>
+                                    </Tooltip>
                                     {delete_show && (
                                         <Tooltip title="Delete Document">
-                                            <Button
-                                                sx={{ mr: 3 }}
-                                                style={{ maxWidth: '30px', maxHeight: '30px' }}
+                                            <IconButton
                                                 onClick={handleClickOpenConfirmation}
-                                                variant="outlined"
-                                                id="header-button-delete"
-                                                color="error"
-                                                startIcon={<DeleteIcon />}
-                                            ></Button>
+                                                sx={{
+                                                    ml: 1.5,
+                                                    '&:hover': {
+                                                        backgroundColor: 'unset !important'
+                                                    },
+                                                    padding: '0 !important'
+                                                }}
+                                                disableRipple
+                                                disableElevation
+                                            >
+                                                <SvgIconStyle src={deleteIcon} sx={{ color: '#092625', width: 13.33, height: 15 }} />
+                                            </IconButton>
                                         </Tooltip>
                                     )}
                                     <ProfileSection />
@@ -384,7 +411,7 @@ const ButtonSection = () => {
                         </Grid>
                     </>
                 ) : (
-                    <Grid item xs={12} md={12}>
+                    <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                         <ProfileSection />
                     </Grid>
                 )}
@@ -409,6 +436,16 @@ const ButtonSection = () => {
                 closeButtonText="Close"
             />
 
+            <AttachmentListDialog
+                title="Attachment title"
+                open={openAttachmentListDialog}
+                data={selectedFile}
+                handleClose={handleCloseAttachmentListDialog}
+                handleOk={(values) => handleFileConfirmationDialogOk(values)}
+                okButtonText="Delete"
+                closeButtonText="Close"
+            />
+
             <ConfirmationDialog
                 title="Delete Document"
                 description="Are you sure? If you delete this document, it will be moved to trash."
@@ -417,6 +454,13 @@ const ButtonSection = () => {
                 handleOk={handleConfirmationDialogOk}
                 okButtonText="Delete"
                 closeButtonText="Close"
+            />
+
+            <PublishSettingDialog
+                open={openPublishDialog}
+                handleClose={handlePublishClose}
+                handleOk={handleDocPublish}
+                okButtonText="Publish"
             />
 
             <ShareDialog link={sharelink} open={openShareDialog} handleClose={handleCloseShareDialog} />

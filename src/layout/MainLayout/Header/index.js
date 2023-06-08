@@ -1,14 +1,9 @@
 import PropTypes from 'prop-types';
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 // material-ui
 import { useTheme } from '@mui/material/styles';
 import { Avatar, Stack, Item, Box, ButtonBase } from '@mui/material';
-
 // project imports
-import LogoSection from '../LogoSection';
-import SearchSection from './SearchSection';
-import ProfileSection from './ProfileSection';
-import NotificationSection from './NotificationSection';
 import ButtonSection from './ButtonSection';
 // assets
 import { IconMenu2 } from '@tabler/icons';
@@ -17,37 +12,22 @@ import { IconMenu2 } from '@tabler/icons';
 
 const Header = ({ handleLeftDrawerToggle }) => {
     const theme = useTheme();
-    const [isDocPage, setIsDocPage] = useState(false);
-    let currentUrl = location.pathname;
-    const urlArr = currentUrl.split('/');
-    useEffect(() => {
-        if (urlArr[1] == 'document') {
-            setIsDocPage(true);
-        } else {
-            setIsDocPage(false);
-        }
-    });
+
     return (
         <>
-            {/* logo & toggler button */}
             <Box
                 sx={{
                     width: { xs: 284, sm: 323, md: 323, lg: 300, xl: 300 },
-                    height: 73,
-                    // marginTop: isDocPage ? '-5px' : '0px',
+                    height: 45,
                     marginLeft: '-23px',
                     paddingLeft: '15px',
                     display: 'flex',
-                    // background: 'linear-gradient(to bottom, white, #eef2f6 )',
                     [theme.breakpoints.down('md')]: {
                         width: 'auto'
                     }
                 }}
             >
                 <Stack direction="row" spacing={4}>
-                    {/* <Box component="span" sx={{ display: { xs: 'block', sm: 'block', md: 'block', lg: 'none', xl: 'none' }, flexGrow: 1, pr: 1 }}>
-                        <LogoSection />
-                    </Box> */}
                     <ButtonBase
                         sx={{
                             display: { xs: 'block', sm: 'block', md: 'block', lg: 'none', xl: 'none' },
@@ -80,16 +60,7 @@ const Header = ({ handleLeftDrawerToggle }) => {
                     </ButtonBase>
                 </Stack>
             </Box>
-
-            {/* header search */}
-            {/* <SearchSection /> */}
-            {/* <Box sx={{ flexGrow: 1 }} />
-            <Box sx={{ flexGrow: 1 }} /> */}
-
-            {/* notification & profile */}
-            {/* <NotificationSection /> */}
             <ButtonSection />
-            {/* <ProfileSection /> */}
         </>
     );
 };

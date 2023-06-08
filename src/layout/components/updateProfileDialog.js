@@ -47,28 +47,6 @@ const UpdateProfileDialog = (props) => {
                             <DialogTitle>{props.title}</DialogTitle>
                             <DialogContent>
                                 <DialogContentText>{props.description}</DialogContentText>
-                                {/* <FormControl fullWidth error={Boolean(touched.first_name && errors.first_name)}>
-                                    <TextField
-                                        sx={{
-                                            marginTop: '20px'
-                                        }}
-                                        autoFocus
-                                        margin="dense"
-                                        id="collectionName"
-                                        label="Collection Name"
-                                        type="text"
-                                        onChange={handleChange}
-                                        value={values.collecton_name}
-                                        variant="outlined"
-                                        name="collecton_name"
-                                    />
-                                    {touched.collecton_name && errors.collecton_name && (
-                                        <FormHelperText error id="standard-weight-helper-text--register">
-                                            {errors.collecton_name}
-                                        </FormHelperText>
-                                    )}
-                                </FormControl> */}
-
                                 <FormControl
                                     fullWidth
                                     error={Boolean(touched.first_name && errors.first_name)}

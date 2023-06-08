@@ -24,7 +24,8 @@ import {
     Popper,
     Stack,
     Switch,
-    Typography
+    Typography,
+    IconButton
 } from '@mui/material';
 
 // third-party
@@ -104,8 +105,9 @@ const ProfileSection = () => {
 
     return (
         <>
-            <Chip
+            {/* <Chip
                 sx={{
+                    ml: 3.5,
                     height: '48px',
                     float: 'right',
                     marginTop: '-5px',
@@ -139,20 +141,6 @@ const ProfileSection = () => {
                         aria-haspopup="true"
                         color="inherit"
                     />
-                    // <Avatar
-                    //     ref={anchorRef}
-                    //     aria-controls={open ? 'menu-list-grow' : undefined}
-                    //     aria-haspopup="true"
-                    //     color="inherit"
-                    //     sx={{
-                    //         margin: '8px 0 8px 8px !important',
-                    //         cursor: 'pointer'
-                    //     }}
-                    // >
-                    //     <Typography variant="h4" sx={{ color: '#fff' }}>
-                    //         OP
-                    //     </Typography>
-                    // </Avatar>
                 }
                 label={<IconSettings stroke={1.5} size="1.5rem" color={theme.palette.primary.main} />}
                 variant="outlined"
@@ -161,7 +149,38 @@ const ProfileSection = () => {
                 aria-haspopup="true"
                 onClick={handleToggle}
                 color="primary"
-            />
+            /> */}
+            <IconButton
+                ref={anchorRef}
+                aria-controls={open ? 'menu-list-grow' : undefined}
+                aria-haspopup="true"
+                onClick={handleToggle}
+                sx={{
+                    float: 'right',
+                    ml: 3,
+                    '&:hover': {
+                        backgroundColor: 'unset !important'
+                    },
+                    padding: '0 !important'
+                }}
+                disableRipple
+                disableElevation
+            >
+                <Avatar
+                    src={profile_pic}
+                    sx={{
+                        ...theme.typography.mediumAvatar,
+                        margin: '8px 0 8px 8px !important',
+                        cursor: 'pointer',
+                        height: '28px',
+                        width: '28px'
+                    }}
+                    ref={anchorRef}
+                    aria-controls={open ? 'menu-list-grow' : undefined}
+                    aria-haspopup="true"
+                    color="inherit"
+                />
+            </IconButton>
 
             <Popper
                 placement="bottom-end"

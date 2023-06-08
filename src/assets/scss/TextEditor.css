@@ -58,12 +58,11 @@
 .ql-editor {
     min-height: 80vh;
     padding: 0px 5px !important;
-    margin-left: 10px;
+    margin-left: 4px;
     /* line-height: 1.13 !important; */
     /*need fixed line height for proper alignment 6.icon relative to the text*/
     line-height: 30px !important;
     tab-size: 2 !important;
-    /* margin-top: 25px; */
 }
 
 .ql-editor ol {
@@ -111,8 +110,10 @@
 }
 
 .ql-container {
-    font-size: 16px !important;
+    font-size: 15px !important;
     overflow: visible !important;
+    font-weight: 400;
+    line-height: 24.45px;
 }
 
 .App .ql-snow .ql-tooltip.ql-flip {
@@ -123,7 +124,7 @@
 
 .ql-bubble .ql-tooltip {
     background-color: #0e101a !important;
-    border-radius: 5px !important;
+    border-radius: 6px !important;
     color: #fff;
     transform: translateY(-170%) !important;
 }
@@ -163,18 +164,24 @@
 }
 
 .ql-bubble .ql-editor h1 {
-    font-size: 32px !important;
+    font-size: 24px !important;
     padding: '3px 0px';
+    line-height: 39.12px;
+    font-weight: 700;
 }
 
 .ql-bubble .ql-editor h2 {
-    font-size: 24px !important;
+    font-size: 20px !important;
     padding: '3px 0px';
+    line-height: 32.6px;
+    font-weight: 700;
 }
 
 .ql-bubble .ql-editor h3 {
-    font-size: 18.72px !important;
+    font-size: 18px !important;
     padding: '3px 0px';
+    line-height: 29.34px;
+    font-weight: 700;
 }
 
 .ql-bubble .ql-editor h4 {
@@ -206,26 +213,15 @@
     z-index: 1100 !important;
 }
 
-/* .ql-cursor .ql-cursor-flag .ql-cursor-name {
-    margin-left: 0px !important;
-} */
 
 .ql-editor.ql-blank::before {
     left: 15px !important;
 }
 
-/* .ql-container.ql-bubble:not(.ql-disabled) a:hover::before {
-    cursor: pointer;
-} */
-
-/* .ql-container.ql-bubble:not(.ql-disabled) a {
-    position: fixed !important;
-} */
 
 .ql-container.ql-bubble:not(.ql-disabled) a::before {
     background-color: #121926 !important;
     border-radius: 5px !important;
-    /* transform: translate(-17%, 92%) !important; */
 }
 
 .image-actions__toolbar {
@@ -237,10 +233,64 @@
      padding-right: '2px !important';
  }
 
-/* .ql-container {
-    z-index: 1101;
-} */
+ .ql-bubble .ql-color-picker .ql-picker-options {
+     padding: 3px 5px;
+     width: 90px !important;
+     border-radius: 5px;
+ }
 
-/* .ql-tooltip {
-    z-index: 1101;
-} */
+ .ql-color-\#092625 {
+     color: #092625;
+ }
+
+ .ql-color-\#D22D2C {
+     color: #d22d2c;
+ }
+
+ .ql-color-\#01927B {
+     color: #01927b;
+ }
+
+ .ql-color-\#3487D1 {
+     color: #3487d1;
+ }
+
+ .ql-color-\#FFFFFF {
+     color: #ffffff;
+ }
+
+ .ql-color-\#849392 {
+     color: #849392;
+ }
+
+ .ql-color-\#2FA85C {
+     color: #2fa85c;
+ }
+
+ .ql-color-\#F1A300 {
+     color: #f1a300;
+ }
+
+ .ql-color-\#F5ED5B {
+     color: #F5ED5B;
+ }
+
+ .ql-color-\#E6E9E9 {
+     color: #E6E9E9;
+ }
+
+ .ql-color-\#FFCFD4 {
+     color: #FFCFD4;
+ }
+
+ .ql-color-\#DFF2EF {
+     color: #DFF2EF;
+ }
+
+ .ql-color-\#F5FFF2 {
+     color: #F5FFF2;
+ }
+
+ .ql-color-\#FDFDE5 {
+     color: #FDFDE5;
+ }

@@ -4,6 +4,7 @@ import QuillCursors from 'quill-cursors';
 import { ImageDrop } from 'quill-image-drop-module';
 import { ImageActions } from 'quill-image-actions-align';
 import { ImageFormats } from '@xeger/quill-image-formats';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 // xeger
 const fontSizeArr = ['16px', '18px', '22px', '26px'];
@@ -11,10 +12,32 @@ const Size = Quill.import('attributors/style/size');
 Size.whitelist = fontSizeArr;
 Quill.register(Size, true);
 
+let icons = Quill.import('ui/icons');
+icons['background'] = '<i class="fa-solid fa-fill-drip"></i>';
+
 // Add fonts to whitelist and register them
 const Font = Quill.import('formats/font');
 Font.whitelist = ['arial', 'comic-sans', 'courier-new', 'georgia', 'lucida'];
 Quill.register(Font, true);
+
+const ColorClass = Quill.import('attributors/class/color');
+ColorClass.whitelist = [
+    '#092625',
+    '#D22D2C',
+    '#01927B',
+    '#3487D1',
+    '#FFFFFF',
+    '#849392',
+    '#2FA85C',
+    '#F1A300',
+    '#F5ED5B',
+    '#E6E9E9',
+    '#FFCFD4',
+    '#DFF2EF',
+    '#F5FFF2',
+    '#FDFDE5'
+]; // Add your desired colors here
+Quill.register(ColorClass, true);
 
 class LinkTooltip {
     constructor(quill, options) {
@@ -46,34 +69,6 @@ class imageDrop extends ImageDrop {
         }
     }
 }
-
-// const BubbleTheme = Quill.import('themes/bubble');
-
-// class ExtendBubbleTheme extends BubbleTheme {
-//     constructor(quill, options) {
-//         super(quill, options);
-
-//         quill.on('selection-change', (range) => {
-//             if (range) {
-//                 //quill.theme.tooltip.show();
-//                 console.log(range);
-//                 console.log(quill.getBounds(range));
-
-//                 //     {
-//                 //     bottom: 21,
-//                 //     height: 17,
-//                 //     left: 15,
-//                 //     right: 71.046875,
-//                 //     top: 0,
-//                 //     width: 56.046875
-//                 // }
-//                 quill.theme.tooltip.position(quill.getBounds(range));
-//             }
-//         });
-//     }
-// }
-
-// Quill.register('themes/bubble', ExtendBubbleTheme);
 
 Quill.register('modules/cursors', QuillCursors);
 Quill.register('modules/linkTooltip', LinkTooltip);
@@ -141,19 +136,6 @@ export const QuillToolbar = (props) => {
             {props.toolbarId !== undefined && (
                 <div id={props.toolbarId}>
                     <span className="ql-formats">
-                        <select className="ql-font" defaultValue={'arial'}>
-                            <option value="arial"> Arial </option>
-                            <option value="comic-sans">Comic Sans</option>
-                            <option value="courier-new">Courier New</option>
-                            <option value="georgia">Georgia</option>
-                            <option value="lucida">Lucida</option>
-                        </select>
-                        <select className="ql-size" defaultValue={'16px'}>
-                            <option value="16px">16px</option>
-                            <option value="18px">18px</option>
-                            <option value="22px">22px</option>
-                            <option value="26px">26px</option>
-                        </select>
                         <select defaultValue={'DEFAULT'} className="ql-header">
                             <option value="1">Heading 1</option>
                             <option value="2">Heading 2</option>
@@ -168,8 +150,30 @@ export const QuillToolbar = (props) => {
                         <button className="ql-strike" />
                     </span>
                     <span className="ql-formats">
-                        <select className="ql-color" />
-                        <select className="ql-background" />
+                        <select className="ql-color">
+                            <option value="#092625"></option>
+                            <option value="#D22D2C"></option>
+                            <option value="#01927B"></option>
+                            <option value="#3487D1"></option>
+                            <option value="#FFFFFF"></option>
+                            <option value="#849392"></option>
+                            <option value="#2FA85C"></option>
+                            <option value="#F1A300"></option>
+                        </select>
+                        <select className="ql-background">
+                            <option value="#092625"></option>
+                            <option value="#849392"></option>
+                            <option value="#D22D2C"></option>
+                            <option value="#01927B"></option>
+                            <option value="#2FA85C"></option>
+                            <option value="#F5ED5B"></option>
+                            <option value="#FFFFFF"></option>
+                            <option value="#E6E9E9"></option>
+                            <option value="#FFCFD4"></option>
+                            <option value="#DFF2EF"></option>
+                            <option value="#F5FFF2"></option>
+                            <option value="#FDFDE5"></option>
+                        </select>
                     </span>
                     <span className="ql-formats">
                         <button className="ql-list" value="ordered" />

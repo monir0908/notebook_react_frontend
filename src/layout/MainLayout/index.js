@@ -100,6 +100,7 @@ const MainLayout = () => {
                         <Toolbar
                             sx={{
                                 paddingTop: 0,
+                                paddingRight: '12px !important',
                                 borderBottom: '.5px solid  #DAE1E9'
                             }}
                         >

@@ -74,6 +74,7 @@ const documentSlice = createSlice({
                 state.error = null;
             }),
             builder.addCase(documentUpdate.fulfilled, (state, { payload }) => {
+                console.log('payload', payload);
                 state.loading = false;
                 state.error = null;
             }),

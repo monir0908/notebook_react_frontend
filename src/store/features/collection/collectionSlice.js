@@ -8,7 +8,8 @@ const initialState = {
     collection: null,
     error: null,
     loading: false,
-    success: false
+    success: false,
+    docName: ''
 };
 
 const collectionSlice = createSlice({
@@ -17,10 +18,10 @@ const collectionSlice = createSlice({
     reducers: {
         updateDocumentTitle(state, action) {
             const { document_key, doc_title } = action.payload;
-
             const updatedCollections = state.data.map((collection) => {
                 const updatedDocuments = collection.documents.map((document) => {
                     if (document.doc_key === document_key) {
+                        state.docName = doc_title;
                         return { ...document, doc_title: doc_title };
                     }
                     return document;
