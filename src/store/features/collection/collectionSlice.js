@@ -28,7 +28,7 @@ const collectionSlice = createSlice({
                 });
                 return { ...collection, documents: updatedDocuments };
             });
-
+            state.docName = doc_title;
             state.data = updatedCollections;
         }
     },

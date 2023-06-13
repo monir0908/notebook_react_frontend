@@ -22,6 +22,7 @@ import publishIcon from 'assets/icons/svg/publish-icon.svg';
 import deleteIcon from 'assets/icons/svg/delete-icon.svg';
 import ReactTimeAgo from 'react-time-ago';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import { updateDocumentTitle } from 'store/features/collection/collectionSlice';
 // ==============================|| Buttons ||============================== //
 import {
     updateShareButton,
@@ -157,18 +158,20 @@ const ButtonSection = () => {
 
     useEffect(() => {
         if (urlArr[1] == 'document') {
-            setDocTitle(doc.doc_title);
+            //setDocTitle(doc.doc_title);
             setIsDocPage(true);
+            dispatch(updateDocumentTitle({ document_key: doc.doc_key, doc_title: doc.doc_title }));
+            // setDocTitle(docName);
         } else {
             setIsDocPage(false);
         }
     }, [doc, urlArr[1]]);
 
-    useEffect(() => {
-        if (docName != '') {
-            setDocTitle(docName);
-        }
-    }, [docName, doc]);
+    // useEffect(() => {
+    //     if (docName != '') {
+    //         setDocTitle(docName);
+    //     }
+    // }, [docName, doc]);
 
     const handleFileChange = async (e) => {
         const documents = e.target.files;
@@ -270,7 +273,7 @@ const ButtonSection = () => {
                     <>
                         <Grid item xs={12} sm={5} md={5} lg={5} xl={5} mt={{ xs: 1 }}>
                             <Typography marginLeft={0.65} sx={{ fontSize: '15px', lineHeight: '21.45px', fontWeight: 400 }}>
-                                {docTitle}
+                                {docName}
                             </Typography>
                         </Grid>
                         <Grid item xs={12} sm={7} md={7} lg={7} xl={7}>
