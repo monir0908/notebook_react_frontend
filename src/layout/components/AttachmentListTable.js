@@ -237,7 +237,7 @@ export default function AttachmentListTable() {
                             />
                             <TableBody sx={{}}>
                                 {docData &&
-                                 docData.attachments &&
+                                    docData.attachments &&
                                     docData.attachments.map((row, index) => {
                                         const labelId = `enhanced-table-checkbox-${index}`;
 

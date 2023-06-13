@@ -324,7 +324,8 @@ const ButtonSection = () => {
                                                     fontWeight: 300
                                                 }}
                                             >
-                                                Last updated at{' '} {docData != null &&
+                                                Last updated at{' '}
+                                                {docData != null &&
                                                     docData.updated_at != null &&
                                                     format(Date.parse(docData.updated_at), 'dd/LL/yyyy hh:mm a')}
                                                 &nbsp;&nbsp;&nbsp; Created by{' '}
