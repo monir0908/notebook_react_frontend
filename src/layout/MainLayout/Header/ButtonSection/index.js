@@ -324,7 +324,9 @@ const ButtonSection = () => {
                                                     fontWeight: 300
                                                 }}
                                             >
-                                                Last updated at {docData && format(Date.parse(docData.updated_at), 'dd/LL/yyyy hh:mm a')}
+                                                Last updated at{' '} {docData != null &&
+                                                    docData.updated_at != null &&
+                                                    format(Date.parse(docData.updated_at), 'dd/LL/yyyy hh:mm a')}
                                                 &nbsp;&nbsp;&nbsp; Created by{' '}
                                                 {userInfo && userInfo.full_name == docData && docData.doc_creator_full_name
                                                     ? 'me'
@@ -348,7 +350,9 @@ const ButtonSection = () => {
                                                     <span style={{ marginRight: '4px' }}>
                                                         {'Edited'} {'  '}
                                                     </span>
-                                                    <ReactTimeAgo date={Date.parse(docData && docData.updated_at)} locale="en-US" />
+                                                    {docData.updated_at != null && (
+                                                        <ReactTimeAgo date={Date.parse(docData.updated_at)} locale="en-US" />
+                                                    )}
                                                 </>
                                             ) : (
                                                 ''

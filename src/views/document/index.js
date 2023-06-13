@@ -169,6 +169,9 @@ const Document = () => {
                             } else if (targetElement.tagName === 'LI') {
                                 extraTop = 7;
                                 hoverDiv.style.top = `${boundingRect.top - containerBoundingRect.top + extraTop}px`;
+                            } else if (targetElement.tagName === 'P') {
+                                extraTop = 8;
+                                hoverDiv.style.top = `${boundingRect.top - containerBoundingRect.top + extraTop}px`;
                             }
 
                             hoverDiv.style.cursor = 'grab';
