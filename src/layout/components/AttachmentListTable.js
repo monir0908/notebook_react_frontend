@@ -23,6 +23,7 @@ import FilterListIcon from '@mui/icons-material/FilterList';
 import { visuallyHidden } from '@mui/utils';
 import Scrollbar from './Scrollbar';
 import { useSelector } from 'react-redux';
+import DescriptionIcon from '@mui/icons-material/Description';
 import IconPdf from 'ui-component/custom-icon/IconPdf';
 import IconXls from 'ui-component/custom-icon/IconXls';
 import IconDocx from 'ui-component/custom-icon/IconDocx';
@@ -125,7 +126,7 @@ function EnhancedTableHead(props) {
                 color: '#092625'
             }}
         >
-            <TableRow sx={{ padding: '8px !important' }}>
+            <TableRow sx={{ stylepadding: '8px !important' }}>
                 {headCells.map((headCell) => (
                     <TableCell
                         key={headCell.id}
@@ -277,7 +278,12 @@ export default function AttachmentListTable() {
                                                                 case '.gif':
                                                                     return <IconGif fontSize="inherit" />;
                                                                 default:
-                                                                    return <DescriptionIcon fontSize="inherit" />;
+                                                                    return (
+                                                                        <DescriptionIcon
+                                                                            fontSize="inherit"
+                                                                            sx={{ height: '24px', width: '24px' }}
+                                                                        />
+                                                                    );
                                                             }
                                                         })()}
                                                         <Typography> {row.file_name}</Typography>

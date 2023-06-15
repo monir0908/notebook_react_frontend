@@ -37,7 +37,9 @@ const ConfirmationDialog = (props) => {
                 </IconButton>
             </DialogTitle>
             <Card>
-                <DialogContent sx={{ width: '382px', textAlign: 'center', padding: 7.5 }}>
+                <DialogContent
+                    sx={{ width: '382px', textAlign: 'center', paddingLeft: 7.5, paddingRight: 7.5, paddingTop: 2.5, paddingBottom: 7.5 }}
+                >
                     <Typography paragraph sx={{ color: '#092625', fontSize: '24px', fontWeight: 700, mt: 1, color: '#092625' }}>
                         {props.title}
                     </Typography>

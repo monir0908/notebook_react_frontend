@@ -37,7 +37,18 @@ const AttachmentListDialog = (props) => {
                 </IconButton>
             </DialogTitle>
             <Card>
-                <DialogContent sx={{ width: '828px', textAlign: 'center', padding: '28px 60px 60px 60px' }}>
+                <DialogContent
+                    sx={{
+                        textAlign: 'center',
+                        padding: {
+                            xs: '16px 16px 16px 16px',
+                            sm: '16px 16px 16px 16px',
+                            md: '16px 16px 16px 16px',
+                            lg: '28px 60px 60px 60px',
+                            xl: '28px 60px 60px 60px'
+                        }
+                    }}
+                >
                     <Typography paragraph sx={{ color: '#092625', fontSize: '24px', fontWeight: 700, mt: 1, color: '#092625' }}>
                         {props.title}
                     </Typography>

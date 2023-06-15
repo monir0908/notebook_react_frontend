@@ -154,7 +154,7 @@ const Trash = () => {
                 data={selectedItem}
                 handleClose={handleCloseConfirmation}
                 closeButtonText="Close"
-                okButtonText="I'm sure -- Delete "
+                okButtonText="Delete"
                 handleOk={(values) => handleConfirmationDialogOk(values)}
             />
         </>

@@ -401,6 +401,8 @@ const Document = () => {
                     selection.addRange(range);
                 }
             }
+
+            quillContainer.querySelector('.pointer-div').remove();
         });
 
         const pointerDiv = (clientY, targetElement) => {
@@ -410,7 +412,7 @@ const Document = () => {
             pointerDiv.style.zIndex = 999;
             pointerDiv.style.pointerEvents = 'none';
             pointerDiv.style.left = '10px';
-            pointerDiv.style.width = '70%';
+            pointerDiv.style.width = '100%';
             pointerDiv.style.borderTop = '3px solid rgb(35,131,226,0.43)';
             const containerBoundingRect = quillContainer.getBoundingClientRect();
 
@@ -730,7 +732,7 @@ const Document = () => {
                     xl={12}
                     mt={{ xs: 2, sm: 2, md: 0.5, lg: 0.5, xl: 0.5 }}
                     sx={{
-                        width: { xs: '100%', sm: '400px', md: '400px', lg: '1108px', xl: '1108px' }
+                        width: { xs: '100%', sm: '100%', md: '100%', lg: '1108px', xl: '1108px' }
                     }}
                 >
                     <TextField
@@ -754,7 +756,7 @@ const Document = () => {
                                 fontSize: { xs: '15px', sm: '28px', md: '32px', lg: '32px', xl: '32px' },
                                 fontWeight: 700,
                                 lineHeight: '45.76px',
-                                ml: { xs: 1.5, sm: 9, md: 1, lg: 3.5, xl: 8.5 },
+                                ml: { xs: 1.5, sm: 9, md: 2, lg: 3.5, xl: 8.5 },
                                 padding: 0,
                                 textOverflow: 'ellipsis'
                             }
