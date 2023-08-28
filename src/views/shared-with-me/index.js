@@ -26,13 +26,10 @@ const SharedWithMe = () => {
         } else {
             dispatch({ type: SET_LOADER, loader: true });
             dispatch(resetState());
-            setTimeout(() => {
-                const url = `document/list-shared-with-me`;
-                dispatch(sharedDocumentList({ url }));
-                if (!loading) {
-                    dispatch({ type: SET_LOADER, loader: false });
-                }
-            }, 500);
+            const url = `document/list-shared-with-me`;
+            dispatch(sharedDocumentList({ url })).then((res) => {
+                dispatch({ type: SET_LOADER, loader: false });
+            });
         }
     }, [navigate, userToken]);
 

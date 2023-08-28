@@ -19,6 +19,7 @@ import ReactTimeAgo from 'react-time-ago';
 import { documentCreate, documentList } from 'store/features/document/documentActions';
 import { collectionDetails } from 'store/features/collection/collectionActions';
 import { SET_LOADER } from 'store/actions';
+import { resetStateCollection } from 'store/features/collection/collectionSlice';
 
 const OutlineInputStyle = styled(OutlinedInput, { shouldForwardProp })(({ theme }) => ({
     width: 500,
@@ -118,7 +119,7 @@ const Collection = () => {
         navigate('/document/' + item.doc_key);
     };
 
-    const getList = async (type) => {
+    const getList = (type) => {
         let p = new URLSearchParams();
         p.append('creator_id', userInfo.id);
         p.append('collection_id', collection_id);
@@ -144,52 +145,78 @@ const Collection = () => {
                 break;
         }
         dispatch({ type: SET_LOADER, loader: true });
-
         const objString = 'document/list?' + p.toString();
-        const res = await API.get(objString);
-        setTimeout(() => {
-            if (res) {
-                dispatch({ type: SET_LOADER, loader: false });
+        //new code start
+        API.get(objString).then((res) => {
+            dispatch({ type: SET_LOADER, loader: false });
+            if (res && res.data && res.data.success) {
+                switch (type) {
+                    case 0:
+                        setDocumentTabData(res.data);
+                        break;
+                    case 1:
+                        setRecentlyUpdatedTabData(res.data);
+                        break;
+                    case 2:
+                        setRecentlyPublishedTabData(res.data);
+                        break;
+                    case 3:
+                        setAtoZTabData(res.data);
+                        break;
+                }
             }
-        }, 200);
-        switch (type) {
-            case 0:
-                if (res.data.success) {
-                    setDocumentTabData(res.data);
-                }
-                break;
-            case 1:
-                if (res.data.success) {
-                    setRecentlyUpdatedTabData(res.data);
-                }
-                break;
-            case 2:
-                if (res.data.success) {
-                    setRecentlyPublishedTabData(res.data);
-                }
-                break;
-            case 3:
-                if (res.data.success) {
-                    setAtoZTabData(res.data);
-                }
-                break;
-        }
+        });
+        //new code end
+        //old code start
+        // setTimeout(() => {
+        //     if (res) {
+        //         dispatch({ type: SET_LOADER, loader: false });
+        //     }
+        // }, 200);
+        // switch (type) {
+        //     case 0:
+        //         if (res.data.success) {
+        //             setDocumentTabData(res.data);
+        //         }
+        //         break;
+        //     case 1:
+        //         if (res.data.success) {
+        //             setRecentlyUpdatedTabData(res.data);
+        //         }
+        //         break;
+        //     case 2:
+        //         if (res.data.success) {
+        //             setRecentlyPublishedTabData(res.data);
+        //         }
+        //         break;
+        //     case 3:
+        //         if (res.data.success) {
+        //             setAtoZTabData(res.data);
+        //         }
+        //         break;
+        // }
+        //old code end
     };
 
     const handleAddNewDocClick = () => {
-        dispatch(documentCreate({ url: 'document/create', navigate, data: { collection: collection_id } }));
-        setTimeout(() => {
-            const url = `collection/list?creator_id=${userInfo.id}&page=1&page_size=100`;
-            dispatch(collectionList({ url }));
-        }, 500);
+        dispatch(documentCreate({ url: 'document/create', navigate, data: { collection: collection_id } })).then((res) => {
+            console.log('doc create res', res);
+            if (res && res.payload && res.payload.success) {
+                const url = `collection/list?creator_id=${userInfo.id}&page=1&page_size=100`;
+                dispatch(collectionList({ url }));
+            }
+        });
     };
 
     const onEnter = (e) => {
         if (e.keyCode === 13 || e.type == 'click') {
             if (searchValue.length > 0) {
+                dispatch({ type: SET_LOADER, loader: true });
                 setShowSearchResult(true);
                 let url = `document/list?creator_id=${userInfo.id}&collection_id=${collection_id}&doc_status=1&doc_status=2&search_param=${searchValue}`;
-                dispatch(documentList({ url }));
+                dispatch(documentList({ url })).then((res) => {
+                    dispatch({ type: SET_LOADER, loader: false });
+                });
             }
         }
     };

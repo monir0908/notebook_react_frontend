@@ -31,6 +31,7 @@ const Drafts = () => {
     };
 
     const getList = () => {
+        dispatch({ type: SET_LOADER, loader: true });
         let url = {
             doc_status: 1,
             creator_id: userInfo.id,
@@ -52,13 +53,16 @@ const Drafts = () => {
         }
 
         const objString = 'document/list?' + new URLSearchParams(url).toString();
-        dispatch({ type: SET_LOADER, loader: true });
-        setTimeout(() => {
-            dispatch(documentList({ url: objString }));
-            if (!loading) {
-                dispatch({ type: SET_LOADER, loader: false });
-            }
-        }, 500);
+        dispatch(documentList({ url: objString })).then((res) => {
+            dispatch({ type: SET_LOADER, loader: false });
+        });
+        // dispatch({ type: SET_LOADER, loader: true });
+        // setTimeout(() => {
+        //     dispatch(documentList({ url: objString }));
+        //     if (!loading) {
+        //         dispatch({ type: SET_LOADER, loader: false });
+        //     }
+        // }, 500);
     };
 
     const itemClicked = (item) => {
@@ -68,11 +72,14 @@ const Drafts = () => {
     useEffect(() => {
         if (!userToken) {
             navigate('/login');
-        }
-        dispatch(resetState());
-        setTimeout(() => {
+        } else {
+            dispatch(resetState());
             getList();
-        }, 300);
+        }
+        // dispatch(resetState());
+        // setTimeout(() => {
+        //     getList();
+        // }, 300);
     }, [navigate, userToken]);
 
     useEffect(() => {

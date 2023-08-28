@@ -61,18 +61,29 @@ const Home = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
+        console.log('userToken', userToken);
         if (!userToken) {
             navigate('/login');
         } else {
+            //new code start
             dispatch({ type: SET_LOADER, loader: true });
-            setTimeout(() => {
-                const url = `document/list?creator_id=${userInfo.id}&doc_status=1&doc_status=2&order_by=-updated_at`;
-                dispatch(resetState());
-                dispatch(documentList({ url }));
-                if (!loading) {
-                    dispatch({ type: SET_LOADER, loader: false });
-                }
-            }, 200);
+            const url = `document/list?creator_id=${userInfo.id}&doc_status=1&doc_status=2&order_by=-updated_at`;
+            dispatch(resetState());
+            dispatch(documentList({ url })).then((res) => {
+                dispatch({ type: SET_LOADER, loader: false });
+            });
+            //new code end
+            //old code start
+            // dispatch({ type: SET_LOADER, loader: true });
+            // setTimeout(() => {
+            //     const url = `document/list?creator_id=${userInfo.id}&doc_status=1&doc_status=2&order_by=-updated_at`;
+            //     dispatch(resetState());
+            //     dispatch(documentList({ url }));
+            //     if (!loading) {
+            //         dispatch({ type: SET_LOADER, loader: false });
+            //     }
+            // }, 200);
+            //old code end
         }
     }, [navigate, userToken]);
 
@@ -87,11 +98,13 @@ const Home = () => {
         setAnchorEl(null);
     };
     const handleNewDocItemClick = (value) => {
-        dispatch(documentCreate({ url: 'document/create', navigate, data: { collection: value.id } }));
-        setTimeout(() => {
-            const url = `collection/list?creator_id=${userInfo.id}&page=1&page_size=100`;
-            dispatch(collectionList({ url }));
-        }, 500);
+        dispatch(documentCreate({ url: 'document/create', navigate, data: { collection: value.id } })).then((res) => {
+            console.log('document/create res', res);
+            if (res && res.payload && res.payload.success) {
+                const url = `collection/list?creator_id=${userInfo.id}&page=1&page_size=100`;
+                dispatch(collectionList({ url }));
+            }
+        });
     };
 
     const itemClicked = (item) => {

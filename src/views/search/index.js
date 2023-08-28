@@ -65,11 +65,16 @@ const Search = () => {
 
         if (searchText) {
             setValue(searchText);
+            dispatch({ type: SET_LOADER, loader: true });
             let url = `document/list?creator_id=${userInfo.id}&search_param=${searchText}`;
-            dispatch(documentList({ url }));
-            setTimeout(() => {
-                setInitPage(true);
-            }, 500);
+            dispatch(documentList({ url })).then((res) => {
+                dispatch({ type: SET_LOADER, loader: false });
+                if (res && res.payload && res.payload.data && res.payload.data.length == 0) {
+                    setInitPage(true);
+                } else {
+                    setInitPage(false);
+                }
+            });
         }
 
         return () => {
@@ -87,9 +92,6 @@ const Search = () => {
         if (e.keyCode === 13 || e.type == 'click') {
             if (value.length > 0) {
                 getList();
-                setTimeout(() => {
-                    setInitPage(true);
-                }, 500);
             } else {
                 dispatch(resetState());
                 setInitPage(false);
@@ -99,13 +101,13 @@ const Search = () => {
 
     const getList = () => {
         dispatch({ type: SET_LOADER, loader: true });
-        setTimeout(() => {
-            let url = `document/list?creator_id=${userInfo.id}&search_param=${value}`;
-            dispatch(documentList({ url }));
-            if (!loading) {
-                dispatch({ type: SET_LOADER, loader: false });
+        let url = `document/list?creator_id=${userInfo.id}&search_param=${value}`;
+        dispatch(documentList({ url })).then((res) => {
+            dispatch({ type: SET_LOADER, loader: false });
+            if (res && res.payload && res.payload.data && res.payload.data.length == 0) {
+                setInitPage(true);
             }
-        }, 500);
+        });
     };
 
     return (

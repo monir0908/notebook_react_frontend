@@ -126,7 +126,7 @@ function EnhancedTableHead(props) {
                 color: '#092625'
             }}
         >
-            <TableRow sx={{ stylepadding: '8px !important' }}>
+            <TableRow sx={{ padding: '8px !important' }}>
                 {headCells.map((headCell) => (
                     <TableCell
                         key={headCell.id}

@@ -65,6 +65,7 @@ const Document = () => {
     let boundingRect = null;
     const getDocumentDetails = async () => {
         const res = await API.get(`document/${documentKey}`);
+        console.log('doc details res', res);
         if (res) {
             let doc = res.data.data;
             setDocObj(doc);
